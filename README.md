@@ -142,6 +142,22 @@ CI-Gate (GitHub Actions, `apps/api/.github/workflows/ci.yml`):
 - `typecheck` → `test --run` → `build` → `prisma validate`
 - Blockiert jeden Merge bei Fehler
 
+### Datenbank-Sicherheitsgate
+
+Vor jedem migrations- oder DB-schreibenden Prisma-Befehl:
+
+```bash
+npm run db:verify-target
+```
+
+Bekannte Ziele: `ienwshemokpsjwkedmyp` = Bevero Development / `bevero-plattform`;
+`czinchfegtglmrloxlmh` = Warenwirtschaft Production / `rauschenberger-os`. Aus
+`bevero-plattform` heraus ist `czinchfegtglmrloxlmh` standardmäßig blockiert
+(Cross-Project Read-Only); nur mit `BEVERO_ALLOW_CROSS_PROJECT_READ` ist Lesezugriff
+für Incident-Verifikation erlaubt, riskante Prisma-Befehle bleiben verboten.
+Details und Stop-Regeln:
+[`docs/productization/bevero-database-boundary-v0.md`](docs/productization/bevero-database-boundary-v0.md).
+
 ---
 
 ## Governance

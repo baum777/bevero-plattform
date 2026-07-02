@@ -16,6 +16,8 @@
     "test": "npm --workspace=apps/api run test",
     "test:ci": "npm --workspace=apps/api run test -- --run",
     "prisma:validate": "npm --workspace=apps/api run prisma:validate",
+    "db:verify-target": "npm --workspace=apps/api run db:verify-target",
+    "db:migrate:deploy": "npm --workspace=apps/api run db:migrate:deploy",
     "ci": "npm run typecheck && npm run test:ci",
     "check:work-docs": "node scripts/check-work-documentation.mjs"
   },

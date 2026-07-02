@@ -46,6 +46,27 @@ Jeder Agent muss vor, während und nach nicht-trivialer Arbeit folgende Schritte
 → Vollständige Regel: [`docs/agent-team/work_documentation_rule.md`](docs/agent-team/work_documentation_rule.md)  
 → Templates: [`docs/agent-team/templates/`](docs/agent-team/templates/)
 
+## Pflicht: Datenbank-Zielgate
+
+Vor jeder Prisma-Migration, jedem Deploy, `db push`, `migrate reset`, Seed oder
+anderer produktionsrelevanter DB-Operation:
+
+1. Supabase Project Ref identifizieren.
+2. Ref gegen das erwartete Ziel prüfen.
+3. Zielrolle (`local`, `development`, `production`) explizit deklarieren.
+4. Für Production separates Owner-Go verlangen.
+5. Evidence ohne Secrets schreiben.
+6. Bei unbekannter Ref, Ref-/Rollen-Mismatch oder Split-Target sofort stoppen.
+
+**Owned Projekt:** `ienwshemokpsjwkedmyp` = `bevero-os` / `development` / `bevero-plattform`.
+**Cross-Project blockiert:** `czinchfegtglmrloxlmh` = `warenwirtschaft` / `production` /
+`rauschenberger-os` — selbst mit `BEVERO_ALLOW_CROSS_PROJECT_READ` ist nur Lesezugriff
+erlaubt; riskante Prisma-Befehle bleiben verboten.
+
+Technischer Einstieg: `npm run db:verify-target`. Riskante direkte Prisma-Kommandos
+werden zusätzlich über `apps/api/prisma.config.ts` geprüft. Der Guard darf niemals
+Connection Strings, Passwörter oder Tokens ausgeben.
+
 ---
 
 ## Autoritätsquelle

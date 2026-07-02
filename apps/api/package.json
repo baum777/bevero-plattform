@@ -11,6 +11,8 @@
     "smoke:supabase": "tsx scripts/smoke/supabase-runtime-smoke.ts",
     "smoke:browser:seed": "tsx scripts/smoke/browser-smoke-seed.ts",
     "smoke:inventory-api:live-prod": "SMOKE_TARGET=live-prod NODE_ENV=production tsx scripts/smoke-inventory-api.ts",
+    "db:verify-target": "tsx scripts/verify-database-target.ts",
+    "db:migrate:deploy": "npm run db:verify-target && prisma migrate deploy",
     "secrets:scan": "gitleaks detect --config .gitleaks.toml --redact",
     "ci": "npm run typecheck && npm run test -- --run",
     "build": "tsc -p tsconfig.json",
