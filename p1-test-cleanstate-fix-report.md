@@ -6,35 +6,42 @@ pass
 
 ## 2. changed-files
 
-- `apps/api/tests/mobile-nav-quick-notes-contract.test.ts`
+No product or test source files were changed.
+
+Documentation/report files changed in this slice:
+
 - `p1-test-cleanstate-fix-report.md`
+- `docs/agent-team/mspr_logbook/2026-07-02-p1-test-cleanstate-fix.md`
+- `docs/agent-team/intent_logbook/2026-07-02-p1-test-cleanstate-fix.md`
 
 ## 3. red-test-finding
 
-The failing assertion was brittle: the test required the exact literal `searchParams.get("type")`, while the cockpit code uses the functionally equivalent `searchParams?.get("type")` in `apps/cockpit/app/(app)/movements/movements-client.tsx`.
+The previously reported red assertion at `apps/api/tests/mobile-nav-quick-notes-contract.test.ts:40` is already semantic in the current checkout.
 
-The product code still uses `useSearchParams`, reads the `type` query param, validates it through `isMovementType(requestedType)`, and applies it with `setMovementType(requestedType)`. No UI logic change was needed.
+Observed current contract checks:
+
+- `useSearchParams` is required.
+- `get("type")` access is required while allowing optional chaining via `searchParams?.get("type")`.
+- `isMovementType(requestedType)` validation is required.
+- `setMovementType(requestedType)` application is required.
+
+Observed product code in `apps/cockpit/app/(app)/movements/movements-client.tsx` still performs that flow. No UI logic change was needed.
 
 ## 4. test-fix-summary
 
-The test now checks the semantic contract instead of one exact string form:
-
-- `useSearchParams` is present.
-- `get("type")` access is present, allowing optional chaining.
-- `isMovementType(requestedType)` validation is present.
-- `setMovementType(requestedType)` application is present.
+No additional test fix was applied in this run because the local test file already matches the requested semantic contract. I did not revert, delete, or loosen the semantic assertions.
 
 ## 5. test-results
 
 Targeted test:
 
 ```text
-cd apps/api && npm test -- --run tests/mobile-nav-quick-notes-contract.test.ts
+cd apps/api && npm run test -- --run tests/mobile-nav-quick-notes-contract.test.ts
 Test Files  1 passed (1)
 Tests  11 passed (11)
 ```
 
-Full `npm run test:ci` was not run in this P1 block; the targeted red test was the requested validation scope.
+`npm run test:ci` was not run; the targeted red test was green and the requested scope was a small P1 block.
 
 ## 6. untracked-spec-pack-finding
 
