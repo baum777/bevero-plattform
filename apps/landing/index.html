@@ -1,16 +1,874 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Bevero Ops zeigt Warenfluss, Auffülllisten, Wareneingang, Bestände, Freigaben und Rollenlogik als visuellen Workflow für Küche, Bar, Lager und Standortleitung." />
-    <meta property="og:title" content="Bevero Ops — Vom Zettel zur steuerbaren Tageslogik" />
-    <meta property="og:description" content="Visuelle Prozessübersicht für Warenfluss, Auffülllisten, Wareneingang, Freigaben und Standortsteuerung." />
-    <meta property="og:type" content="website" />
-    <title>Bevero Ops — Visueller Workflow für Warenfluss, Küche & Standortleitung</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bevero — Jede Schichtübergabe nachlesbar. Jede Warenbewegung nachvollziehbar.</title>
+<meta name="description" content="Bevero ersetzt Zettel, Zuruf und WhatsApp-Gruppen in Küche, Bar und Lager — nicht Ihre Kasse, nicht Ihre Buchhaltung. Warenannahme, Umlagerung, Auffüllliste, Schichtübergabe und Freigabe in einer App.">
+<style>
+  :root {
+    --gruen: #1a5c3f;
+    --gruen-dunkel: #12442e;
+    --gruen-hell: #eef4f0;
+    --tinte: #1f2933;
+    --grau: #4a5560;
+    --linie: #dde3e0;
+    --papier: #ffffff;
+    --papier-warm: #f7f9f8;
+    --bernstein: #8a5a00;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: auto; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--tinte);
+    background: var(--papier);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.0625rem;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--gruen);
+    color: #fff;
+    padding: 12px 20px;
+    z-index: 100;
+  }
+  .skip-link:focus { left: 0; }
+
+  a { color: var(--gruen); }
+  a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 3px solid var(--gruen);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  @media (min-width: 768px) { .container { padding: 0 32px; } }
+
+  /* ---------- Kopfzeile ---------- */
+  header.top {
+    border-bottom: 1px solid var(--linie);
+    background: var(--papier);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .top-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    gap: 16px;
+  }
+  .marke {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--tinte);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    padding: 10px 0;
+  }
+  .marke .punkt { color: var(--gruen); }
+
+  .btn {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--radius);
+    padding: 14px 24px;
+    min-height: 48px;
+    text-align: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+  }
+  .btn-gruen { background: var(--gruen); color: #fff; }
+  .btn-gruen:hover { background: var(--gruen-dunkel); }
+  .btn-rand { border-color: var(--gruen); color: var(--gruen); background: transparent; }
+  .btn-rand:hover { background: var(--gruen-hell); }
+  .top .btn { padding: 10px 18px; min-height: 44px; font-size: 0.95rem; }
+
+  /* ---------- Abschnitte ---------- */
+  section { padding: 64px 0; }
+  @media (min-width: 768px) { section { padding: 96px 0; } }
+
+  .abschnitt-kopf { max-width: 42rem; margin-bottom: 40px; }
+  h1, h2, h3 { line-height: 1.2; letter-spacing: -0.015em; }
+  h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 16px; }
+  h3 { font-size: 1.15rem; margin-bottom: 8px; }
+  .vorzeile {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gruen);
+    margin-bottom: 12px;
+  }
+  .abschnitt-kopf p { color: var(--grau); }
+  .prose { max-width: 42rem; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 56px 0 64px; }
+  @media (min-width: 900px) {
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 64px;
+      align-items: center;
+    }
+  }
+  .hero h1 {
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    margin-bottom: 20px;
+  }
+  .hero .subline {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--grau);
+    max-width: 34rem;
+    margin-bottom: 32px;
+  }
+  .hero .subline strong { color: var(--tinte); }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .cta-hinweis { font-size: 0.9rem; color: var(--grau); max-width: 30rem; }
+
+  /* ---------- Handy-Mockup ---------- */
+  .telefon {
+    width: min(320px, 100%);
+    margin: 48px auto 0;
+    border: 1px solid var(--linie);
+    border-radius: 28px;
+    background: var(--papier);
+    box-shadow: 0 12px 32px rgba(31, 41, 51, 0.10);
+    padding: 18px 16px 22px;
+  }
+  @media (min-width: 900px) { .telefon { margin-top: 0; } }
+  .telefon-kerbe {
+    width: 90px; height: 6px; border-radius: 3px;
+    background: var(--linie); margin: 0 auto 14px;
+  }
+  .app-kopf {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 10px; border-bottom: 1px solid var(--linie); margin-bottom: 10px;
+  }
+  .app-kopf .titel { font-weight: 700; font-size: 0.95rem; }
+  .app-kopf .zeit { font-size: 0.8rem; color: var(--grau); }
+  .app-zeile {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 9px 6px; border-radius: 8px; font-size: 0.85rem; line-height: 1.4;
+  }
+  .app-zeile + .app-zeile { border-top: 1px solid var(--papier-warm); }
+  .app-zeile .text strong { display: block; font-weight: 600; }
+  .app-zeile .text span { color: var(--grau); font-size: 0.78rem; }
+  .haken, .offen {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; margin-top: 1px;
+  }
+  .haken { background: var(--gruen-hell); color: var(--gruen); border: 1px solid var(--gruen); }
+  .offen { background: #fdf6e8; color: var(--bernstein); border: 1px solid var(--bernstein); }
+  .app-fuss {
+    margin-top: 12px;
+    background: var(--gruen); color: #fff;
+    border-radius: 8px; text-align: center;
+    padding: 12px; font-size: 0.85rem; font-weight: 600;
+  }
+
+  /* ---------- Problem ---------- */
+  .grau-flaeche { background: var(--papier-warm); border-top: 1px solid var(--linie); border-bottom: 1px solid var(--linie); }
+  .szenen { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .szenen { grid-template-columns: 1fr 1fr; gap: 20px; } }
+  .szene {
+    background: var(--papier);
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .szene .uhr {
+    font-weight: 700; font-size: 0.9rem; color: var(--gruen);
+    display: block; margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .szene p { color: var(--grau); font-size: 0.98rem; }
+  .kein-vorwurf {
+    margin-top: 32px;
+    border-left: 4px solid var(--gruen);
+    padding: 16px 20px;
+    background: var(--papier);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    max-width: 46rem;
+  }
+
+  /* ---------- Prozesse ---------- */
+  .prozesse { display: grid; gap: 16px; counter-reset: prozess; }
+  @media (min-width: 768px) { .prozesse { gap: 20px; } }
+  .prozess {
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    counter-increment: prozess;
+  }
+  @media (min-width: 768px) {
+    .prozess { display: grid; grid-template-columns: 56px 1fr; gap: 20px; padding: 32px 28px; }
+  }
+  .prozess-nr {
+    flex: none;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--gruen-hell); color: var(--gruen);
+    font-weight: 700; font-size: 1.1rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .prozess-nr::before { content: counter(prozess); }
+  .prozess h3 { font-size: 1.25rem; }
+  .prozess .ablauf { color: var(--grau); margin: 8px 0 0; }
+  .claim {
+    margin-top: 14px;
+    font-weight: 600;
+    color: var(--gruen-dunkel);
+    background: var(--gruen-hell);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: inline-block;
+    font-size: 0.98rem;
+  }
+
+  /* ---------- Magic Moment ---------- */
+  .moment { background: var(--gruen-dunkel); color: #f2f6f4; }
+  .moment .vorzeile { color: #9fc6b2; }
+  .moment h2 { color: #fff; }
+  .moment p { color: #d7e4dd; }
+  .moment .prose p + p { margin-top: 16px; }
+  .moment-liste { list-style: none; margin: 24px 0; display: grid; gap: 10px; max-width: 38rem; }
+  .moment-liste li {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 8px; padding: 12px 16px;
+    color: #e8f0eb; font-size: 0.98rem;
+  }
+  .moment-liste .haken { background: rgba(255,255,255,0.12); color: #b5e0c8; border-color: #6fa88a; }
+  .moment-liste .offen { background: rgba(255,255,255,0.08); color: #f0d494; border-color: #c9a44c; }
+  .moment .zitat {
+    margin-top: 32px;
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    color: #fff;
+    border-left: 4px solid #6fa88a;
+    padding-left: 20px;
+    max-width: 36rem;
+  }
+  .moment .zitat footer { font-size: 0.9rem; font-weight: 400; color: #a9c7b7; margin-top: 8px; }
+
+  /* ---------- Effekte ---------- */
+  .effekte-grid { display: grid; gap: 16px; }
+  @media (min-width: 640px) { .effekte-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .effekte-grid { grid-template-columns: repeat(4, 1fr); } }
+  .effekt {
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+  }
+  .effekt .zahl {
+    font-size: 2rem; font-weight: 700; color: var(--gruen);
+    display: block; line-height: 1.1; margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .effekt p { color: var(--grau); font-size: 0.95rem; }
+  .hypothese-hinweis {
+    margin-top: 24px;
+    font-size: 0.95rem;
+    color: var(--grau);
+    max-width: 46rem;
+    border-left: 4px solid var(--bernstein);
+    padding: 12px 16px;
+    background: #fdf9f0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* ---------- Abgrenzung ---------- */
+  .nicht-liste { list-style: none; display: grid; gap: 12px; max-width: 42rem; margin: 24px 0 32px; }
+  .nicht-liste li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 18px;
+    border: 1px solid var(--linie);
+    border-radius: 8px;
+    background: var(--papier);
+  }
+  .nicht-liste .kreuz {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--papier-warm); color: var(--grau);
+    border: 1px solid var(--linie);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; margin-top: 3px;
+  }
+  .nicht-liste strong { display: block; }
+  .nicht-liste span { color: var(--grau); font-size: 0.95rem; }
+  .abgrenzung-claim {
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    color: var(--gruen-dunkel);
+    max-width: 36rem;
+  }
+
+  /* ---------- Praxis ---------- */
+  .praxis-grid { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .praxis-grid { grid-template-columns: 1fr 1fr; } }
+  .praxis {
+    background: var(--papier);
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .praxis h3 { font-size: 1.05rem; }
+  .praxis p { color: var(--grau); font-size: 0.95rem; }
+
+  /* ---------- Pilot ---------- */
+  .pilot-karte {
+    border: 2px solid var(--gruen);
+    border-radius: 14px;
+    padding: 28px 24px;
+    max-width: 46rem;
+  }
+  @media (min-width: 768px) { .pilot-karte { padding: 40px; } }
+  .pilot-karte ul { list-style: none; display: grid; gap: 14px; margin: 20px 0 28px; }
+  .pilot-karte li { display: flex; gap: 12px; align-items: flex-start; }
+  .pilot-karte li .haken { margin-top: 2px; }
+  .pilot-karte li div strong { display: block; }
+  .pilot-karte li div span { color: var(--grau); font-size: 0.95rem; }
+  .preis-hinweis { font-size: 0.9rem; color: var(--grau); margin-top: 16px; }
+
+  /* ---------- FAQ ---------- */
+  .faq-liste { max-width: 46rem; display: grid; gap: 12px; }
+  .faq-liste details {
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    background: var(--papier);
+  }
+  .faq-liste summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 52px 18px 20px;
+    font-weight: 600;
+    position: relative;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .faq-liste summary::-webkit-details-marker { display: none; }
+  .faq-liste summary::after {
+    content: "+";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--gruen);
+    line-height: 1;
+  }
+  .faq-liste details[open] summary::after { content: "–"; }
+  .faq-liste details[open] summary { border-bottom: 1px solid var(--linie); }
+  .faq-antwort { padding: 16px 20px 20px; color: var(--grau); }
+  .faq-antwort p + p { margin-top: 12px; }
+
+  /* ---------- Abschluss ---------- */
+  .abschluss { background: var(--gruen-dunkel); color: #f2f6f4; }
+  .abschluss h2 { color: #fff; }
+  .abschluss .vorzeile { color: #9fc6b2; }
+  .abschluss p { color: #d7e4dd; }
+  .schritte { list-style: none; counter-reset: schritt; display: grid; gap: 14px; margin: 28px 0 36px; max-width: 40rem; }
+  .schritte li {
+    counter-increment: schritt;
+    display: flex; gap: 16px; align-items: flex-start;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .schritte li::before {
+    content: counter(schritt);
+    flex: none;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #fff; color: var(--gruen-dunkel);
+    font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .schritte strong { display: block; color: #fff; }
+  .schritte span { color: #c6d8cd; font-size: 0.95rem; }
+
+  .kontakt-form {
+    background: #fff;
+    color: var(--tinte);
+    border-radius: 14px;
+    padding: 28px 24px;
+    max-width: 34rem;
+  }
+  @media (min-width: 768px) { .kontakt-form { padding: 36px; } }
+  .kontakt-form h3 { margin-bottom: 20px; }
+  .feld { margin-bottom: 18px; }
+  .feld label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; }
+  .feld input, .feld textarea {
+    width: 100%;
+    padding: 12px 14px;
+    min-height: 48px;
+    border: 1px solid #b9c2bd;
+    border-radius: 8px;
+    font: inherit;
+    color: var(--tinte);
+    background: #fff;
+  }
+  .feld textarea { min-height: 110px; resize: vertical; }
+  .form-hinweis { font-size: 0.85rem; color: var(--grau); margin-top: 12px; }
+  .abschluss .mail-alt { margin-top: 20px; font-size: 0.95rem; }
+  .abschluss .mail-alt a { color: #b5e0c8; font-weight: 600; }
+
+  /* ---------- Footer ---------- */
+  footer.fuss {
+    padding: 32px 0;
+    border-top: 1px solid var(--linie);
+    font-size: 0.9rem;
+    color: var(--grau);
+  }
+  .fuss-inner { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; }
+  .fuss nav { display: flex; gap: 24px; }
+  .fuss a { color: var(--grau); }
+
+  /* ---------- Scroll-Reveal (nur ohne reduced motion) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 350ms ease-out, transform 350ms ease-out;
+    }
+    .reveal.sichtbar { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+<header class="top">
+  <div class="container top-inner">
+    <a class="marke" href="#inhalt">Bevero<span class="punkt">.</span></a>
+    <a class="btn btn-gruen" href="#pilot-kontakt">Pilotgespräch vereinbaren</a>
+  </div>
+</header>
+
+<main id="inhalt">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-labelledby="hero-titel">
+    <div class="container hero-grid">
+      <div>
+        <h1 id="hero-titel">Jede Schichtübergabe nachlesbar. Jede Warenbewegung nachvollziehbar.</h1>
+        <p class="subline">Bevero ersetzt Zettel, Zuruf und WhatsApp-Gruppen in Küche, Bar und Lager — <strong>nicht Ihre Kasse, nicht Ihre Buchhaltung.</strong> Die bleiben führend. Bevero ist die Ausführungs- und Nachweisebene davor.</p>
+        <div class="hero-cta">
+          <a class="btn btn-gruen" href="#pilot-kontakt">Pilotgespräch vereinbaren</a>
+          <a class="btn btn-rand" href="#prozesse">Die fünf Prozesse ansehen</a>
+        </div>
+        <p class="cta-hinweis">60 Minuten vor Ort: Wir sehen uns gemeinsam eine echte Warenannahme und eine Übergabe an. Keine Folien, kein Verkaufsgespräch.</p>
+      </div>
+
+      <!-- Stilisiertes Mockup: Schichtübergabe -->
+      <div class="telefon" role="img" aria-label="Stilisierte App-Ansicht einer Schichtübergabe: Warenannahme abgeschlossen, Fehlmenge freigegeben, Auffüllliste zu 80 Prozent erledigt, ein offener Punkt der Frühschicht.">
+        <div class="telefon-kerbe" aria-hidden="true"></div>
+        <div aria-hidden="true">
+          <div class="app-kopf">
+            <span class="titel">Schichtübergabe</span>
+            <span class="zeit">Di · 15:55</span>
+          </div>
+          <div class="app-zeile">
+            <span class="haken">✓</span>
+            <div class="text"><strong>Warenannahme abgeschlossen</strong><span>Metzger &amp; Gemüse · 7:30 · M. Krause</span></div>
+          </div>
+          <div class="app-zeile">
+            <span class="haken">✓</span>
+            <div class="text"><strong>Fehlmenge freigegeben</strong><span>2× Kalbsfond · Küchenchef · 7:35</span></div>
+          </div>
+          <div class="app-zeile">
+            <span class="haken">✓</span>
+            <div class="text"><strong>Auffüllliste Bar: 80 % erledigt</strong><span>Rest: Keller, Position 4–6</span></div>
+          </div>
+          <div class="app-zeile">
+            <span class="offen">!</span>
+            <div class="text"><strong>Offener Punkt Frühschicht</strong><span>Kühlhaus-Tür 2 klemmt · zuständig: T. Weber</span></div>
+          </div>
+          <div class="app-fuss">Übergabe bestätigen</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM ============ -->
+  <section class="grau-flaeche" id="problem" aria-labelledby="problem-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Der Normalzustand heute</span>
+        <h2 id="problem-titel">So läuft es in den meisten Betrieben. Nicht aus Nachlässigkeit — aus Zeitdruck.</h2>
+      </div>
+      <div class="szenen">
+        <article class="szene reveal">
+          <span class="uhr">7:30 Uhr — an der Rampe</span>
+          <p>Der Lieferant steht mit der Palette da, der Lieferschein steckt in der Klarsichthülle. Zwei Kisten fehlen. Das wird mündlich weitergegeben — an jemanden, der gerade auf dem Weg in die Küche ist. Um 16:00 Uhr weiß es niemand mehr.</p>
+        </article>
+        <article class="szene reveal">
+          <span class="uhr">14:50 Uhr — im Flur</span>
+          <p>Die Schichtübergabe passiert im Vorbeigehen, zwischen Umkleide und Pass. Drei Sätze, zwei davon wichtig. Wer es nicht gehört hat, weiß es nicht — und fragt später nach. Oder fragt nicht nach.</p>
+        </article>
+        <article class="szene reveal">
+          <span class="uhr">17:15 Uhr — die Auffüllliste</span>
+          <p>Der Block mit der Auffüllliste liegt mal in der Küche, mal an der Theke, mal nirgends. Was Freitagabend gebraucht wird, steht im Kopf von zwei Leuten — von denen heute einer frei hat.</p>
+        </article>
+        <article class="szene reveal">
+          <span class="uhr">Monatsende — die Inventur</span>
+          <p>Ware im mittleren vierstelligen Wert fehlt. Bruch? Schwund? Falsch gebucht? Nie angekommen? Niemand kann es rekonstruieren — weil es nirgends steht. Also bleibt es eine Inventurdifferenz ohne Erklärung.</p>
+        </article>
+      </div>
+      <p class="kein-vorwurf reveal"><strong>Das ist kein Organisationsversagen.</strong> Das ist der Normalzustand, wenn 40 Leute unter Zeitdruck arbeiten und das Werkzeug dafür ein Zettel ist. Genau dafür ist Bevero gebaut.</p>
+    </div>
+  </section>
+
+  <!-- ============ FÜNF KERNPROZESSE ============ -->
+  <section id="prozesse" aria-labelledby="prozesse-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Die Lösung</span>
+        <h2 id="prozesse-titel">Fünf Prozesse. Jeder mit Verantwortlichem, Freigabe und Verlauf.</h2>
+        <p>Kein Funktionskatalog — fünf Abläufe, die es in Ihrem Betrieb heute schon gibt. Nur laufen sie ab jetzt ohne Papier.</p>
+      </div>
+
+      <div class="prozesse">
+        <article class="prozess reveal">
+          <span class="prozess-nr" aria-hidden="true"></span>
+          <div>
+            <h3>Warenannahme</h3>
+            <p class="ablauf">Lieferung kommt an, Positionen werden am Handy erfasst und abgehakt. Fehlmenge? Antippen, markieren, fertig. Der Lieferschein wird fotografiert und hängt am Vorgang — nicht in der Klarsichthülle.</p>
+            <p class="claim">„Die Fehlmenge von 7:30 Uhr ist um 7:35 Uhr beim Küchenchef — nicht bei der Inventur."</p>
+          </div>
+        </article>
+
+        <article class="prozess reveal">
+          <span class="prozess-nr" aria-hidden="true"></span>
+          <div>
+            <h3>Umlagerung</h3>
+            <p class="ablauf">Sechs Flaschen Gin vom Keller ins Barlager? Ein Antippen. Jede Bewegung zwischen Trockenlager, Kühlhaus, Keller und Theke wird mit Person, Zeit und Anlass festgehalten. Die Frage „wer war das" hat eine Antwort — ohne dass jemand suchen muss.</p>
+          </div>
+        </article>
+
+        <article class="prozess reveal">
+          <span class="prozess-nr" aria-hidden="true"></span>
+          <div>
+            <h3>Auffüllliste</h3>
+            <p class="ablauf">Die Liste ist vorbefüllt — aus den Mustern der letzten gleichen Wochentage. Die Liste kennt die letzten Freitage und schlägt vor, was heute gebraucht wird. Jeder Artikel steht mit seinem Lagerort da: Keller, Kühlhaus, Trockenlager. Auffüllen heißt abhaken, nicht suchen.</p>
+            <p class="claim">„Die Auffüllliste, die schon weiß, was Freitagabend gebraucht wird."</p>
+          </div>
+        </article>
+
+        <article class="prozess reveal">
+          <span class="prozess-nr" aria-hidden="true"></span>
+          <div>
+            <h3>Schichtübergabe</h3>
+            <p class="ablauf">Aus den Vorgängen des Tages entsteht automatisch ein Entwurf: Was wurde angenommen, was fehlt, was ist offen. Die gehende Schicht ergänzt zwei Sätze, die kommende Schicht bestätigt aktiv — nicht „wird schon gelesen worden sein", sondern ein echter Haken. In zwei Minuten Bescheid wissen statt zwanzig Minuten hinterhertelefonieren.</p>
+          </div>
+        </article>
+
+        <article class="prozess reveal">
+          <span class="prozess-nr" aria-hidden="true"></span>
+          <div>
+            <h3>Freigabe &amp; Korrektur</h3>
+            <p class="ablauf">Korrekturen laufen nach dem Zwei-Personen-Prinzip: einer erfasst, einer gibt frei. Nichts wird je gelöscht oder überschrieben — jede Änderung ergänzt den Verlauf. Bei der Inventur ist jede Differenz einem dokumentierten Vorgang zuordenbar: Bruch, Schwund, Fehlmenge oder Umlagerung.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MAGIC MOMENT ============ -->
+  <section class="moment" aria-labelledby="moment-titel">
+    <div class="container">
+      <div class="prose reveal">
+        <span class="vorzeile">Ein Dienstag, 15:55 Uhr</span>
+        <h2 id="moment-titel">Zwei Minuten in der Umkleide. Mehr braucht die Übergabe nicht.</h2>
+        <p>Die Schichtleitung zieht sich um, öffnet Bevero auf dem Handy und weiß alles, was zählt:</p>
+        <ul class="moment-liste">
+          <li><span class="haken" aria-hidden="true">✓</span> Warenannahme abgeschlossen — Lieferschein hängt am Vorgang</li>
+          <li><span class="haken" aria-hidden="true">✓</span> Die Fehlmenge von heute Morgen ist erfasst und freigegeben</li>
+          <li><span class="haken" aria-hidden="true">✓</span> Auffüllliste zu 80 % erledigt — der Rest steht im Keller bereit</li>
+          <li><span class="offen" aria-hidden="true">!</span> Ein offener Punkt der Frühschicht — mit Namen dran, wer sich kümmert</li>
+        </ul>
+        <p>Niemand wurde angerufen. Keine WhatsApp-Gruppe durchgescrollt. Kein „hat dir das jemand gesagt?". Die Schicht beginnt mit Übersicht statt mit Rückfragen.</p>
+        <blockquote class="zitat reveal">
+          „So will ich nie wieder eine Schicht übernehmen müssen, ohne das zu haben."
+          <footer>Schichtleitung nach der zweiten Pilotwoche — genau der Moment, für den Bevero gebaut ist.</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MESSBARE EFFEKTE ============ -->
+  <section aria-labelledby="effekte-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Woran wir uns messen lassen</span>
+        <h2 id="effekte-titel">Vier Zielwerte für den Piloten</h2>
+      </div>
+      <div class="effekte-grid">
+        <div class="effekt reveal">
+          <span class="zahl">−30 %</span>
+          <p>unaufgeklärte Inventurdifferenzen nach 3 Monaten</p>
+        </div>
+        <div class="effekt reveal">
+          <span class="zahl">−50 %</span>
+          <p>Rückfragen an die Vorschicht</p>
+        </div>
+        <div class="effekt reveal">
+          <span class="zahl">−20 Min.</span>
+          <p>Rüstzeit pro Schicht</p>
+        </div>
+        <div class="effekt reveal">
+          <span class="zahl">≥ 90 %</span>
+          <p>der Lieferabweichungen am Annahmetag dokumentiert — heute sind es geschätzt unter 30 %</p>
+        </div>
+      </div>
+      <p class="hypothese-hinweis reveal"><strong>Ehrlich gesagt:</strong> Das sind Zielhypothesen, keine gemessenen Ergebnisse. Genau deshalb gibt es den Piloten — wir messen diese vier Werte gemeinsam in Ihrem Betrieb und schauen nach drei Monaten auf echte Zahlen statt auf Versprechen.</p>
+    </div>
+  </section>
+
+  <!-- ============ ABGRENZUNG ============ -->
+  <section class="grau-flaeche" id="abgrenzung" aria-labelledby="abgrenzung-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Was Bevero nicht ist</span>
+        <h2 id="abgrenzung-titel">Ihre Kasse, Ihre Buchhaltung, Ihre Warenwirtschaft bleiben führend.</h2>
+        <p>Bevero will diese Systeme nicht ersetzen — es ist die Ausführungs- und Nachweisebene davor: dort, wo Ware angenommen, bewegt und übergeben wird.</p>
+      </div>
+      <ul class="nicht-liste">
+        <li><span class="kreuz" aria-hidden="true">✕</span><div><strong>Keine Kasse</strong><span>Ihr Kassensystem bleibt, wie es ist.</span></div></li>
+        <li><span class="kreuz" aria-hidden="true">✕</span><div><strong>Keine Buchhaltung</strong><span>Belege und Buchungen laufen weiter über Ihren Steuerberater und Ihre Systeme.</span></div></li>
+        <li><span class="kreuz" aria-hidden="true">✕</span><div><strong>Kein Bestellwesen</strong><span>Bestellt wird, wo Sie heute bestellen.</span></div></li>
+        <li><span class="kreuz" aria-hidden="true">✕</span><div><strong>Keine Rezeptkalkulation</strong><span>Kalkulation bleibt Sache von Küchenchef und Betriebsleitung.</span></div></li>
+        <li><span class="kreuz" aria-hidden="true">✕</span><div><strong>Keine Dienstplanung</strong><span>Wer wann arbeitet, plant Ihr bestehendes Werkzeug.</span></div></li>
+      </ul>
+      <p class="abgrenzung-claim reveal">„Bevero ersetzt nicht Ihre Kasse. Bevero ersetzt das Chaos davor."</p>
+    </div>
+  </section>
+
+  <!-- ============ PRAXIS ============ -->
+  <section aria-labelledby="praxis-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Gebaut für den Betrieb</span>
+        <h2 id="praxis-titel">Für die Rampe, den Keller und die Theke — nicht fürs Büro.</h2>
+      </div>
+      <div class="praxis-grid">
+        <article class="praxis reveal">
+          <h3>Funktioniert im Kühlhaus</h3>
+          <p>Kein Empfang hinter der Kühlhaustür? Egal. Bevero arbeitet offline weiter und gleicht automatisch ab, sobald wieder Netz da ist. Nichts geht verloren.</p>
+        </article>
+        <article class="praxis reveal">
+          <h3>Bedienbar mit nassen Händen</h3>
+          <p>Große Touchziele, Abhaken statt Tippen. Wer gerade Kisten geschleppt hat oder fettige Finger hat, kann trotzdem erfassen — ohne Formularkrampf.</p>
+        </article>
+        <article class="praxis reveal">
+          <h3>Deutsch und Englisch, einfache Texte</h3>
+          <p>Kurze Sätze, klare Begriffe, zwei Sprachen. Wer eine Auffüllliste lesen kann, kann Bevero bedienen. Einrichtung und Schulung machen wir gemeinsam am echten Prozess.</p>
+        </article>
+        <article class="praxis reveal">
+          <h3>Ihre Daten gehören Ihnen</h3>
+          <p>Hosting in der EU, Auftragsverarbeitung nach DSGVO. Alle Daten jederzeit als CSV exportierbar — und bei Vertragsende werden sie gelöscht. Ohne Diskussion.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PILOT ============ -->
+  <section class="grau-flaeche" id="pilot" aria-labelledby="pilot-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Das Pilotangebot</span>
+        <h2 id="pilot-titel">Drei Monate. Monatlich kündbar. Wir machen die Arbeit.</h2>
+        <p>Die Rückfallhöhe ist der heutige Zustand: Wenn der Pilot nichts bringt, sind Sie genau da, wo Sie jetzt sind — mit Ihren Daten als CSV in der Hand.</p>
+      </div>
+      <div class="pilot-karte reveal">
+        <ul>
+          <li>
+            <span class="haken" aria-hidden="true">✓</span>
+            <div><strong>Datenaufnahme vor Ort</strong><span>Wir nehmen Ihre Artikel, Lagerorte und Abläufe selbst auf — Sie liefern keinen Excel-Export, wir stehen im Keller.</span></div>
+          </li>
+          <li>
+            <span class="haken" aria-hidden="true">✓</span>
+            <div><strong>Einrichtung komplett durch uns</strong><span>Lagerorte, Artikel, Rollen, Freigaben — fertig eingerichtet, bevor die erste Schicht damit arbeitet.</span></div>
+          </li>
+          <li>
+            <span class="haken" aria-hidden="true">✓</span>
+            <div><strong>Schulung am echten Prozess</strong><span>2 × 45 Minuten je Rollengruppe, direkt an der Rampe und an der Theke. Keine Folienschulung.</span></div>
+          </li>
+          <li>
+            <span class="haken" aria-hidden="true">✓</span>
+            <div><strong>Faire Abbruchkriterien</strong><span>Vorab schriftlich vereinbart — z.&nbsp;B.: Kostet Bevero nach vier Wochen mehr Zeit als der Zettel, brechen wir ab. Monatlich kündbar, keine Jahresverträge.</span></div>
+          </li>
+          <li>
+            <span class="haken" aria-hidden="true">✓</span>
+            <div><strong>Dauerhafte Vorzugskonditionen</strong><span>Wer als Pilotkunde das Risiko mitträgt, behält die Pilotkonditionen — dauerhaft, nicht nur im ersten Jahr.</span></div>
+          </li>
+        </ul>
+        <p><strong>Setup-Pauschale:</strong> 2.000–4.000 € einmalig · <strong>Pilotpreis:</strong> 300–500 € pro Monat</p>
+        <p class="preis-hinweis">Beides sind Spannen und ein Vorschlag zur Verhandlung — der genaue Wert hängt von Anzahl der Lagerorte und Ausgabestellen ab und wird im Pilotgespräch festgelegt. Keine versteckten Posten.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" aria-labelledby="faq-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Die berechtigten Einwände</span>
+        <h2 id="faq-titel">Was Küchenchefs und Schichtleitungen uns zuerst fragen</h2>
+      </div>
+      <div class="faq-liste">
+        <details class="reveal">
+          <summary>„Wir haben keine Zeit für noch ein System."</summary>
+          <div class="faq-antwort">
+            <p>Verständlich — die meisten Betriebe haben schon einen gescheiterten Digitalanlauf hinter sich. Deshalb drehen wir es um: Bevero muss vom ersten Tag an schneller sein als der Zettel, sonst hat es keine Daseinsberechtigung. Eine Warenannahme dauert mit Bevero nicht länger als heute — sie ist danach nur nicht verschwunden.</p>
+            <p>Und schriftlich vereinbart: <strong>Wenn Bevero nach vier Wochen mehr Zeit kostet als der Zettel, ist das ein Abbruchgrund.</strong> Kein Kleingedrucktes, keine Diskussion.</p>
+          </div>
+        </details>
+        <details class="reveal">
+          <summary>„Unser Team ist nicht digital."</summary>
+          <div class="faq-antwort">
+            <p>Ihr Team schreibt privat in WhatsApp-Gruppen und zahlt an der Tankstelle kontaktlos. Digital können alle — was keiner will, sind Formulare mit zwölf Pflichtfeldern.</p>
+            <p>Bevero besteht aus Listen und Haken. Wer eine Auffüllliste auf Papier abhaken kann, kann sie auch am Handy abhaken. Die Schulung passiert am echten Prozess, an der Rampe, nicht im Seminarraum.</p>
+          </div>
+        </details>
+        <details class="reveal">
+          <summary>„Was passiert mit unseren Daten?"</summary>
+          <div class="faq-antwort">
+            <p>Gehostet in der EU, mit Auftragsverarbeitungsvertrag nach DSGVO. Die Daten gehören Ihrem Betrieb — nicht uns. Sie können jederzeit alles als CSV exportieren, auch mitten im Pilot. Bei Vertragsende werden Ihre Daten gelöscht.</p>
+          </div>
+        </details>
+        <details class="reveal">
+          <summary>„Was, wenn ihr in einem Jahr weg seid?"</summary>
+          <div class="faq-antwort">
+            <p>Ehrliche Antwort: Das Risiko existiert — wir sind ein junges Unternehmen. Deshalb ist alles darauf ausgelegt, dass Sie nie in der Falle sitzen: monatlich kündbar, keine Jahresverträge, alle Daten jederzeit als CSV exportierbar.</p>
+            <p>Ihr schlimmster Fall ist der heutige Zustand — Zettel und Zuruf. Den kennen Sie schon, der funktioniert notfalls weiter.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABSCHLUSS-CTA ============ -->
+  <section class="abschluss" id="pilot-kontakt" aria-labelledby="kontakt-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">Der nächste Schritt</span>
+        <h2 id="kontakt-titel">Ein Termin, eine echte Warenannahme, eine Entscheidung.</h2>
+        <p>Kein Verkaufszyklus mit fünf Terminen. So läuft es:</p>
+      </div>
+
+      <ol class="schritte">
+        <li>
+          <div><strong>60 Minuten vor Ort</strong><span>Wir schauen uns gemeinsam eine echte Warenannahme und eine Schichtübergabe in Ihrem Betrieb an — an der Rampe, nicht im Besprechungsraum.</span></div>
+        </li>
+        <li>
+          <div><strong>Zwei Prozess-Paten benennen</strong><span>Eine Person aus der Küche, eine von Bar oder Service — die beiden, auf die das Team hört. Sie werden zuerst geschult und tragen den Piloten.</span></div>
+        </li>
+        <li>
+          <div><strong>Pilot-Absichtserklärung</strong><span>Eine Seite: Ziele, Zielwerte, Abbruchkriterien, Konditionen. Dann geht es los.</span></div>
+        </li>
+      </ol>
+
+      <form class="kontakt-form reveal" id="kontaktformular">
+        <h3>Pilotgespräch vereinbaren</h3>
+        <div class="feld">
+          <label for="f-name">Name</label>
+          <input type="text" id="f-name" name="name" autocomplete="name" required>
+        </div>
+        <div class="feld">
+          <label for="f-betrieb">Betrieb</label>
+          <input type="text" id="f-betrieb" name="betrieb" autocomplete="organization" required>
+        </div>
+        <div class="feld">
+          <label for="f-mail">E-Mail</label>
+          <input type="email" id="f-mail" name="email" autocomplete="email" required>
+        </div>
+        <div class="feld">
+          <label for="f-nachricht">Kurz zu Ihrem Betrieb <span style="font-weight:400; color:var(--grau);">(optional — z.&nbsp;B. Anzahl Lagerorte, Ausgabestellen)</span></label>
+          <textarea id="f-nachricht" name="nachricht"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gruen" style="width:100%;">Anfrage senden</button>
+        <p class="form-hinweis">Öffnet Ihr E-Mail-Programm mit einer vorbereiteten Nachricht — Sie sehen vor dem Senden alles, was uns erreicht.</p>
+      </form>
+
+      <p class="mail-alt">Lieber direkt schreiben? <a href="mailto:twim.baum@proton.me?subject=Pilotgespr%C3%A4ch%20Bevero">twim.baum@proton.me</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="fuss">
+  <div class="container fuss-inner">
+    <span>© 2026 Bevero — die Betriebsebene für Gastronomie und Hotellerie</span>
+    <nav aria-label="Rechtliches">
+      <a href="#">Impressum</a>
+      <a href="#">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Kontaktformular: baut eine mailto-Nachricht — kein Versand an Dritte, kein Backend.
+  document.getElementById('kontaktformular').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('f-name').value.trim();
+    var betrieb = document.getElementById('f-betrieb').value.trim();
+    var mail = document.getElementById('f-mail').value.trim();
+    var nachricht = document.getElementById('f-nachricht').value.trim();
+    var body = 'Guten Tag,%0D%0A%0D%0Awir möchten ein Pilotgespräch vereinbaren.%0D%0A%0D%0A'
+      + 'Name: ' + encodeURIComponent(name) + '%0D%0A'
+      + 'Betrieb: ' + encodeURIComponent(betrieb) + '%0D%0A'
+      + 'E-Mail: ' + encodeURIComponent(mail)
+      + (nachricht ? '%0D%0A%0D%0AZum Betrieb:%0D%0A' + encodeURIComponent(nachricht) : '');
+    window.location.href = 'mailto:twim.baum@proton.me?subject=' + encodeURIComponent('Pilotgespräch Bevero — ' + betrieb) + '&body=' + body;
+  });
+
+  // Scroll-Reveal — nur wenn der Betriebssystem-Schalter Bewegung erlaubt.
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window) {
+    var beobachter = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (eintrag) {
+        if (eintrag.isIntersecting) {
+          eintrag.target.classList.add('sichtbar');
+          beobachter.unobserve(eintrag.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { beobachter.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('sichtbar'); });
+  }
+</script>
+
+</body>
 </html>
