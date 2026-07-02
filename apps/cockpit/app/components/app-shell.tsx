@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../providers/auth-provider";
 import { useWorkspace } from "../providers/workspace-provider";
@@ -8,7 +8,6 @@ import { useTheme } from "../../hooks/useTheme";
 import { BottomNav } from "./bottom-nav";
 import { QuickNotesFab } from "./quick-notes-fab";
 import { getConfiguredBackendApiBaseLabel } from "../../lib/backend/api-base";
-import { apiFetch } from "../../lib/backend/api-fetch";
 import { createClient } from "../../lib/supabase/client";
 import type { Role } from "../../lib/auth/rbac";
 
@@ -195,56 +194,13 @@ type AppShellProps = {
   children: ReactNode;
 };
 
-const BAR_REFILL_OPERATIONAL_ROLES: Role[] = ["owner", "admin", "manager", "staff"];
-
-function barRefillCacheKey(): string {
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(new Date());
-  return `bevero-bar-refill-run:${today}`;
-}
-
-// Fires once after auth resolves if today's run isn't cached yet.
-// Moves the expensive run-creation transaction off the critical path so that
-// navigating to /inventory/bar-refill is instant for the first visit of the day.
-function useBarRefillPrimer(role: Role | null, authLoading: boolean, organizationId: string | null) {
-  const primed = useRef(false);
-
-  useEffect(() => {
-    if (authLoading || !role || !BAR_REFILL_OPERATIONAL_ROLES.includes(role)) return;
-    if (!organizationId) return;
-    if (primed.current) return;
-    if (typeof localStorage !== "undefined" && localStorage.getItem(barRefillCacheKey())) return;
-
-    primed.current = true;
-
-    async function prime() {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getSession();
-        const token = data.session?.access_token;
-        if (!token) return;
-
-        const authOptions = { accessToken: token, organizationId, requireOrganization: true };
-
-        let res = await apiFetch("/bar-refill/runs/today", { ...authOptions, throwOnError: false });
-        if (res.status === 404) {
-          res = await apiFetch("/bar-refill/runs", { method: "POST", ...authOptions, throwOnError: false });
-        }
-        if (!res.ok) return;
-
-        const run: unknown = await res.json();
-        try {
-          localStorage.setItem(barRefillCacheKey(), JSON.stringify(run));
-        } catch {
-          // quota / private-mode — ignore
-        }
-      } catch {
-        // Silent: this is just a pre-warm, never surface errors to the user
-      }
-    }
-
-    void prime();
-  }, [authLoading, organizationId, role]);
-}
+// Note: a previous version of this shell contained an auto-priming hook that
+// pre-warmed today's bar-refill run on every dashboard load by issuing a
+// GET /bar-refill/runs/today followed (on 404) by a POST /bar-refill/runs.
+// That hook has been removed intentionally: a dashboard visit must never
+// implicitly create production rows. The /inventory/bar-refill page is now
+// solely responsible for run creation, and only via explicit user action
+// (page navigation + GET, or "Neuen Lauf starten" button).
 
 export function AppShell({ children }: AppShellProps) {
   const { role, loading: authLoading, organizationId } = useAuth();
@@ -259,8 +215,6 @@ export function AppShell({ children }: AppShellProps) {
     await supabase.auth.signOut();
     router.push("/sign-in");
   }
-
-  useBarRefillPrimer(role, authLoading, organizationId);
 
   const activeNavGroups = activeGroupType === "kitchen_storage" ? kitchenNavGroups : navGroups;
 

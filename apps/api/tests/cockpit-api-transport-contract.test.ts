@@ -41,8 +41,12 @@ describe("cockpit API transport contract", () => {
     expect(authProvider).toContain("organizationId: string | null");
     expect(authProvider).toContain(".select(\"organizationId,role\")");
 
+    // appShell is intentionally excluded from this loop: after the
+    // dashboard-priming hook was removed, the shell no longer makes any
+    // backend call itself — it only renders children. Every page-level client
+    // (refill, movements, goods-receipt, withdrawal, walk-route, freigaben)
+    // still uses the auth-provider organizationId and requireOrganization flag.
     for (const source of [
-      appShell,
       refillClient,
       movementsClient,
       goodsReceiptClient,
@@ -88,5 +92,30 @@ describe("cockpit API transport contract", () => {
     expect(withdrawalClient).toContain('>("/withdrawals"');
     expect(walkRouteClient).toContain('apiFetch("/correction-requests"');
     expect(freigabenClient).toContain("apiFetch(`/admin/correction-requests/");
+  });
+
+  it("keeps the AppShell dashboard load read-only — no implicit POST to /bar-refill/runs", () => {
+    // The previous useBarRefillPrimer hook pre-warmed today's run on every
+    // authenticated AppShell mount by issuing a GET /bar-refill/runs/today
+    // followed (on 404) by a POST /bar-refill/runs. That hook has been removed
+    // so dashboard navigation never implicitly writes to production. Only the
+    // /inventory/bar-refill page is allowed to create runs, and only on
+    // explicit user action.
+    expect(appShell).not.toContain("useBarRefillPrimer");
+    expect(appShell).not.toContain("barRefillCacheKey");
+    expect(appShell).not.toContain("BAR_REFILL_OPERATIONAL_ROLES");
+    expect(appShell).not.toContain('"/bar-refill/runs"');
+    expect(appShell).not.toContain('"/bar-refill/runs/today"');
+    // The intentional-removal note must be present so future contributors don't
+    // re-introduce the priming behavior. The phrase spans a line break in the
+    // comment, so check for two adjacent substrings that together form the
+    // intentional-removal marker.
+    expect(appShell).toContain("dashboard visit must never");
+    expect(appShell).toContain("implicitly");
+
+    // The bar-refill page itself must still own the GET-first / POST-fallback
+    // contract so explicit user navigation can still create today's run.
+    expect(refillClient).toContain('BAR_REFILL_RUNS_ENDPOINT = "/bar-refill/runs"');
+    expect(refillClient).toContain('BAR_REFILL_TODAY_ENDPOINT = "/bar-refill/runs/today"');
   });
 });
