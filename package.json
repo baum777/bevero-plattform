@@ -1,0 +1,25 @@
+{
+  "name": "bevero-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace=apps/api run dev",
+    "dev:cockpit": "npm --workspace=apps/cockpit run dev",
+    "dev:landing": "npm --workspace=apps/landing run dev",
+    "build:api": "npm --workspace=apps/api run build",
+    "build:cockpit": "npm --workspace=apps/cockpit run build",
+    "build:landing": "npm --workspace=apps/landing run build",
+    "typecheck": "npm --workspace=apps/api run typecheck && npm --workspace=apps/cockpit run typecheck && npm --workspace=apps/landing run typecheck",
+    "test": "npm --workspace=apps/api run test",
+    "test:ci": "npm --workspace=apps/api run test -- --run",
+    "prisma:validate": "npm --workspace=apps/api run prisma:validate",
+    "ci": "npm run typecheck && npm run test:ci",
+    "check:work-docs": "node scripts/check-work-documentation.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
+  }
+}

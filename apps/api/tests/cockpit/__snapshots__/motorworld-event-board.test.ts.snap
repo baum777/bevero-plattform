@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`motorworld-event-board tile composition (ADR-0054) > EVENT_BANKETT_FUTURE profile includes event_pipeline and event_space_utilization tiles 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+  "event_pipeline",
+  "event_space_utilization",
+]
+`;
+
+exports[`motorworld-event-board tile composition (ADR-0054) > MOTORWORLD_STANDARD profile includes base tiles only 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+]
+`;

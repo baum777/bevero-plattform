@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/baum777/bevero-webapp/docs/agent-team/swarm_task_envelope.schema.json",
+  "title": "Swarm Task Envelope",
+  "description": "Envelope issued by the Orchestrator to the Builder. The Builder must refuse to act on a missing or out-of-policy envelope. See docs/agent-team/swarm_roles.md and swarm_task_routing.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "userRequest",
+    "taskType",
+    "scopeLayer",
+    "pathsInScope",
+    "pathsOutOfScope",
+    "autonomyTier",
+    "assignedAgents",
+    "requiredValidation",
+    "approvalRequired",
+    "humanApprovalRequired",
+    "risks",
+    "expectedOutputs"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for this envelope (UUID, ULID, or repo-local hash)."
+    },
+    "userRequest": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Verbatim or paraphrased user request that triggered this envelope."
+    },
+    "taskType": {
+      "type": "string",
+      "enum": [
+        "read_only_audit",
+        "docs_spec",
+        "implementation",
+        "bugfix",
+        "refactor",
+        "test_validation",
+        "governance_change",
+        "ci_build_change",
+        "infra_db_change",
+        "security_sensitive",
+        "destructive_operation"
+      ]
+    },
+    "scopeLayer": {
+      "type": "string",
+      "enum": [
+        "docs_only",
+        "package_local",
+        "app_local",
+        "cross_package",
+        "runtime_core",
+        "governance_policy",
+        "infra_database",
+        "ci_deployment",
+        "production_sensitive"
+      ]
+    },
+    "pathsInScope": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 0
+    },
+    "pathsOutOfScope": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 0
+    },
+    "autonomyTier": {
+      "type": "integer",
+      "enum": [0, 1, 2, 3, 4],
+      "description": "0 = blocked, 1 = read-only, 2 = draft/spec, 3 = execute with review, 4 = autonomous with strict limits."
+    },
+    "assignedAgents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["orchestrator"],
+      "properties": {
+        "orchestrator": { "type": "string", "minLength": 1 },
+        "builder":      { "type": "string" },
+        "reviewer":     { "type": "string" }
+      }
+    },
+    "requiredValidation": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "markdown_sanity",
+          "json_schema_parse",
+          "typecheck",
+          "lint",
+          "unit_tests",
+          "integration_tests",
+          "build",
+          "prisma_validate",
+          "ci_workflow_run",
+          "manual_smoke"
+        ]
+      },
+      "minItems": 1,
+      "description": "Validations the Builder must run and the Reviewer must verify before 'pass'."
+    },
+    "approvalRequired": {
+      "type": "boolean",
+      "description": "True if a Reviewer verdict is required before finalization."
+    },
+    "humanApprovalRequired": {
+      "type": "boolean",
+      "description": "True if a human owner must sign off (Tier 0 or production-sensitive slices)."
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Named risks the Orchestrator has identified. The Builder must surface new risks, not silently absorb them."
+    },
+    "expectedOutputs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "Concrete artifacts the Builder is expected to produce (file paths, doc sections, schema files, etc.)."
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO-8601 deadline. The Orchestrator may set this for time-boxed slices; it is never a hard SLA for the swarm itself."
+    }
+  }
+}

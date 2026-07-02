@@ -1,0 +1,26 @@
+# local/dev artifacts
+.local-dev/
+output/
+screenshots/
+playwright-report/
+test-results/
+coverage/
+
+# archives / dumps / local dbs
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.sqlite
+*.db
+*.dump
+
+# large media
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# misc
+.DS_Store

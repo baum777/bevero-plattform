@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cube-dashboard tile composition (ADR-0053) > CUBE_PREMIUM profile includes event-inquiry-detail tile 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+  "service_preparation",
+  "group_rule_badge",
+  "menu_active",
+  "event_inquiry_detail",
+]
+`;
+
+exports[`cube-dashboard tile composition (ADR-0053) > MOTORWORLD_STANDARD profile does not include event-inquiry-detail tile 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+]
+`;

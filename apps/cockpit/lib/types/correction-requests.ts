@@ -1,0 +1,22 @@
+export type CorrectionRequestListItem = {
+  id: string;
+  organizationId: string | null;
+  storageLocationId: string | null;
+  storageLocationName: string | null;
+  inventoryItemId: string;
+  inventoryItemName: string;
+  status: string;
+  expectedDelta: number;
+  expectedQuantity: number | null;
+  countedQuantity: number | null;
+  unit: string;
+  reason: string;
+  note: string | null;
+  sourceLabel: string | null;
+  submittedAt: string | null;
+  requestedById: string;
+  reviewedById: string | null;
+  reviewedAt: string | null;
+  relatedMovementId: string | null;
+  createdAt: string;
+};

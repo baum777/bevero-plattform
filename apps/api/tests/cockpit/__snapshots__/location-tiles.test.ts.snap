@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`location-tiles (ADR-0052 Task 07) > CUBE_PREMIUM includes base tiles plus service-preparation and group_rule_badge 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+  "service_preparation",
+  "group_rule_badge",
+  "menu_active",
+  "event_inquiry_detail",
+]
+`;
+
+exports[`location-tiles (ADR-0052 Task 07) > EVENT_BANKETT_FUTURE includes event_pipeline and event_space_utilization 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+  "event_pipeline",
+  "event_space_utilization",
+]
+`;
+
+exports[`location-tiles (ADR-0052 Task 07) > MOTORWORLD_STANDARD includes base tiles and not CUBE-specific tiles 1`] = `
+[
+  "refill_runs",
+  "open_deliveries",
+  "critical_stock",
+  "anomalies",
+  "active_slots",
+  "open_inquiries",
+]
+`;

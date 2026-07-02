@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+.worktrees/
+worktrees/
+*.log
+.vercel
+.next/
+*.tsbuildinfo
+bevero zip.zip

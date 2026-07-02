@@ -1,0 +1,2595 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["public", "auth"]
+}
+
+model SyncRun {
+  id           String        @id @default(cuid())
+  source       String
+  status       SyncRunStatus
+  startedAt    DateTime      @default(now())
+  finishedAt   DateTime?
+  errorCode    String?
+  errorMessage String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  rawPayloads RawPayload[]
+
+  @@schema("public")
+}
+
+model RawPayload {
+  id          String   @id @default(cuid())
+  source      String
+  externalId  String?
+  entityType  String?
+  payloadHash String   @unique
+  payloadJson Json
+  syncRunId   String?
+  syncRun     SyncRun? @relation(fields: [syncRunId], references: [id])
+  receivedAt  DateTime @default(now())
+
+  @@index([source, externalId])
+  @@index([payloadHash])
+  @@index([syncRunId])
+  @@schema("public")
+}
+
+model WorkflowEvent {
+  id             String    @id @default(cuid())
+  type           String
+  version        Int
+  source         String
+  externalId     String?
+  idempotencyKey String    @unique
+  businessDate   DateTime?
+  occurredAt     DateTime
+  importedAt     DateTime  @default(now())
+  payloadRef     String?
+  dataJson       Json
+  metadataJson   Json?
+  createdAt      DateTime  @default(now())
+
+  tasks WorkflowTask[]
+
+  @@index([type, occurredAt])
+  @@index([source, externalId])
+  @@index([businessDate])
+  @@schema("public")
+}
+
+model WorkflowTask {
+  id              String             @id @default(cuid())
+  type            String
+  status          WorkflowTaskStatus
+  severity        String
+  title           String
+  description     String?
+  workflowEventId String?
+  workflowEvent   WorkflowEvent?     @relation(fields: [workflowEventId], references: [id])
+  assignedRole    String?
+  createdAt       DateTime           @default(now())
+  resolvedAt      DateTime?
+
+  @@index([workflowEventId])
+  @@schema("public")
+}
+
+model InventoryItem {
+  id                String           @id @default(cuid())
+  organizationId    String?          @map("organization_id")
+  categoryId        String?          @map("category_id")
+  name              String
+  sku               String?
+  category          String?
+  defaultUnit       String
+  minStock          Float?
+  targetStock       Float?           @map("target_stock")
+  displayOrder      Int?             @map("display_order")
+  storageLocationId String?
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id])
+  categoryLink      InventoryCategory? @relation(fields: [categoryId], references: [id])
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  movements          InventoryMovement[]
+  refillTemplateItems BarRefillTemplateItem[]
+  refillRunItems      BarRefillRunItem[]
+  orderItems         PurchaseOrderItem[]
+  receiptItems       GoodsReceiptItem[]
+  stockSnapshots     InventoryStockSnapshot[]
+  correctionRequests InventoryCorrectionRequest[]
+  locationConfig     LocationInventoryConfig[]
+
+  @@index([name])
+  @@index([category])
+  @@index([organizationId])
+  @@index([organizationId, id])
+  @@index([categoryId])
+  @@index([storageLocationId])
+  @@schema("public")
+}
+
+model InventoryCategory {
+  id             String   @id @default(cuid())
+  organizationId String?  @map("organization_id")
+  name           String
+  displayOrder   Int      @map("display_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  items InventoryItem[]
+
+  @@index([organizationId])
+  @@unique([organizationId, name])
+  @@unique([organizationId, displayOrder])
+  @@map("inventory_categories")
+  @@schema("public")
+}
+
+model BarRefillTemplateItem {
+  id              String   @id @default(cuid())
+  organizationId  String?  @map("organization_id")
+  displayOrder    Int      @map("display_order")
+  productName     String   @map("product_name")
+  unit            String?
+  targetQuantity  Float?   @map("target_quantity")
+  inventoryItemId String?  @map("inventory_item_id")
+  inventoryItem   InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+  isMisc          Boolean  @default(false) @map("is_misc")
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  runItems BarRefillRunItem[]
+
+  @@index([organizationId])
+  @@index([inventoryItemId])
+  @@unique([organizationId, displayOrder])
+  @@map("bar_refill_template_items")
+  @@schema("public")
+}
+
+model BarRefillRun {
+  id           String            @id @default(cuid())
+  organizationId String          @map("organization_id")
+  runDateLocal DateTime          @map("run_date_local") @db.Date
+  timezone     String            @default("Europe/Berlin")
+  createdBy    String            @map("created_by")
+  status       BarRefillRunStatus @default(open)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  completedAt  DateTime?         @map("completed_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  items BarRefillRunItem[]
+
+  @@index([organizationId, runDateLocal])
+  @@map("bar_refill_runs")
+  @@schema("public")
+}
+
+model BarRefillRunItem {
+  id                  String                 @id @default(cuid())
+  refillRunId         String                 @map("refill_run_id")
+  refillRun           BarRefillRun           @relation(fields: [refillRunId], references: [id], onDelete: Cascade)
+  templateItemId      String                 @map("template_item_id")
+  templateItem        BarRefillTemplateItem  @relation(fields: [templateItemId], references: [id])
+  inventoryItemId     String?                @map("inventory_item_id")
+  inventoryItem       InventoryItem?         @relation(fields: [inventoryItemId], references: [id])
+  displayOrder        Int                    @map("display_order")
+  productNameSnapshot String                 @map("product_name_snapshot")
+  unitSnapshot        String?                @map("unit_snapshot")
+  targetQuantity      Float?                 @map("target_quantity")
+  requestedQuantity   Float?                 @map("requested_quantity")
+  status              BarRefillRunItemStatus @default(open)
+  confirmedBy         String?                @map("confirmed_by")
+  confirmedAt         DateTime?              @map("confirmed_at")
+  stockMovementId     String?                @unique @map("stock_movement_id")
+  stockMovement       InventoryMovement?     @relation("BarRefillRunItemStockMovement", fields: [stockMovementId], references: [id])
+  movement            InventoryMovement?     @relation("BarRefillRunItemMovement")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
+
+  @@index([refillRunId])
+  @@index([templateItemId])
+  @@index([inventoryItemId])
+  @@unique([refillRunId, displayOrder])
+  @@map("bar_refill_run_items")
+  @@schema("public")
+}
+
+model Supplier {
+  id             String   @id @default(cuid())
+  organizationId String?  @map("organization_id")
+  name           String
+  email          String?
+  phone          String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model StorageLocation {
+  id               String          @id @default(cuid())
+  organizationId   String?         @map("organization_id")
+  name             String
+  type             String?
+  isActive         Boolean         @default(true)
+  floor            Int?            @default(0)
+  temperatureZone  TemperatureZone? @map("temperature_zone")
+  isCountable      Boolean         @default(true)  @map("is_countable")
+  isTransferPoint  Boolean         @default(false) @map("is_transfer_point")
+  walkOrder        Int?            @map("walk_order")
+  workspaceGroupId String?         @map("workspace_group_id")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  workspaceGroup    WorkspaceGroup?    @relation(fields: [workspaceGroupId], references: [id], onDelete: SetNull)
+  inventoryItems    InventoryItem[]
+  receiptItems      GoodsReceiptItem[]
+  movements         InventoryMovement[]
+  outgoingTransfers InventoryMovement[] @relation("InventoryMovementFromLocation")
+  incomingTransfers InventoryMovement[] @relation("InventoryMovementToLocation")
+  stockSnapshots    InventoryStockSnapshot[]
+  defaultTeams      Team[]            @relation("TeamDefaultLocation")
+  areaLinks         Area[]            @relation("AreaStorageLocation")
+  locationConfig    LocationInventoryConfig[]
+  operationalNotes  OperationalNote[]
+  correctionRequests InventoryCorrectionRequest[]
+
+  @@index([organizationId])
+  @@index([organizationId, id])
+  @@index([workspaceGroupId])
+  @@schema("public")
+}
+
+model OrganizationMember {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         String
+  role           OrganizationRole
+  createdAt      DateTime         @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model WorkspaceMember {
+  id             String        @id @default(cuid())
+  workspaceId    String
+  userId         String
+  role           WorkspaceRole
+  organizationId String
+  createdAt      DateTime      @default(now())
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model WorkspaceGroup {
+  id             String             @id @default(cuid())
+  organizationId String             @map("organization_id")
+  locationId     String             @map("location_id")
+  name           String
+  slug           String
+  type           WorkspaceGroupType
+  isActive       Boolean            @default(true)  @map("is_active")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt      @map("updated_at")
+
+  storageLocations StorageLocation[]
+  members          WorkspaceGroupMember[]
+
+  @@unique([locationId, slug])
+  @@index([organizationId])
+  @@index([locationId])
+  @@schema("public")
+}
+
+model WorkspaceGroupMember {
+  id               String          @id @default(cuid())
+  workspaceGroupId String          @map("workspace_group_id")
+  userId           String          @map("user_id")
+  role             KitchenTeamRole
+  isDefault        Boolean         @default(false) @map("is_default")
+  createdAt        DateTime        @default(now()) @map("created_at")
+
+  workspaceGroup   WorkspaceGroup @relation(fields: [workspaceGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceGroupId, userId])
+  @@index([userId])
+  @@index([workspaceGroupId])
+  @@schema("public")
+}
+
+model PurchaseOrder {
+  id          String              @id @default(cuid())
+  supplierId  String?
+  supplier    Supplier?           @relation(fields: [supplierId], references: [id])
+  status      PurchaseOrderStatus @default(draft)
+  createdById String
+  orderedAt   DateTime?
+  note        String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  items     PurchaseOrderItem[]
+  receipts  GoodsReceipt[]
+  movements InventoryMovement[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([supplierId])
+  @@schema("public")
+}
+
+model PurchaseOrderItem {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  orderedQty      Float
+  receivedQty     Float         @default(0)
+  unit            String
+  note            String?
+
+  @@index([purchaseOrderId])
+  @@index([inventoryItemId])
+  @@schema("public")
+}
+
+model GoodsReceipt {
+  id              String         @id @default(cuid())
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+  receivedById    String
+  receivedAt      DateTime       @default(now())
+  note            String?
+  createdAt       DateTime       @default(now())
+
+  items     GoodsReceiptItem[]
+  movements InventoryMovement[]
+
+  @@index([purchaseOrderId])
+  @@index([receivedAt])
+  @@schema("public")
+}
+
+model GoodsReceiptItem {
+  id                String           @id @default(cuid())
+  goodsReceiptId    String
+  goodsReceipt      GoodsReceipt     @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
+  inventoryItemId   String
+  inventoryItem     InventoryItem    @relation(fields: [inventoryItemId], references: [id])
+  quantity          Float
+  unit              String
+  storageLocationId String?
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id])
+  note              String?
+
+  @@index([goodsReceiptId])
+  @@index([inventoryItemId])
+  @@index([storageLocationId])
+  @@schema("public")
+}
+
+model InventoryMovement {
+  id                String                @id @default(cuid())
+  idempotencyKey    String                @unique
+  organizationId    String?
+  inventoryItemId   String
+  inventoryItem     InventoryItem         @relation(fields: [inventoryItemId], references: [id])
+  type              InventoryMovementType
+  quantity          Float
+  unit              String
+  actorUserId       String
+  storageLocationId String?
+  storageLocation   StorageLocation?      @relation(fields: [storageLocationId], references: [id])
+  fromStorageLocationId String?            @map("from_storage_location_id")
+  fromStorageLocation   StorageLocation?  @relation("InventoryMovementFromLocation", fields: [fromStorageLocationId], references: [id])
+  toStorageLocationId String?              @map("to_storage_location_id")
+  toStorageLocation   StorageLocation?    @relation("InventoryMovementToLocation", fields: [toStorageLocationId], references: [id])
+  purchaseOrderId   String?
+  purchaseOrder     PurchaseOrder?        @relation(fields: [purchaseOrderId], references: [id])
+  goodsReceiptId    String?
+  goodsReceipt      GoodsReceipt?         @relation(fields: [goodsReceiptId], references: [id])
+  barRefillRunItemId String?              @unique @map("bar_refill_run_item_id")
+  barRefillRunItem  BarRefillRunItem?     @relation("BarRefillRunItemMovement", fields: [barRefillRunItemId], references: [id])
+  refillRunItemStockRef BarRefillRunItem? @relation("BarRefillRunItemStockMovement")
+  procurementOrderItemId String?          @map("procurement_order_item_id")
+  procurementOrderItem   ProcurementOrderItem? @relation(fields: [procurementOrderItemId], references: [id])
+  relatedMovementId String?
+  note              String?
+  createdAt         DateTime              @default(now())
+
+  @@index([inventoryItemId, createdAt])
+  @@index([organizationId, type, createdAt])
+  @@index([type])
+  @@index([actorUserId])
+  @@index([storageLocationId])
+  @@index([fromStorageLocationId])
+  @@index([toStorageLocationId])
+  @@index([purchaseOrderId])
+  @@index([goodsReceiptId])
+  @@index([barRefillRunItemId])
+  @@index([procurementOrderItemId])
+  @@schema("public")
+}
+
+model InventoryStockSnapshot {
+  id                String           @id @default(cuid())
+  inventoryItemId   String
+  inventoryItem     InventoryItem    @relation(fields: [inventoryItemId], references: [id])
+  storageLocationId String?
+  storageLocation   StorageLocation? @relation(fields: [storageLocationId], references: [id])
+  quantity          Float
+  unit              String
+  calculatedAt      DateTime         @default(now())
+
+  @@unique([inventoryItemId, storageLocationId])
+  @@index([storageLocationId])
+  @@index([calculatedAt])
+  @@schema("public")
+}
+
+model InventoryCorrectionRequest {
+  id                String                    @id @default(cuid())
+  organizationId    String?                   @map("organization_id")
+  inventoryItemId   String
+  inventoryItem     InventoryItem             @relation(fields: [inventoryItemId], references: [id])
+  storageLocationId String?                   @map("storage_location_id")
+  storageLocation   StorageLocation?          @relation(fields: [storageLocationId], references: [id])
+  requestedById     String
+  status            InventoryCorrectionStatus @default(open)
+  expectedDelta     Float
+  unit              String
+  reason            String
+  note              String?
+  expectedQuantity  Float?                    @map("expected_quantity")
+  countedQuantity   Float?                    @map("counted_quantity")
+  sourceLabel       String?                   @map("source_label")
+  submittedAt       DateTime?                 @map("submitted_at")
+  relatedMovementId String?
+  reviewedById      String?
+  reviewedAt        DateTime?
+  createdAt         DateTime                  @default(now())
+
+  @@index([status])
+  @@index([inventoryItemId])
+  @@index([organizationId, status, createdAt])
+  @@index([storageLocationId])
+  @@index([createdAt])
+  @@schema("public")
+}
+
+model AuthUser {
+  id String @id @db.Uuid
+
+  userProfile UserProfile? @relation("AuthUserProfile")
+
+  @@map("users")
+  @@schema("auth")
+}
+
+model Team {
+  id                 String   @id
+  name               String
+  slug               String   @unique(map: "Team_slug_key")
+  defaultLocationId  String?
+  createdByProfileId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime
+
+  defaultLocation StorageLocation? @relation("TeamDefaultLocation", fields: [defaultLocationId], references: [id], map: "Team_defaultLocationId_fkey")
+  invites         TeamInvite[]
+  members         TeamMember[]
+  defaultProfiles UserProfile[]    @relation("UserProfileDefaultTeam")
+
+  @@index([slug], map: "Team_slug_idx")
+  @@index([defaultLocationId], map: "Team_defaultLocationId_idx")
+  @@index([createdByProfileId], map: "Team_createdByProfileId_idx")
+  @@schema("public")
+}
+
+model TeamInvite {
+  id                 String           @id
+  teamId             String
+  email              String
+  role               TeamRole
+  tokenHash          String           @unique(map: "TeamInvite_tokenHash_key")
+  status             TeamMemberStatus @default(invited)
+  invitedByProfileId String
+  expiresAt          DateTime
+  acceptedAt         DateTime?
+  revokedAt          DateTime?
+  createdAt          DateTime         @default(now())
+
+  team             Team        @relation(fields: [teamId], references: [id], onDelete: Cascade, map: "TeamInvite_teamId_fkey")
+  invitedByProfile UserProfile @relation("UserProfileSentInvites", fields: [invitedByProfileId], references: [id], map: "TeamInvite_invitedByProfileId_fkey")
+
+  @@index([teamId], map: "TeamInvite_teamId_idx")
+  @@index([email], map: "TeamInvite_email_idx")
+  @@index([status, expiresAt], map: "TeamInvite_status_expiresAt_idx")
+  @@schema("public")
+}
+
+model TeamMember {
+  id        String           @id
+  teamId    String
+  profileId String
+  role      TeamRole
+  status    TeamMemberStatus @default(active)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime
+
+  team    Team        @relation(fields: [teamId], references: [id], onDelete: Cascade, map: "TeamMember_teamId_fkey")
+  profile UserProfile @relation("UserProfileMemberships", fields: [profileId], references: [id], onDelete: Cascade, map: "TeamMember_profileId_fkey")
+
+  @@unique([teamId, profileId], map: "TeamMember_teamId_profileId_key")
+  @@index([profileId], map: "TeamMember_profileId_idx")
+  @@index([teamId, role], map: "TeamMember_teamId_role_idx")
+  @@index([teamId, status], map: "TeamMember_teamId_status_idx")
+  @@schema("public")
+}
+
+model UserProfile {
+  id                         String   @id
+  authUserId                 String   @unique(map: "UserProfile_authUserId_key") @db.Uuid
+  email                      String   @unique(map: "UserProfile_email_key")
+  displayName                String?
+  avatarUrl                  String?
+  defaultTeamId              String?
+  preferredStorageLocationId String?
+  preferencesJson            Json?
+  isActive                   Boolean  @default(true)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime
+
+  authUser        AuthUser     @relation("AuthUserProfile", fields: [authUserId], references: [id], onDelete: Cascade, map: "UserProfile_authUserId_fkey")
+  defaultTeam     Team?        @relation("UserProfileDefaultTeam", fields: [defaultTeamId], references: [id], map: "UserProfile_defaultTeamId_fkey")
+  sentInvites     TeamInvite[] @relation("UserProfileSentInvites")
+  teamMemberships TeamMember[] @relation("UserProfileMemberships")
+
+  // Shift planning (ADR Phase 1)
+  shiftAssignments   ShiftAssignment[] @relation("ShiftAssignmentUser")
+  shiftSessions      ShiftSession[]    @relation("ShiftSessionUser")
+  startedShiftSessions ShiftSession[]  @relation("ShiftSessionStartedBy")
+  endedShiftSessions ShiftSession[]    @relation("ShiftSessionEndedBy")
+  shiftSessionEvents ShiftSessionEvent[] @relation("ShiftSessionEventActor")
+  taskInstances      TaskInstance[]    @relation("TaskInstanceUser")
+  completedTasks     TaskInstance[]    @relation("TaskInstanceCompletedBy")
+  verifiedTasks      TaskInstance[]    @relation("TaskInstanceVerifiedBy")
+  reportedTaskIssues TaskIssue[]       @relation("TaskIssueReportedBy")
+  resolvedTaskIssues TaskIssue[]       @relation("TaskIssueResolvedBy")
+  taskComments       TaskComment[]     @relation("TaskCommentCreatedBy")
+  shiftSignoffs      ShiftSignoff[]    @relation("ShiftSignoffSignedBy")
+
+  @@index([defaultTeamId], map: "UserProfile_defaultTeamId_idx")
+  @@index([preferredStorageLocationId], map: "UserProfile_preferredStorageLocationId_idx")
+  @@schema("public")
+}
+
+model ProcurementMailImport {
+  id               String   @id @default(cuid())
+  organizationId   String   @map("organization_id")
+  messageId        String   @unique @map("message_id")
+  internetMessageId String? @unique @map("internet_message_id")
+  mailbox          String?
+  folder           String?
+  from             String
+  subject          String
+  receivedAt       DateTime @map("received_at")
+  dkimPass         Boolean  @default(false) @map("dkim_pass")
+  dkimSignature    String?  @map("dkim_signature")
+  parseStatus      String   @map("parse_status")
+  parseConfidence  Decimal  @default(0) @map("parse_confidence") @db.Decimal(3, 2)
+  rawText          String?  @map("raw_text")
+  rawHtml          String?  @map("raw_html")
+  graphMessageId   String?  @unique @map("graph_message_id")
+  objectStorageUrl String?  @map("object_storage_url")
+  parseErrorMsg    String?  @map("parse_error_msg")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  order ProcurementOrder?
+
+  @@index([organizationId, parseStatus, receivedAt])
+  @@index([messageId])
+  @@index([internetMessageId])
+  @@index([graphMessageId])
+  @@map("procurement_mail_imports")
+  @@schema("public")
+}
+
+model ProcurementOrder {
+  id                  String    @id @default(cuid())
+  organizationId      String    @map("organization_id")
+  locationId          String?   @map("location_id")
+  source              String
+  sourceMailImportId  String?   @unique @map("source_mail_import_id")
+  externalOrderNumber String    @map("external_order_number")
+  supplierName        String    @map("supplier_name")
+  orderedAt           DateTime  @map("ordered_at")
+  expectedDeliveryAt  DateTime? @map("expected_delivery_at")
+  status              String
+  rawSnapshot         Json?     @map("raw_snapshot")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  sourceMailImport ProcurementMailImport? @relation(fields: [sourceMailImportId], references: [id])
+  items            ProcurementOrderItem[]
+
+  @@unique([organizationId, externalOrderNumber])
+  @@index([organizationId, status, expectedDeliveryAt])
+  @@map("procurement_orders")
+  @@schema("public")
+}
+
+model ProcurementOrderItem {
+  id              String   @id @default(cuid())
+  orderId         String   @map("order_id")
+  order           ProcurementOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  lineNumber      Int      @map("line_number")
+  productNameRaw  String   @map("product_name_raw")
+  supplierSku     String?  @map("supplier_sku")
+  unit            String
+  orderedQty      Decimal  @map("ordered_qty") @db.Decimal(10, 3)
+  deliveredQty    Decimal? @map("delivered_qty") @db.Decimal(10, 3)
+  acceptedQty     Decimal? @map("accepted_qty") @db.Decimal(10, 3)
+  unitPrice       Decimal? @map("unit_price") @db.Decimal(12, 4)
+  taxRate         Decimal? @map("tax_rate") @db.Decimal(5, 2)
+  inventoryItemId String?  @map("inventory_item_id")
+  mappingStatus   String   @map("mapping_status")
+  rejectionReason String?  @map("rejection_reason")
+  comment         String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  movements InventoryMovement[]
+
+  @@index([orderId])
+  @@map("procurement_order_items")
+  @@schema("public")
+}
+
+model ArticleMapping {
+  id              String   @id @default(cuid())
+  organizationId  String   @map("organization_id")
+  supplierName    String   @map("supplier_name")
+  productNameRaw  String   @map("product_name_raw")
+  supplierSku     String?  @map("supplier_sku")
+  inventoryItemId String   @map("inventory_item_id")
+  createdBy       String?  @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([organizationId, supplierName, productNameRaw])
+  @@index([organizationId, supplierName, productNameRaw])
+  @@map("article_mappings")
+  @@schema("public")
+}
+
+model AutomationRule {
+  id             String                      @id @default(cuid())
+  organizationId String
+  version        Int                         @default(1)
+  enabled        Boolean                     @default(true)
+  ruleType       AutomationRuleType
+  name           String
+  description    String?
+  condition      Json
+  action         Json
+  evaluateOn     AutomationRuleEvaluationMode
+  schedule       String?
+  metadata       Json?
+  createdBy      String?
+  createdAt      DateTime                    @default(now())
+  updatedAt      DateTime                    @updatedAt
+  deletedAt      DateTime?
+
+  suggestions AutomationSuggestion[]
+
+  @@index([organizationId, enabled, evaluateOn])
+  @@index([organizationId, ruleType])
+  @@index([enabled, schedule])
+  @@schema("public")
+}
+
+model AutomationSuggestion {
+  id                        String                     @id @default(cuid())
+  organizationId            String
+  workspaceId               String?
+  storageLocationId         String?
+  ruleId                    String
+  ruleVersion               Int
+  status                    AutomationSuggestionStatus
+  type                      AutomationSuggestionType
+  severity                  AutomationSuggestionSeverity @default(warning)
+  title                     String
+  explanation               String?
+  detail                    String
+  evidence                  Json?
+  relatedItemIds            String[]
+  createdAt                 DateTime                   @default(now())
+  expiresAt                 DateTime?
+  approvedBy                String?
+  approvedAt                DateTime?
+  rejectedBy                String?
+  rejectedAt                DateTime?
+  rejectionReason           String?
+  automaticActionOnApproval Json?
+
+  rule      AutomationRule       @relation(fields: [ruleId], references: [id])
+  decisions AutomationDecision[]
+
+  @@index([organizationId, status, createdAt(sort: Desc)])
+  @@index([organizationId, expiresAt])
+  @@index([ruleId, status])
+  @@schema("public")
+}
+
+model AutomationDecision {
+  id           String                   @id @default(cuid())
+  suggestionId String
+  status       AutomationDecisionStatus
+  actor        String
+  actorRole    String
+  timestamp    DateTime                 @default(now())
+  reason       String?
+  notes        String?
+  metadata     Json?
+
+  suggestion AutomationSuggestion @relation(fields: [suggestionId], references: [id])
+
+  @@index([suggestionId])
+  @@index([actor, timestamp(sort: Desc)])
+  @@index([timestamp])
+  @@schema("public")
+}
+
+model OfflineActionQueue {
+  id               String              @id @default(cuid())
+  organizationId   String
+  userId           String
+  deviceId         String
+  actionType       OfflineActionType
+  clientMutationId String              @unique
+  timestamp        DateTime            @default(now())
+  operationData    Json
+  status           OfflineActionStatus @default(pending)
+  syncedAt         DateTime?
+  conflictReason   String?
+  retryCount       Int                 @default(0)
+  lastError        String?
+  createdAt        DateTime            @default(now())
+
+  @@index([userId, deviceId, status])
+  @@index([organizationId, status, createdAt])
+  @@schema("public")
+}
+
+model ShiftHandoverDraft {
+  id                  String    @id @default(cuid())
+  organizationId      String
+  shiftLeadId         String
+  workspaceId         String?
+  date                DateTime  @db.Date
+  startTime           DateTime? @db.Time
+  endTime             DateTime? @db.Time
+  summary             String?
+  openItems           Json?
+  alerts              Json?
+  notes               String?
+  synthesizedHandover String?
+  synthesizedAt       DateTime?
+  confirmedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([organizationId, date, shiftLeadId])
+  @@index([confirmedAt])
+  @@schema("public")
+}
+
+enum AutomationRuleType {
+  threshold
+  time
+  event
+  anomaly
+
+  @@schema("public")
+}
+
+enum AutomationRuleEvaluationMode {
+  write
+  schedule
+  both
+
+  @@schema("public")
+}
+
+enum AutomationSuggestionType {
+  refill
+  receipt_alert
+  consumption_anomaly
+  alert_consolidation
+  custom
+
+  @@schema("public")
+}
+
+enum AutomationSuggestionStatus {
+  open
+  approved
+  rejected
+  expired
+  superseded
+
+  @@schema("public")
+}
+
+enum AutomationSuggestionSeverity {
+  info
+  warning
+  critical
+
+  @@schema("public")
+}
+
+enum AutomationDecisionStatus {
+  approved
+  rejected
+
+  @@schema("public")
+}
+
+enum OfflineActionType {
+  quick_note
+  refill_confirm
+  correction_request
+  movement
+  transfer
+  other
+
+  @@schema("public")
+}
+
+enum OfflineActionStatus {
+  pending
+  synced
+  conflict
+  failed
+
+  @@schema("public")
+}
+
+enum SyncRunStatus {
+  running
+  succeeded
+  failed
+  partially_failed
+
+  @@schema("public")
+}
+
+enum WorkflowTaskStatus {
+  open
+  in_review
+  resolved
+  dismissed
+
+  @@schema("public")
+}
+
+enum PurchaseOrderStatus {
+  draft
+  ordered
+  partially_received
+  received
+  cancelled
+
+  @@schema("public")
+}
+
+enum InventoryMovementType {
+  goods_received
+  item_removed
+  transfer
+  correction_positive
+  correction_negative
+
+  @@schema("public")
+}
+
+enum InventoryCorrectionStatus {
+  open
+  approved
+  rejected
+
+  @@schema("public")
+}
+
+enum BarRefillRunStatus {
+  open
+  partially_confirmed
+  completed
+
+  @@schema("public")
+}
+
+enum BarRefillRunItemStatus {
+  open
+  pending
+  confirmed
+  cancelled
+
+  @@schema("public")
+}
+
+enum OrganizationRole {
+  owner
+  admin
+  manager
+  staff
+  viewer
+
+  @@schema("public")
+}
+
+enum InviteStatus {
+  pending
+  accepted
+  revoked
+
+  @@schema("public")
+}
+
+model OrganizationInvite {
+  id              String           @id @default(cuid())
+  organizationId  String
+  email           String
+  role            OrganizationRole @default(staff)
+  token           String           @unique
+  status          InviteStatus     @default(pending)
+  invitedByUserId String
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@schema("public")
+}
+
+enum WorkspaceRole {
+  owner
+  admin
+  manager
+  staff
+  viewer
+
+  @@schema("public")
+}
+
+enum TeamMemberStatus {
+  invited
+  active
+  suspended
+
+  @@schema("public")
+}
+
+enum TeamRole {
+  admin
+  shift_lead
+  staff
+
+  @@schema("public")
+}
+
+enum WorkspaceGroupType {
+  kitchen_storage
+  bar_service
+  admin
+
+  @@schema("public")
+}
+
+enum TemperatureZone {
+  chilled
+  frozen
+  dry
+  production
+  neutral
+
+  @@schema("public")
+}
+
+enum KitchenTeamRole {
+  kitchen_lead
+  kitchen_staff
+  inventory_controller
+  viewer
+
+  @@schema("public")
+}
+
+// ADR-0030 (accepted) + ADR-0031 (accepted): Multi-Standort / CUBE Premium
+// data model. New tables layer on top of the existing models; no
+// InventoryItem, StorageLocation, or OrganizationMember is modified. See
+// docs/architecture/multi-location-mother-concern.md and ADR-0031
+// §Decisions Made Binding for the binding decisions.
+
+enum LocationProfile {
+  MOTORWORLD_STANDARD
+  CUBE_PREMIUM
+  EVENT_BANKETT_FUTURE
+
+  @@schema("public")
+}
+
+enum StoragePrecisionLevel {
+  BASIC
+  DETAILED
+  PREMIUM_TRACEABLE
+
+  @@schema("public")
+}
+
+model Brand {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  locations Location[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model Location {
+  id               String                @id @default(cuid())
+  organizationId   String
+  brandId          String
+  brand            Brand                 @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  name             String
+  slug             String
+  type             String?
+  profile          LocationProfile       @default(MOTORWORLD_STANDARD)
+  precisionLevel   StoragePrecisionLevel @default(BASIC)
+  signatureAssets  String[]
+  weatherSensitive Boolean               @default(false)
+  cinemaAvailable  Boolean               @default(false)
+  isActive         Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  areas                  Area[]
+  members                LocationMember[]
+  inventoryConfig        LocationInventoryConfig[]
+  operationalUnits       OperationalUnit[]
+  eventSpaces            EventSpace[]
+  exceptionRules         ExceptionRule[]
+  reservationConnectors  ReservationConnector[]
+  externalSystemLinks    ExternalSystemLink[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@index([organizationId, id])
+  @@index([brandId])
+  @@index([profile])
+  @@schema("public")
+}
+
+model Area {
+  id               String   @id @default(cuid())
+  locationId       String
+  location         Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  organizationId   String
+  name             String
+  type             String?
+  storageLocationId String?
+  storageLocation  StorageLocation? @relation("AreaStorageLocation", fields: [storageLocationId], references: [id], onDelete: SetNull)
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  inventoryConfig LocationInventoryConfig[]
+
+  @@index([locationId])
+  @@index([organizationId])
+  @@index([locationId, sortOrder])
+  @@index([storageLocationId])
+  @@schema("public")
+}
+
+model LocationMember {
+  id             String   @id @default(cuid())
+  organizationId String
+  locationId     String
+  location       Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  userId         String
+  role           String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([locationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([locationId, isActive])
+  @@schema("public")
+}
+
+model LocationInventoryConfig {
+  id                      String   @id @default(cuid())
+  organizationId          String
+  locationId              String
+  location                Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  inventoryItemId         String
+  inventoryItem           InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
+  areaId                  String?
+  area                    Area?    @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  storageLocationId       String?
+  storageLocation         StorageLocation? @relation(fields: [storageLocationId], references: [id], onDelete: SetNull)
+  targetQuantity          Float?
+  minimumQuantity         Float?
+  premiumHandlingRequired Boolean  @default(false)
+  qualityNoteRequired     Boolean  @default(false)
+  batchNoteAllowed        Boolean  @default(false)
+  isActive                Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@unique([locationId, inventoryItemId])
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([inventoryItemId])
+  @@index([areaId])
+  @@index([storageLocationId])
+  @@index([locationId, isActive])
+  @@schema("public")
+}
+
+// ADR-0029-A: CUBE Venue-Model (Operational Units, Slice 1). 00a-shape.
+// Read-only slice; mutation surface deferred. Profile-Discriminator is
+// unitType per ADR-0030 §Decisions §1 (no name matching downstream).
+enum OperationalUnitType {
+  RESTAURANT
+  BAR
+  EVENT
+  CAFE
+  OUTDOOR_TERRACE
+  HOTEL_CONTEXT
+  LOUNGE
+
+  @@schema("public")
+}
+
+model OperationalUnit {
+  id                         String              @id @default(cuid())
+  organizationId             String
+  locationId                 String
+  location                   Location            @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  key                        String
+  name                       String
+  unitType                   OperationalUnitType
+  parentContext              String?
+  requiresManualConfirmation Boolean             @default(false)
+  weatherSensitive           Boolean             @default(false)
+  outdoorCapacityRelevant    Boolean             @default(false)
+  inventoryScopes            String[]
+  dayparts                   String[]
+  sortOrder                  Int                 @default(0)
+  isActive                   Boolean             @default(true)
+  createdAt                  DateTime            @default(now())
+  updatedAt                  DateTime            @updatedAt
+
+  serviceSlots    ServiceSlot[]
+  groupRule       GroupRule?
+  menus           Menu[]
+  eventInquiries  EventInquiry[]
+  eventPackages   EventPackage[]
+
+  @@unique([locationId, key])
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@index([unitType])
+  @@schema("public")
+}
+
+model ServiceSlot {
+  id                String          @id @default(cuid())
+  organizationId    String
+  operationalUnitId String
+  operationalUnit   OperationalUnit @relation(fields: [operationalUnitId], references: [id], onDelete: Cascade)
+  slotKind          String
+  name              String
+  daysOfWeekMask    Int
+  startTimeLocal    String
+  endTimeLocal      String
+  kitchenTimeLocal  String?
+  inventoryImpact   String[]
+  sortOrder         Int             @default(0)
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([organizationId])
+  @@index([operationalUnitId])
+  @@index([operationalUnitId, isActive])
+  @@index([operationalUnitId, sortOrder])
+  @@schema("public")
+}
+
+model GroupRule {
+  id                    String          @id @default(cuid())
+  organizationId        String
+  operationalUnitId     String          @unique
+  operationalUnit       OperationalUnit @relation(fields: [operationalUnitId], references: [id], onDelete: Cascade)
+  alaCarteMaxGuests     Int
+  groupMenuRequiredFrom Int
+  bankettInquiryFrom    Int
+  exclusiveRentalFrom   Int?
+  seatedMenuMax         Int?
+  standingReceptionMax  Int?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([organizationId])
+  @@schema("public")
+}
+
+// ADR-0050: Motorworld-Inn Extensions — EventSpace, ExceptionRule,
+// ReservationConnector, ExternalSystemLink. Read-only slice; mutation
+// surface deferred to ADR-0061. RLS: org-scoped SELECT + app_runtime SELECT.
+
+enum EventSpaceSupport {
+  PRIVATE_EVENT
+  COMPANY_EVENT
+  WEDDING
+  CONFERENCE
+  PRODUCT_PRESENTATION
+  CINEMA
+  DINNER_THEATER
+  WORKSHOP
+  SEMINAR
+  PRESENTATION_PITCH
+  TRAINING
+  EVENT_ADDON
+
+  @@schema("public")
+}
+
+enum ExceptionRuleType {
+  EXCLUSIVE_EVENT_CLOSURE
+  BRUNCH_BLOCKS_REGULAR_SERVICE
+  OECHSLE_BUFFET_OVERRIDE
+  WEATHER_OUTDOOR_CHANGE
+  HOLIDAY_SCHEDULE
+  HOTEL_OPERATIONAL_HOLIDAY
+  BRUNCH_SUNDAY_LATE_START
+  EVENT_CLOSURE_PRIVATE
+
+  @@schema("public")
+}
+
+enum ReservationProvider {
+  GASTRONAUT
+  GASTRONOVI
+  PHONE
+  WALK_IN
+  EVENT_INQUIRY
+  EVIIVO
+  OTHER
+
+  @@schema("public")
+}
+
+enum ExternalSystemLinkKind {
+  GUTSCHEINE_AMADEUS360
+  HOTEL_EVIIVO
+  OECHSLE_SCHEDULE
+  FOODNOTIFY_BRIDGE
+  GASTRONOVI_BRIDGE
+  GASTRONAUT_BRIDGE
+  OTHER
+
+  @@schema("public")
+}
+
+model EventSpace {
+  id               String               @id @default(cuid())
+  organizationId   String
+  locationId       String
+  location         Location             @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  name             String
+  slug             String
+  capacitySeated   Int?
+  capacityStanding Int?
+  capacityIndoor   Int?
+  capacityOutdoor  Int?
+  hasOwnBar        Boolean              @default(false)
+  hasRestrooms     Boolean              @default(false)
+  supports         EventSpaceSupport[]
+  metadata         Json?
+  isActive         Boolean              @default(true)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@unique([locationId, slug])
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@schema("public")
+}
+
+model ExceptionRule {
+  id                   String            @id @default(cuid())
+  organizationId       String
+  locationId           String
+  location             Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  type                 ExceptionRuleType
+  title                String
+  description          String?
+  affectedUnitIds      String[]
+  startsAt             DateTime?
+  endsAt               DateTime?
+  source               String
+  requiresConfirmation Boolean           @default(false)
+  confirmedByUserId    String?
+  confirmedAt          DateTime?
+  isActive             Boolean           @default(true)
+  metadata             Json?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@index([locationId, type])
+  @@index([startsAt, endsAt])
+  @@schema("public")
+}
+
+model ReservationConnector {
+  id             String              @id @default(cuid())
+  organizationId String
+  locationId     String
+  location       Location            @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  provider       ReservationProvider
+  externalUrl    String?
+  externalRef    String?
+  isActive       Boolean             @default(true)
+  metadata       Json?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@schema("public")
+}
+
+model ExternalSystemLink {
+  id             String                 @id @default(cuid())
+  organizationId String
+  locationId     String
+  location       Location               @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  kind           ExternalSystemLinkKind
+  url            String
+  externalRef    String?
+  isActive       Boolean                @default(true)
+  metadata       Json?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@index([organizationId])
+  @@index([locationId])
+  @@index([locationId, isActive])
+  @@schema("public")
+}
+
+// ADR-0029-B: CUBE Source-Conflict-Validator substrate (Slice 2 of ADR-0036).
+// Read-only slice; mutation surface deferred to ADR-0029-B.2. Three new
+// substrates in the public schema: CUBE_Source (versioned source register),
+// CUBE_SourceField (key/value claims per source), CUBE_Conflict (detected
+// conflicts awaiting manager resolution). Profile-Discriminator per
+// ADR-0030 §Decisions §1 does not apply here — sources are brand-übergreifend,
+// org-scoped only (no locationId, no name-match downstream). PII-mitigation
+// is a service-layer regex (sanitizePII) plus a DB-level CHECK (length <= 500)
+// defense-in-depth backstop.
+
+// Note: lowercase-by-design; new enum. See ADR-0029-B §16.
+enum CUBE_SourceFieldConfidence {
+  confirmed
+  conflict_detected
+  requires_manager_confirmation
+
+  @@schema("public")
+}
+
+model CUBE_Source {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  displayName    String
+  version        Int      @default(1)
+  retrievedAt    DateTime
+  url            String?
+  payloadHash    String?
+  isActive       Boolean  @default(true)
+  enteredBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  fields CUBE_SourceField[]
+
+  @@unique([organizationId, name, version])
+  @@index([organizationId, isActive])
+  @@index([organizationId, name])
+  @@schema("public")
+}
+
+model CUBE_SourceField {
+  id             String                     @id @default(cuid())
+  organizationId String
+  sourceId       String
+  source         CUBE_Source                @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  fieldKey       String
+  fieldValue     String
+  confidence     CUBE_SourceFieldConfidence @default(requires_manager_confirmation)
+  discoveredAt   DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+
+  @@unique([sourceId, fieldKey])
+  @@index([organizationId, fieldKey])
+  @@index([organizationId])
+  @@index([confidence])
+  @@schema("public")
+}
+
+model CUBE_Conflict {
+  id                     String    @id @default(cuid())
+  organizationId         String
+  fieldKey               String
+  sourceIds              String[]  @default([])
+  detectedAt             DateTime  @default(now())
+  resolvedAt             DateTime?
+  resolvedBySuggestionId String?
+  winningFieldValue      String?
+
+  @@index([organizationId, resolvedAt])
+  @@index([organizationId, fieldKey, resolvedAt])
+  @@schema("public")
+}
+
+// ============================================================================
+// ADR-0029-C: CUBE Event-Economic-Rules (Slice 3)
+// ============================================================================
+// 4 read-only public-schema tables for CUBE event-economics:
+//   - ExclusiveRentalPolicy  (Exklusivanmietung: Miete + Mindestverzehr)
+//   - AfterMidnightStaffRate (Personal-Stundensätze ab 24:00 Uhr)
+//   - NonFoodComponent        (Non-Food-Komponenten, inkludiert/optional/cost-driver)
+//   - FurniturePolicy         (Möbel-Schwellenwerte; Website vs. Bankettmappe)
+//
+// All 4 tables are append-only at the DB layer (8 BEFORE UPDATE/DELETE
+// triggers, mirrors the CUBE_Conflict pattern at ADR-0029-B §11).
+// All monetary fields use the *NetCents suffix (ADR-0029-C §5 binding).
+// The seed inserts all rows with isActive: false + requiresManagerConfirmation: true
+// (verbatim from 00c §1-§4; manager verification required before activation).
+//
+// See docs/DECISIONS.md ADR-0029-C and docs/tasks/logik/00c-cube-event-economic-rules.md.
+
+enum StaffRole {
+  cook
+  service
+  restaurant_manager
+  bartender
+  bar_buffet_staff
+  security
+
+  @@schema("public")
+}
+
+enum NonFoodCategory {
+  included_by_default
+  optional_addon
+  cost_driver
+
+  @@schema("public")
+}
+
+enum FurniturePolicySource {
+  CUBE_WEBSITE
+  CUBE_BANKETTMAPPE_PDF
+  OTHER
+
+  @@schema("public")
+}
+
+model ExclusiveRentalPolicy {
+  id                              String   @id @default(cuid())
+  organizationId                  String
+  name                            String
+  validFrom                       DateTime?
+  validUntil                      DateTime?
+  isActive                        Boolean  @default(true)
+  requiresManagerConfirmation     Boolean  @default(false)
+  minimumGuestCount               Int
+  dayRentalUntilHourLocal         String
+  dayRentalRoomNetCents           Int
+  dayRentalMinConsumptionNetCents Int
+  eveningRentalFromHourLocal      String
+  eveningRentalRoomNetCents       Int
+  eveningRentalMinConsumptionNetCents Int
+  seatedMenuMaxGuests             Int
+  standingReceptionMaxGuests      Int
+  notes                           String?
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+
+  @@unique([organizationId, name])
+  @@index([organizationId, isActive, validFrom])
+  @@index([organizationId, validUntil])
+  @@schema("public")
+}
+
+model AfterMidnightStaffRate {
+  id                          String   @id @default(cuid())
+  organizationId              String
+  role                        StaffRole
+  hourlyRateNetCents          Int
+  fromHourLocal               String
+  toHourLocal                 String
+  validFrom                   DateTime?
+  validUntil                  DateTime?
+  isActive                    Boolean  @default(true)
+  requiresManagerConfirmation Boolean  @default(false)
+  notes                       String?
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@unique([organizationId, role, fromHourLocal, toHourLocal])
+  @@index([organizationId, role, isActive])
+  @@index([validFrom])
+  @@schema("public")
+}
+
+model NonFoodComponent {
+  id                          String          @id @default(cuid())
+  organizationId              String
+  category                    NonFoodCategory
+  name                        String
+  description                 String?
+  defaultIncluded             Boolean         @default(false)
+  extraCostNetCents           Int?
+  notes                       String?
+  isActive                    Boolean         @default(true)
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @updatedAt
+
+  @@unique([organizationId, category, name])
+  @@index([organizationId, category])
+  @@index([organizationId, isActive])
+  @@schema("public")
+}
+
+model FurniturePolicy {
+  id                          String   @id @default(cuid())
+  organizationId              String
+  name                        String
+  includedUntilGuestCount     Int
+  additionalFromGuestCount    Int
+  effectiveFrom               DateTime?
+  effectiveUntil              DateTime?
+  isActive                    Boolean  @default(true)
+  sourceUrl                   String?
+  requiresManagerConfirmation Boolean  @default(false)
+  notes                       String?
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@unique([organizationId, name])
+  @@index([organizationId, isActive])
+  @@index([organizationId, effectiveFrom])
+  @@schema("public")
+}
+
+// ADR-0029-A2: CUBE Menu Matrix substrate (Task 02, Slice 1.2 of ADR-0036).
+// Read-only slice; mutation surface deferred to a future ADR. Four models:
+// Menu, MenuItem, MenuItemIngredient (consumption hint, not recipe),
+// MenuItemAllergen (free LMIV string codes). Brutto/Netto DB-Check-Constraint
+// (00a §4 verbatim): scope IN ('restaurant_lunch','restaurant_dinner','ot_bar')
+// ⇒ priceMode = 'gross_including_vat'; event/bankett scopes ⇒ 'net_excluding_vat'.
+
+enum MenuCategory {
+  FISH_MEAT
+  VEGETARIAN
+  VEGAN_POSSIBLE
+  DESSERT
+  BEVERAGE_PAIRING
+  NON_ALCOHOLIC_PAIRING
+
+  @@schema("public")
+}
+
+model Menu {
+  id                String          @id @default(cuid())
+  organizationId    String
+  operationalUnitId String
+  operationalUnit   OperationalUnit @relation(fields: [operationalUnitId], references: [id], onDelete: Cascade)
+  name              String
+  slotKind          String
+  courseCount       Int             @default(3)
+  priceMode         String
+  scope             String
+  validFrom         DateTime?
+  validUntil        DateTime?
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  items MenuItem[]
+
+  @@index([organizationId])
+  @@index([operationalUnitId])
+  @@index([operationalUnitId, slotKind, isActive])
+  @@index([operationalUnitId, validFrom, validUntil])
+  @@schema("public")
+}
+
+model MenuItem {
+  id                 String        @id @default(cuid())
+  organizationId     String
+  menuId             String
+  menu               Menu          @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  name               String
+  position           Int           @default(0)
+  category           MenuCategory
+  pricePerPersonCents Int?
+  isVeganPossible    Boolean       @default(false)
+  isVegetarian       Boolean       @default(false)
+  description        String?
+  imageUrl           String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  ingredients MenuItem_Ingredient[]
+  allergens   MenuItem_Allergen[]
+
+  @@index([organizationId])
+  @@index([menuId])
+  @@index([menuId, position])
+  @@schema("public")
+}
+
+model MenuItem_Ingredient {
+  id              String    @id @default(cuid())
+  organizationId  String
+  menuItemId      String
+  menuItem        MenuItem  @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  inventoryItemId String
+  quantityPerPerson Float
+  unit            String
+  isPremium       Boolean   @default(false)
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([menuItemId])
+  @@schema("public")
+}
+
+model MenuItem_Allergen {
+  id             String   @id @default(cuid())
+  organizationId String
+  menuItemId     String
+  menuItem       MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  allergenCode   String
+  isTrace        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([menuItemId])
+  @@schema("public")
+}
+
+// ADR-0029-A2: CUBE Event-Intake Read substrate (Task 03, Slice 1.2 of ADR-0036).
+// Read-only slice; mutations deferred. Six models + four enums. PII fields
+// (rawMessage, contactEmail, contactPhone) are never returned by the API.
+// Brutto/Netto DB-Check-Constraint and private_package ⇒ prepayment invariant
+// are enforced at DB layer (00a §4 + §7). assignedToUserId is RLS-scope
+// indicator (ADR-0062 reserved).
+
+enum EventInquirySubject {
+  BUSINESS_DINNER
+  CORPORATE_EVENT
+  INCENTIVE
+  WEDDING
+  PRIVATE_EVENT
+  OTHER
+
+  @@schema("public")
+}
+
+enum EventInquiryStatus {
+  NEW
+  NEEDS_REVIEW
+  OFFER_DRAFT
+  APPROVED
+  CONFIRMED
+  REJECTED
+  ARCHIVED
+
+  @@schema("public")
+}
+
+enum BeveragePackageName {
+  APERITIF
+  CLASSIC
+  EXKLUSIV
+  KIDS
+  DIGESTIF
+  COCKTAILS_LONGDRINKS
+  CUSTOM
+
+  @@schema("public")
+}
+
+enum EventPackageOrderMode {
+  a_la_carte
+  fixed_menu
+  group_menu_required
+  buffet
+  flying_buffet
+  package
+
+  @@schema("public")
+}
+
+// ============================================================================
+// ADR-0056: Mother-Concern Meta-Layer — Organization, BusinessUnit,
+// EventConcept, ExternalCatalogEntry, Inquiry, InquiryRoutingRule
+// ============================================================================
+
+enum BusinessUnitName {
+  CORPORATE_EVENTS
+  PRIVATE_EVENTS
+  RESTAURANTS
+  BOOK_THE_CONCEPT
+  LOCATIONS
+
+  @@schema("public")
+}
+
+enum EventConceptName {
+  FEEL_THE_FOREST
+  MYSTERIOUS_URBAN_VENUE
+  WINTER_WONDERLAND
+  DINE_AROUND_THE_WORLD
+  GARDEN_EDEN
+  HEAVEN_SEVEN_ELEVEN
+  BUENA_VIDA
+  CUSTOM
+
+  @@schema("public")
+}
+
+enum InquirySource {
+  RAUSCHENBERGER_WEBSITE
+  CUBE_WEBSITE
+  MOTORWORLD_INN_WEBSITE
+  MANUAL_ENTRY
+  EMAIL_IMPORT
+
+  @@schema("public")
+}
+
+enum InquirySubject {
+  BUSINESS_DINNER
+  CORPORATE_EVENT
+  INCENTIVE
+  WEDDING
+  PRIVATE_EVENT
+  BIRTHDAY
+  CONFERENCE
+  SEMINAR
+  WORKSHOP
+  CHRISTMAS_PARTY
+  PRODUCT_PRESENTATION
+  OTHER
+
+  @@schema("public")
+}
+
+enum InquiryStatus {
+  NEW
+  NEEDS_CLASSIFICATION
+  NEEDS_HUMAN_REVIEW
+  OFFER_DRAFT
+  APPROVED
+  SENT
+  CONFIRMED
+  LOST
+  REJECTED
+  ARCHIVED
+
+  @@schema("public")
+}
+
+enum ExternalCatalogEntryType {
+  PARTNER_RESTAURANT
+  PARTNER_EVENT_HALL
+  PARTNER_CONFERENCE_SPACE
+  PARTNER_OUTDOOR
+  PARTNER_WEDDING_LOCATION
+  PARTNER_SPECIAL_VENUE
+
+  @@schema("public")
+}
+
+enum CateringMode {
+  INHOUSE
+  EXTERNAL_EVENT_CATERING
+  HYBRID
+
+  @@schema("public")
+}
+
+model Organization {
+  id                   String   @id @default(cuid())
+  name                 String
+  slug                 String   @unique
+  headquartersAddress  String?
+  headquartersPhone    String?
+  headquartersEmail    String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  businessUnits        BusinessUnit[]
+  eventConcepts        EventConcept[]
+  externalCatalogEntries ExternalCatalogEntry[]
+  inquiries            Inquiry[]
+  routingRules         InquiryRoutingRule[]
+
+  @@schema("public")
+}
+
+model BusinessUnit {
+  id                    String           @id @default(cuid())
+  organizationId        String
+  organization          Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name                  BusinessUnitName
+  slug                  String
+  description           String?
+  defaultWorkflowKey    String
+  requiredInquiryFields Json?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  locationLinks         BusinessUnitLocation[]
+  conceptLinks          BusinessUnitEventConcept[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model BusinessUnitLocation {
+  businessUnitId String
+  businessUnit   BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
+  locationId     String
+  isPrimary      Boolean      @default(false)
+  metadata       Json?
+
+  @@id([businessUnitId, locationId])
+  @@schema("public")
+}
+
+model BusinessUnitEventConcept {
+  businessUnitId  String
+  businessUnit    BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
+  eventConceptId  String
+  eventConcept    EventConcept @relation(fields: [eventConceptId], references: [id], onDelete: Cascade)
+
+  @@id([businessUnitId, eventConceptId])
+  @@schema("public")
+}
+
+model EventConcept {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           EventConceptName
+  customName     String?
+  description    String?
+  themeTags      String[]
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  businessUnitLinks   BusinessUnitEventConcept[]
+  locationCompatibility EventConceptLocationCompatibility[]
+
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model EventConceptLocationCompatibility {
+  id                       String        @id @default(cuid())
+  eventConceptId           String
+  eventConcept             EventConcept  @relation(fields: [eventConceptId], references: [id], onDelete: Cascade)
+  locationId               String?
+  externalCatalogEntryId   String?
+  compatibilityScore       Int?
+  notes                    String?
+
+  @@index([eventConceptId])
+  @@schema("public")
+}
+
+model ExternalCatalogEntry {
+  id             String                   @id @default(cuid())
+  organizationId String
+  organization   Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String
+  city           String
+  region         String
+  type           ExternalCatalogEntryType
+  capacityMin    Int?
+  capacityMax    Int?
+  cateringMode   CateringMode
+  logisticsProfile Json?
+  isActive       Boolean                  @default(true)
+  metadata       Json?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@schema("public")
+}
+
+model Inquiry {
+  id                            String           @id @default(cuid())
+  organizationId                String
+  organization                  Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  businessUnitHint              BusinessUnitName?
+  source                        InquirySource
+  externalRef                   String?
+  subject                       InquirySubject
+  guestCount                    Int?
+  contactName                   String
+  contactEmail                  String
+  contactPhone                  String?
+  contactAddress                String?
+  rawMessage                    String?
+  preferredDate                 DateTime?
+  preferredLocationId           String?
+  preferredExternalCatalogEntryId String?
+  status                        InquiryStatus    @default(NEW)
+  assignedToUserId              String?
+  routingRuleId                 String?
+  createdAt                     DateTime         @default(now())
+  updatedAt                     DateTime         @updatedAt
+
+  classificationAudits InquiryClassificationAudit[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([organizationId, businessUnitHint])
+  @@index([assignedToUserId])
+  @@schema("public")
+}
+
+model InquiryRoutingRule {
+  id               String           @id @default(cuid())
+  organizationId   String
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  businessUnitHint BusinessUnitName
+  priority         Int
+  matchKeywords    String[]
+  matchSubjectTypes InquirySubject[]
+  matchGuestCountMin Int?
+  matchGuestCountMax Int?
+  isActive         Boolean          @default(true)
+  description      String?
+  createdByUserId  String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([organizationId, isActive, priority])
+  @@schema("public")
+}
+
+model InquiryClassificationAudit {
+  id               String           @id @default(cuid())
+  inquiryId        String?
+  inquiry          Inquiry?         @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
+  matchedRuleId    String?
+  matchedKeywords  String[]
+  confidence       Int
+  businessUnitHint BusinessUnitName?
+  callerUserId     String?
+  createdAt        DateTime         @default(now())
+
+  @@index([inquiryId])
+  @@schema("public")
+}
+
+model EventInquiry {
+  id                              String               @id @default(cuid())
+  organizationId                  String
+  operationalUnitId               String
+  operationalUnit                 OperationalUnit      @relation(fields: [operationalUnitId], references: [id], onDelete: Cascade)
+  source                          String
+  subject                         EventInquirySubject
+  guestCount                      Int
+  contactName                     String
+  contactEmail                    String
+  contactPhone                    String?
+  rawMessage                      String?
+  preferredDate                   DateTime?
+  preferredAreas                  String[]
+  status                          EventInquiryStatus  @default(NEW)
+  assignedToUserId                String?
+  confirmationEmailSentAt         DateTime?
+  confirmationExpectedWithinMinutes Int               @default(10)
+  confirmationReminderSentAt      DateTime?
+  createdAt                       DateTime            @default(now())
+  updatedAt                       DateTime            @updatedAt
+
+  packageSelections EventPackageSelection[]
+
+  @@index([organizationId])
+  @@index([organizationId, status])
+  @@index([operationalUnitId])
+  @@index([assignedToUserId])
+  @@schema("public")
+}
+
+model BeveragePackage {
+  id                  String              @id @default(cuid())
+  organizationId      String
+  name                BeveragePackageName
+  durationHours       Float
+  durationHoursMin    Float
+  durationHoursMax    Float
+  includedCategories  String[]
+  pricePerPersonCents Int?
+  serviceIncluded     Boolean             @default(true)
+  isActive            Boolean             @default(true)
+  isKidsPackage       Boolean             @default(false)
+  childAgeMin         Int?
+  childAgeMax         Int?
+  under5Free          Boolean             @default(false)
+  eventPhaseFactor    Float               @default(1.0)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  eventPackageBeverages EventPackageBeverage[]
+
+  @@index([organizationId])
+  @@index([organizationId, isActive])
+  @@schema("public")
+}
+
+model EventPackage {
+  id                   String               @id @default(cuid())
+  organizationId       String
+  operationalUnitId    String
+  operationalUnit      OperationalUnit      @relation(fields: [operationalUnitId], references: [id], onDelete: Cascade)
+  name                 String
+  courseCount          Int?
+  pricePerPersonCents  Int?
+  priceMode            String               @default("net_excluding_vat")
+  scope                String               @default("corporate_event")
+  orderMode            EventPackageOrderMode @default(group_menu_required)
+  requiredLeadTimeDays Int                  @default(3)
+  paymentMode          String               @default("prepayment")
+  cancellationPolicy   String               @default("free_until_3_days_before")
+  windowSeat           String               @default("only_by_availability")
+  includedItems        String[]
+  addOns               String[]
+  defaultGuestCount    Int                  @default(2)
+  validFrom            DateTime?
+  validUntil           DateTime?
+  isActive             Boolean              @default(true)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  menuItems        EventPackageMenuItem[]
+  beverages        EventPackageBeverage[]
+  packageSelections EventPackageSelection[]
+
+  @@index([organizationId])
+  @@index([operationalUnitId])
+  @@index([operationalUnitId, isActive])
+  @@schema("public")
+}
+
+model EventPackageMenuItem {
+  id             String       @id @default(cuid())
+  organizationId String
+  eventPackageId String
+  eventPackage   EventPackage @relation(fields: [eventPackageId], references: [id], onDelete: Cascade)
+  menuItemId     String
+  isOptional     Boolean      @default(false)
+  position       Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([eventPackageId])
+  @@schema("public")
+}
+
+model EventPackageBeverage {
+  id               String          @id @default(cuid())
+  organizationId   String
+  eventPackageId   String
+  eventPackage     EventPackage    @relation(fields: [eventPackageId], references: [id], onDelete: Cascade)
+  beveragePackageId String
+  beveragePackage  BeveragePackage @relation(fields: [beveragePackageId], references: [id], onDelete: Cascade)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([organizationId])
+  @@index([eventPackageId])
+  @@schema("public")
+}
+
+model EventPackageSelection {
+  id              String       @id @default(cuid())
+  organizationId  String
+  eventInquiryId  String
+  eventInquiry    EventInquiry @relation(fields: [eventInquiryId], references: [id], onDelete: Cascade)
+  eventPackageId  String
+  eventPackage    EventPackage @relation(fields: [eventPackageId], references: [id], onDelete: Cascade)
+  guestCountOverride Int?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([eventInquiryId])
+  @@schema("public")
+}
+
+// ── Scope D: Operational Notes ───────────────────────────────────────────────
+
+model OperationalNote {
+  id                  String                    @id @default(cuid())
+  organizationId      String
+  workspaceId         String?
+  storageLocationId   String?
+  authorUserId        String
+  authorRole          OrganizationRole
+  title               String?
+  body                String
+  visibility          OperationalNoteVisibility @default(team)
+  noteType            OperationalNoteType       @default(general)
+  relatedEntityType   OperationalNoteEntityType?
+  relatedEntityId     String?
+  priority            OperationalNotePriority   @default(normal)
+  status              OperationalNoteStatus     @default(open)
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  resolvedAt          DateTime?
+  resolvedByUserId    String?
+
+  storageLocation StorageLocation? @relation(fields: [storageLocationId], references: [id], onDelete: SetNull)
+  auditEvents     OperationalNoteAuditEvent[]
+
+  @@index([organizationId, status, createdAt(sort: Desc)])
+  @@index([organizationId, priority, status])
+  @@index([organizationId, workspaceId, status])
+  @@index([organizationId, storageLocationId])
+  @@index([relatedEntityType, relatedEntityId])
+  @@index([authorUserId])
+  @@schema("public")
+}
+
+model OperationalNoteAuditEvent {
+  id          String                    @id @default(cuid())
+  noteId      String
+  action      OperationalNoteAuditAction
+  actorUserId String
+  before      Json?
+  after       Json?
+  createdAt   DateTime                  @default(now())
+
+  note OperationalNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId, createdAt(sort: Desc)])
+  @@index([actorUserId])
+  @@schema("public")
+}
+
+enum OperationalNoteVisibility {
+  private
+  team
+  manager_only
+
+  @@schema("public")
+}
+
+enum OperationalNoteType {
+  general
+  stock_issue
+  delivery_issue
+  handover
+  maintenance
+  incident
+  refill_context
+
+  @@schema("public")
+}
+
+enum OperationalNoteEntityType {
+  inventory_item
+  movement
+  bar_refill_run
+  review_task
+  shift_handover
+  storage_location
+
+  @@schema("public")
+}
+
+enum OperationalNotePriority {
+  normal
+  important
+  critical
+
+  @@schema("public")
+}
+
+enum OperationalNoteStatus {
+  open
+  resolved
+  archived
+
+  @@schema("public")
+}
+
+enum OperationalNoteAuditAction {
+  created
+  updated
+  resolved
+  archived
+  linked
+
+  @@schema("public")
+}
+
+// ── Shift planning (Phase 1) ──────────────────────────────────────────────────
+// Schichtplan-Import → tagesbezogene Bereichszuweisung → Aufgabenmatrix → Tagesaufgaben.
+// Gardemanger/Entremetier/Saucier sind operative Tagesrollen (kitchen_areas),
+// keine permanenten System-Rollen.
+
+model KitchenArea {
+  id               String   @id @default(cuid())
+  organizationId   String
+  workspaceGroupId String?
+  slug             String
+  name             String
+  description      String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  shiftAssignments ShiftAssignment[]
+  shiftSessions    ShiftSession[]
+  checklistTasks   ChecklistTask[]
+  taskDayMatrices  TaskDayMatrix[]
+  taskInstances    TaskInstance[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, workspaceGroupId])
+  @@map("kitchen_areas")
+  @@schema("public")
+}
+
+model ShiftPlanImport {
+  id                  String    @id @default(cuid())
+  organizationId      String
+  workspaceGroupId    String?
+  fileName            String
+  fileSize            Int
+  weekNumber          Int?
+  yearNumber          Int?
+  uploadedByUserId    String
+  status              String
+  parseErrors         Json?
+  importedRowCount    Int       @default(0)
+  matchedUserCount    Int       @default(0)
+  unmatchedUserNames  Json?
+  areaDetectionIssues Json?
+  parsedData          Json?
+  confirmedAt         DateTime?
+  confirmedByUserId   String?
+  releasedAt          DateTime?
+  releasedByUserId    String?
+  failureReason       String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  shiftAssignments ShiftAssignment[]
+  taskInstances    TaskInstance[]
+
+  @@index([organizationId, status, createdAt])
+  @@map("shift_plan_imports")
+  @@schema("public")
+}
+
+model ShiftAssignment {
+  id               String          @id @default(cuid())
+  organizationId   String
+  importId         String
+  import           ShiftPlanImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+  date             DateTime        @db.Date
+  weekday          Int
+  userId           String
+  userProfile      UserProfile     @relation("ShiftAssignmentUser", fields: [userId], references: [id], onDelete: Cascade)
+  workspaceGroupId String?
+  areaId           String
+  area             KitchenArea     @relation(fields: [areaId], references: [id])
+  shiftStartAt     DateTime
+  shiftEndAt       DateTime
+  locationId       String?
+  department       String
+  assignmentType   String          @default("primary")
+  sourceRow        Int?
+  status           String          @default("active")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  taskInstances TaskInstance[]
+  shiftSession ShiftSession?
+
+  @@unique([date, userId, areaId, shiftStartAt, shiftEndAt])
+  @@index([organizationId, date, areaId])
+  @@index([userId, date])
+  @@map("shift_assignments")
+  @@schema("public")
+}
+
+model ShiftSession {
+  id                String   @id @default(cuid())
+  organizationId    String
+  workspaceGroupId  String?
+  shiftAssignmentId String   @unique
+  shiftAssignment   ShiftAssignment @relation(fields: [shiftAssignmentId], references: [id], onDelete: Cascade)
+  userId            String
+  user              UserProfile @relation("ShiftSessionUser", fields: [userId], references: [id], onDelete: Cascade)
+  areaId            String
+  area              KitchenArea @relation(fields: [areaId], references: [id])
+  plannedStartAt    DateTime
+  plannedEndAt      DateTime
+  clientStartedAt   DateTime?
+  serverStartedAt   DateTime?
+  actualStartedAt   DateTime?
+  actualEndedAt     DateTime?
+  sessionStatus     String   @default("scheduled")
+  startStatus       String?
+  endStatus         String?
+  startDeltaMinutes Int?
+  endDeltaMinutes   Int?
+  startedByUserId   String?
+  startedBy         UserProfile? @relation("ShiftSessionStartedBy", fields: [startedByUserId], references: [id], onDelete: SetNull)
+  endedByUserId     String?
+  endedBy           UserProfile? @relation("ShiftSessionEndedBy", fields: [endedByUserId], references: [id], onDelete: SetNull)
+  timezone          String?
+  clockSkewMs       Int?
+  startSource       String?
+  endSource         String?
+  startNote         String?
+  endNote           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  events ShiftSessionEvent[]
+
+  @@index([organizationId, userId, plannedStartAt])
+  @@index([organizationId, workspaceGroupId, plannedStartAt])
+  @@map("shift_sessions")
+  @@schema("public")
+}
+
+model ShiftSessionEvent {
+  id              String   @id @default(cuid())
+  organizationId  String
+  shiftSessionId  String
+  shiftSession    ShiftSession @relation(fields: [shiftSessionId], references: [id], onDelete: Cascade)
+  actorUserId     String
+  actor           UserProfile @relation("ShiftSessionEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  eventType       String
+  occurredAt      DateTime
+  serverCreatedAt DateTime @default(now())
+  payload         Json?
+
+  @@index([organizationId, occurredAt])
+  @@index([shiftSessionId, occurredAt])
+  @@map("shift_session_events")
+  @@schema("public")
+}
+
+model ChecklistTask {
+  id                String      @id @default(cuid())
+  organizationId    String
+  workspaceGroupId  String?
+  department        String
+  areaId            String
+  area              KitchenArea @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  title             String
+  description       String?
+  notes             String?
+  requiresPhoto     Boolean     @default(false)
+  requiresComment   Boolean     @default(false)
+  requiresSignature Boolean     @default(false)
+  frequency         String      @default("daily")
+  sortOrder         Int         @default(0)
+  active            Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  taskDayMatrices TaskDayMatrix[]
+  taskInstances   TaskInstance[]
+
+  @@index([organizationId, department, areaId])
+  @@index([active])
+  @@map("checklist_tasks")
+  @@schema("public")
+}
+
+model TaskDayMatrix {
+  id              String        @id @default(cuid())
+  organizationId  String
+  taskId          String
+  task            ChecklistTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  areaId          String
+  area            KitchenArea   @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  mondayActive    Boolean       @default(true)
+  tuesdayActive   Boolean       @default(true)
+  wednesdayActive Boolean       @default(true)
+  thursdayActive  Boolean       @default(true)
+  fridayActive    Boolean       @default(true)
+  saturdayActive  Boolean       @default(true)
+  sundayActive    Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([taskId, areaId])
+  @@index([organizationId, areaId])
+  @@map("task_day_matrix")
+  @@schema("public")
+}
+
+model TaskInstance {
+  id                String           @id @default(cuid())
+  organizationId    String
+  date              DateTime         @db.Date
+  weekday           Int
+  importId          String?
+  import            ShiftPlanImport? @relation(fields: [importId], references: [id], onDelete: SetNull)
+  shiftAssignmentId String?
+  shiftAssignment   ShiftAssignment? @relation(fields: [shiftAssignmentId], references: [id], onDelete: SetNull)
+  userId            String
+  user              UserProfile      @relation("TaskInstanceUser", fields: [userId], references: [id], onDelete: Cascade)
+  areaId            String
+  area              KitchenArea      @relation(fields: [areaId], references: [id])
+  taskId            String
+  task              ChecklistTask    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  status            String           @default("open")
+  completedAt       DateTime?
+  completedByUserId String?
+  completedBy       UserProfile?     @relation("TaskInstanceCompletedBy", fields: [completedByUserId], references: [id], onDelete: SetNull)
+  verifiedAt        DateTime?
+  verifiedByUserId  String?
+  verifiedBy        UserProfile?     @relation("TaskInstanceVerifiedBy", fields: [verifiedByUserId], references: [id], onDelete: SetNull)
+  dueAt             DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  taskIssues   TaskIssue[]
+  taskComments TaskComment[]
+
+  @@unique([shiftAssignmentId, taskId])
+  @@index([organizationId, date, userId])
+  @@index([organizationId, status, date])
+  @@index([areaId, date])
+  @@map("task_instances")
+  @@schema("public")
+}
+
+model TaskIssue {
+  id               String       @id @default(cuid())
+  organizationId   String
+  taskInstanceId   String
+  taskInstance     TaskInstance @relation(fields: [taskInstanceId], references: [id], onDelete: Cascade)
+  reportedByUserId String
+  reportedBy       UserProfile  @relation("TaskIssueReportedBy", fields: [reportedByUserId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  photoUrl         String?
+  severity         String       @default("medium")
+  status           String       @default("open")
+  resolvedByUserId String?
+  resolvedBy       UserProfile? @relation("TaskIssueResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: SetNull)
+  resolvedAt       DateTime?
+  resolutionNotes  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([organizationId, status])
+  @@index([taskInstanceId])
+  @@map("task_issues")
+  @@schema("public")
+}
+
+model TaskComment {
+  id              String       @id @default(cuid())
+  taskInstanceId  String
+  taskInstance    TaskInstance @relation(fields: [taskInstanceId], references: [id], onDelete: Cascade)
+  createdByUserId String
+  createdBy       UserProfile  @relation("TaskCommentCreatedBy", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  content         String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([taskInstanceId])
+  @@map("task_comments")
+  @@schema("public")
+}
+
+model ShiftSignoff {
+  id                 String      @id @default(cuid())
+  organizationId     String
+  date               DateTime    @db.Date
+  weekday            Int
+  workspaceGroupId   String
+  department         String
+  signedByUserId     String
+  signedBy           UserProfile @relation("ShiftSignoffSignedBy", fields: [signedByUserId], references: [id], onDelete: Cascade)
+  completedTaskCount Int
+  totalTaskCount     Int
+  openIssueCount     Int
+  summary            String?
+  notes              String?
+  signedAt           DateTime    @default(now())
+
+  @@unique([organizationId, date, workspaceGroupId, department])
+  @@index([organizationId, date, workspaceGroupId])
+  @@map("shift_signoffs")
+  @@schema("public")
+}

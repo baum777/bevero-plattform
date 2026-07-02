@@ -1,0 +1,13 @@
+{
+  "eventType": "receipt.created",
+  "externalId": "rcpt-2026-06-20-0042",
+  "tenantId": "motorworld-inn-boeblingen",
+  "businessDate": "2026-06-20",
+  "amount": 87.50,
+  "currency": "EUR",
+  "items": [
+    { "productId": "prod-001", "name": "Wiener Schnitzel", "quantity": 2, "unitPrice": 32.50 },
+    { "productId": "prod-042", "name": "Mineralwasser", "quantity": 2, "unitPrice": 5.50 }
+  ],
+  "createdAt": "2026-06-20T12:34:56Z"
+}

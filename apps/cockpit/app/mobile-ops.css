@@ -1,0 +1,198 @@
+/* Mobile operations polish: keep the existing paper/notebook palette, but make
+   the phone layout behave like a bottom-nav-first app. */
+
+.qn-storage-hint {
+  margin: 2px 0 0;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.qn-saved-list {
+  display: grid;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.qn-saved-heading {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.qn-saved-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: var(--sp-1);
+  align-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-raised);
+}
+
+.qn-saved-row.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.qn-saved-item {
+  min-width: 0;
+  min-height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+  padding: var(--sp-2) var(--sp-3);
+  text-align: left;
+}
+
+.qn-saved-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.qn-saved-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.qn-saved-delete {
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 1023px) {
+  .topbar {
+    height: 48px;
+    min-height: 48px;
+    justify-content: center;
+    padding: 0 var(--sp-4);
+    position: sticky;
+    text-align: center;
+  }
+
+  .mobile-nav-toggle,
+  .topbar-actions,
+  .workspace-select {
+    display: none !important;
+  }
+
+  .topbar strong {
+    max-width: calc(100% - 96px);
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-theme-toggle {
+    position: absolute;
+    right: var(--sp-3);
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+  }
+
+  .main-column {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .page-wrap {
+    padding: var(--sp-4);
+    padding-bottom: calc(128px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav {
+    height: calc(68px + env(safe-area-inset-bottom));
+    align-items: center;
+    gap: 2px;
+    padding:
+      6px
+      max(10px, env(safe-area-inset-left))
+      calc(6px + env(safe-area-inset-bottom))
+      max(10px, env(safe-area-inset-right));
+  }
+
+  .bottom-nav-tab {
+    min-height: 52px;
+    border-radius: var(--radius-md);
+  }
+
+  .bottom-nav-tab.active {
+    background: var(--accent-soft);
+    color: var(--text-primary);
+  }
+
+  .bottom-nav-plus {
+    width: 56px;
+    height: 56px;
+    margin: -22px var(--sp-2) 0;
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--bg-base) 65%, transparent);
+  }
+
+  .qa-sheet {
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: var(--sp-4) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
+  }
+
+  .qn-fab {
+    display: none;
+  }
+
+  .qn-panel {
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    max-height: min(78dvh, calc(100dvh - 96px - env(safe-area-inset-bottom)));
+    padding-bottom: calc(var(--sp-4) + env(safe-area-inset-bottom));
+  }
+
+  .bar-refill-wrap {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom));
+  }
+
+  .bar-refill-sticky {
+    top: 48px;
+    margin-right: calc(var(--sp-4) * -1);
+    margin-left: calc(var(--sp-4) * -1);
+    padding-right: var(--sp-4);
+    padding-left: var(--sp-4);
+  }
+
+  .bar-refill-item-controls {
+    align-items: stretch;
+  }
+
+  .bar-refill-diff {
+    flex: 1 1 112px;
+  }
+
+  .bar-refill-qty-input {
+    width: 100%;
+    max-width: none;
+  }
+
+  .bar-refill-fab,
+  .bar-refill-toast,
+  .mv-toast {
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .bar-refill-fab {
+    right: max(var(--sp-4), env(safe-area-inset-right));
+  }
+}

@@ -1,0 +1,16 @@
+X-Synthetic-Fixture: true
+From: orders@foodnotify.com
+Subject: Synthetic FoodNotify order confirmation
+Message-ID: <synthetic-text@foodnotify.test>
+
+Synthetic FoodNotify order confirmation fixture.
+No real supplier, tenant, price, or customer data.
+
+Bestellung Nr.: FN-SYN-1001
+Lieferant: Metro Test Supplier
+Bestelldatum: 02.06.2026
+Lieferdatum: 05.06.2026
+
+Pos  Artikel                  Menge  Einheit  Preis    MwSt
+1    ART-1001 Coca Cola 0,2l  24     Kiste    6,50€    19%
+2    Mineralwasser still      12     Kiste    3,20€     7%

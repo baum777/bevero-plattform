@@ -1,0 +1,10 @@
+{
+  "eventType": "daily.close",
+  "externalId": "dc-2026-06-20-001",
+  "tenantId": "motorworld-inn-boeblingen",
+  "businessDate": "2026-06-20",
+  "totalRevenue": 15234.50,
+  "totalTransactions": 142,
+  "currency": "EUR",
+  "closedAt": "2026-06-20T23:59:59Z"
+}

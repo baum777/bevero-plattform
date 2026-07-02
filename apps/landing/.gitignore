@@ -1,0 +1,17 @@
+# Vite
+dist/
+.vite/
+
+# Node
+node_modules/
+package-lock.json
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+.env.local
+.vercel

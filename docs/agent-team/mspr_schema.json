@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/baum777/bevero-webapp/docs/agent-team/mspr_schema.json",
+  "title": "MSPR Logbook Entry",
+  "description": "Single MSPR (Memory, Scope, Progress, Review) entry for the Bevero 3-agent swarm. See docs/agent-team/mspr_logbook.md for the human-readable form and the Spec for the role of each field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "timestamp",
+    "runId",
+    "agentRole",
+    "taskType",
+    "scope",
+    "memory",
+    "progress",
+    "review"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for this MSPR entry (UUID, ULID, or repo-local hash)."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp. UTC recommended."
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the swarm run that produced this entry."
+    },
+    "agentRole": {
+      "type": "string",
+      "enum": ["orchestrator", "builder", "reviewer"],
+      "description": "Which agent role wrote or finalized this entry."
+    },
+    "taskType": {
+      "type": "string",
+      "enum": [
+        "read_only_audit",
+        "docs_spec",
+        "implementation",
+        "bugfix",
+        "refactor",
+        "test_validation",
+        "governance_change",
+        "ci_build_change",
+        "infra_db_change",
+        "security_sensitive",
+        "destructive_operation"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layer", "pathsInScope", "pathsOutOfScope", "autonomyTier"],
+      "properties": {
+        "layer": {
+          "type": "string",
+          "enum": [
+            "docs_only",
+            "package_local",
+            "app_local",
+            "cross_package",
+            "runtime_core",
+            "governance_policy",
+            "infra_database",
+            "ci_deployment",
+            "production_sensitive"
+          ]
+        },
+        "pathsInScope": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 0
+        },
+        "pathsOutOfScope": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 0
+        },
+        "autonomyTier": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3, 4],
+          "description": "0 = blocked, 1 = read-only, 2 = draft/spec, 3 = execute with review, 4 = autonomous with strict limits."
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["newFindings", "reusableRules", "gotchas"],
+      "properties": {
+        "newFindings":   { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "reusableRules": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "gotchas":       { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actionsTaken", "filesRead", "filesChanged", "commandsRun", "validationResults"],
+      "properties": {
+        "actionsTaken":       { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "filesRead":          { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "filesChanged":       { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "commandsRun":        { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "validationResults":  { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "risks", "scorecard", "nextGate"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "needs_rework", "blocked", "approval_required"]
+        },
+        "risks": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "scorecard": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "outcomeQuality",
+            "scopeDiscipline",
+            "safety",
+            "evidenceQuality",
+            "sideEffects"
+          ],
+          "properties": {
+            "outcomeQuality":  { "type": "integer", "minimum": 0, "maximum": 5 },
+            "scopeDiscipline":  { "type": "integer", "minimum": 0, "maximum": 5 },
+            "safety":           { "type": "integer", "minimum": 0, "maximum": 5 },
+            "evidenceQuality":  { "type": "integer", "minimum": 0, "maximum": 5 },
+            "sideEffects":      { "type": "integer", "minimum": 0, "maximum": 5 }
+          }
+        },
+        "nextGate": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

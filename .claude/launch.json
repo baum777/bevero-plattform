@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--workspace=apps/landing", "run", "dev"],
+      "port": 5173,
+      "autoPort": true
+    },
+    {
+      "name": "cockpit",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--workspace=apps/cockpit", "run", "dev"],
+      "port": 3000
+    }
+  ]
+}

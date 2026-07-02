@@ -1,0 +1,24 @@
+title = "bevero gitleaks rules"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "supabase-project-ref-in-placeholder"
+description = "Committed examples must not contain concrete Supabase project refs or hosts."
+regex = '''(?i)(?:postgres\.[a-z0-9]{15,}|db\.[a-z0-9]{15,}\.supabase\.co|https://[a-z0-9]{15,}\.supabase\.co)'''
+keywords = ["supabase", "postgres.", "db."]
+
+[[rules]]
+id = "real-mail-imap-user"
+description = "Use fictional example.com mailboxes for committed IMAP user placeholders."
+path = '''(^|/)\.env\.example$'''
+regex = '''(?i)MAIL_IMAP_USER\s*=\s*["']?[a-z0-9._%+-]+@(?!example\.com\b)[a-z0-9.-]+\.[a-z]{2,}'''
+keywords = ["MAIL_IMAP_USER"]
+
+[[rules]]
+id = "real-email-in-ingest-doc"
+description = "Use fictional example.com mailboxes in ingest documentation."
+path = '''(^|/)docs/.*ingest.*\.md$'''
+regex = '''(?i)[a-z0-9._%+-]+@(?!example\.com\b)[a-z0-9.-]+\.[a-z]{2,}'''
+keywords = ["@"]

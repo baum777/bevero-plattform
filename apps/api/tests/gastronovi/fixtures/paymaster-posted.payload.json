@@ -1,0 +1,10 @@
+{
+  "eventType": "paymaster.posted",
+  "externalId": "pm-2026-06-20-007",
+  "tenantId": "motorworld-inn-boeblingen",
+  "businessDate": "2026-06-20",
+  "amount": 742.00,
+  "currency": "EUR",
+  "reference": "CONF-2026-007",
+  "postedAt": "2026-06-20T18:22:10Z"
+}
