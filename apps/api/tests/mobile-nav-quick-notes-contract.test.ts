@@ -36,8 +36,17 @@ const globalsCss = readFileSync(
 describe("mobile navigation and quick notes contracts", () => {
   it("opens withdrawal quick action via dedicated withdrawal page", () => {
     expect(bottomNav).toContain('go("/inventory/withdrawal")');
-    expect(movementsClient).toContain("useSearchParams");
-    expect(movementsClient).toContain('searchParams.get("type")');
+    // Semantic contract for the movements page query-param flow:
+    // useSearchParams is called, ?type= is read (optional chaining allowed),
+    // isMovementType validates the value, and setMovementType applies it.
+    // Replaces a brittle literal match on `searchParams.get("type")` which
+    // breaks against the production code's `searchParams?.get("type")`.
+    expect(movementsClient).toMatch(/useSearchParams/);
+    expect(movementsClient).toMatch(
+      /searchParams\??\s*\.\s*get\s*\(\s*["']type["']\s*\)/
+    );
+    expect(movementsClient).toContain("isMovementType(requestedType)");
+    expect(movementsClient).toContain("setMovementType(requestedType)");
   });
 
   it("uses workspace-aware bereich tab as mobile nav destination", () => {
