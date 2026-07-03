@@ -17,6 +17,17 @@
 | Öffnungszeiten / Betriebszeiten | |
 | Teil einer Gruppe / Kette? | |
 | Quelle(n) der Recherche | |
+| Ansprechpartner (Rolle + Name — **nur** öffentlich erkennbar oder im Erstgespräch freiwillig genannt; keine Eigenrecherche) | |
+| Kontaktkanal (Website-Formular / öffentliche Telefonnummer / LinkedIn-Profil / Empfehlung — **kein** privater Kanal) | |
+
+### 1.1 Steckbrief-Meta
+
+| Feld | Eintrag |
+|---|---|
+| Erstellt am | |
+| Owner / Bearbeiter | |
+| Status | ☐ cold · ☐ warm · ☐ contacted · ☐ replied |
+| Letzte Aktualisierung | |
 
 ## 2. Standortlogik
 
