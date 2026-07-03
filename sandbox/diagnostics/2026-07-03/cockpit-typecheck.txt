@@ -1,0 +1,7 @@
+=== apps/cockpit: typecheck (next typegen + tsc --noEmit) ===
+
+> @bevero-platform/cockpit@0.1.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Route types generated successfully

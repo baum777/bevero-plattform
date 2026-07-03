@@ -1,0 +1,57 @@
+=== B.2c Verification — three independent invocations + dual probes ===
+
+--- 1. Direct tsx from repo root (CWD = root → reads ./.env) ---
+Database target verified: ienwshemokpsjwkedmyp (bevero-os / development).
+EXIT 0
+
+--- 2. Direct tsx from apps/api (CWD = apps/api → reads apps/api/.env) ---
+Database target verified: ienwshemokpsjwkedmyp (bevero-os / development).
+EXIT 0
+
+--- 3. npm run db:verify-target (npm workspaces CWD = apps/api/) ---
+Database target verified: ienwshemokpsjwkedmyp (bevero-os / development).
+EXIT 0
+
+--- 4. Probe from repo root (what ./.env parses to) ---
+=== probe-verify-env ===
+DATABASE_URL present? true
+DIRECT_URL present? true
+BEVERO_DB_TARGET = "development"
+BEVERO_EXPECTED_SUPABASE_REF = "ienwshemokpsjwkedmyp"
+DATABASE_URL:
+  hostname=aws-1-eu-central-1.pooler.supabase.com
+  port=6543
+  username_raw="postgres.ienwshemokpsjwkedmyp"
+  username_decoded="postgres.ienwshemokpsjwkedmyp"
+  derived_ref=ienwshemokpsjwkedmyp
+  password_len=16
+DIRECT_URL:
+  hostname=aws-1-eu-central-1.pooler.supabase.com
+  port=5432
+  username_raw="postgres.ienwshemokpsjwkedmyp"
+  username_decoded="postgres.ienwshemokpsjwkedmyp"
+  derived_ref=ienwshemokpsjwkedmyp
+  password_len=16
+=== end probe ===
+
+--- 5. Probe from apps/api (what apps/api/.env parses to) ---
+=== probe-verify-env ===
+DATABASE_URL present? true
+DIRECT_URL present? true
+BEVERO_DB_TARGET = "development"
+BEVERO_EXPECTED_SUPABASE_REF = "ienwshemokpsjwkedmyp"
+DATABASE_URL:
+  hostname=aws-1-eu-central-1.pooler.supabase.com
+  port=6543
+  username_raw="postgres.ienwshemokpsjwkedmyp"
+  username_decoded="postgres.ienwshemokpsjwkedmyp"
+  derived_ref=ienwshemokpsjwkedmyp
+  password_len=16
+DIRECT_URL:
+  hostname=aws-1-eu-central-1.pooler.supabase.com
+  port=5432
+  username_raw="postgres.ienwshemokpsjwkedmyp"
+  username_decoded="postgres.ienwshemokpsjwkedmyp"
+  derived_ref=ienwshemokpsjwkedmyp
+  password_len=16
+=== end probe ===

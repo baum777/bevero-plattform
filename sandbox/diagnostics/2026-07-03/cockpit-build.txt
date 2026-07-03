@@ -1,0 +1,79 @@
+=== apps/cockpit: next build ===
+
+> @bevero-platform/cockpit@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.19
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.8s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/3) ...
+ ✓ Generating static pages (3/3)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                          Size  First Load JS
+┌ ƒ /                                               178 B         102 kB
+├ ƒ /_not-found                                     178 B         102 kB
+├ ƒ /alerts                                       1.97 kB         104 kB
+├ ƒ /api/alerts/tasks/[id]/[command]                178 B         102 kB
+├ ƒ /api/backend/[...path]                          178 B         102 kB
+├ ƒ /api/kitchen/dashboard                          178 B         102 kB
+├ ƒ /automation/suggestions                       4.94 kB         176 kB
+├ ƒ /callback                                       178 B         102 kB
+├ ƒ /dashboard                                    5.32 kB         173 kB
+├ ƒ /freigaben                                    4.32 kB         172 kB
+├ ƒ /health                                         178 B         102 kB
+├ ƒ /heute                                        3.77 kB         171 kB
+├ ƒ /inquiries                                    6.23 kB         174 kB
+├ ƒ /inquiries/[inquiryId]                        4.03 kB         171 kB
+├ ƒ /inventory/balances                           6.62 kB         174 kB
+├ ƒ /inventory/bar-refill                         5.77 kB         176 kB
+├ ƒ /inventory/goods-receipt                        178 B         102 kB
+├ ƒ /inventory/items                              5.05 kB         172 kB
+├ ƒ /inventory/withdrawal                           178 B         102 kB
+├ ƒ /invite/[token]                                 170 B         106 kB
+├ ƒ /kitchen/checkliste                           2.44 kB         105 kB
+├ ƒ /kitchen/walk-route                           4.76 kB         172 kB
+├ ƒ /mother-concern                               5.31 kB         173 kB
+├ ƒ /mother-concern/event-concepts                3.89 kB         171 kB
+├ ƒ /mother-concern/partner-locations             3.88 kB         171 kB
+├ ƒ /movements                                    9.79 kB         177 kB
+├ ƒ /notes                                        4.16 kB         175 kB
+├ ƒ /onboarding                                     355 B         103 kB
+├ ƒ /procurement                                    170 B         106 kB
+├ ƒ /procurement/[id]                             2.69 kB         173 kB
+├ ƒ /schichtplan/abschluss                        4.49 kB         172 kB
+├ ƒ /schichtplan/heute                            4.73 kB         172 kB
+├ ƒ /schichtplan/import                           3.08 kB         170 kB
+├ ƒ /schichtplan/maengel                          4.05 kB         171 kB
+├ ƒ /schichtplan/matrix                            1.6 kB         104 kB
+├ ƒ /schichtplan/uebersicht                       2.67 kB         170 kB
+├ ƒ /settings/profile                               178 B         102 kB
+├ ƒ /settings/roles                                 178 B         102 kB
+├ ƒ /settings/team                                3.64 kB         171 kB
+├ ƒ /shift-handover                               4.73 kB         172 kB
+├ ƒ /sign-in                                        369 B         106 kB
+├ ƒ /sign-up                                      1.19 kB         107 kB
+├ ƒ /storage                                        178 B         102 kB
+├ ƒ /workspaces                                     170 B         106 kB
+├ ƒ /workspaces/[locationId]                      2.94 kB         109 kB
+├ ƒ /workspaces/[locationId]/calendar             3.24 kB         171 kB
+├ ƒ /workspaces/[locationId]/connectors           2.87 kB         170 kB
+├ ƒ /workspaces/[locationId]/cube                 4.91 kB         172 kB
+├ ƒ /workspaces/[locationId]/cube/menus           3.19 kB         171 kB
+├ ƒ /workspaces/[locationId]/event-ops            4.41 kB         172 kB
+├ ƒ /workspaces/[locationId]/event-ops/inquiries  3.53 kB         171 kB
+├ ƒ /workspaces/[locationId]/event-spaces         2.92 kB         170 kB
+└ ƒ /workspaces/[locationId]/today                2.61 kB         105 kB
++ First Load JS shared by all                      102 kB
+  ├ chunks/18-e687f169faa2ca51.js                 46.1 kB
+  ├ chunks/87c73c54-0375ba195de27293.js           54.2 kB
+  └ other shared chunks (total)                   1.93 kB
+
+
+ƒ  (Dynamic)  server-rendered on demand
+
