@@ -55,3 +55,23 @@ Kurze Einträge pro Session. Format: Datum · Was wurde getan · Was ist offen.
 - Operator-Rollen und Freigabepersonen benennen
 - Echten Pilot-Durchlauf durchführen und im Audit-Log erfassen
 - Live-Connector aktivieren
+
+---
+
+## 2026-07-03 — DB-Target-Gate-Diagnose und B.2c-Verifikation
+
+**Was:** Operative Anfrage „prüfe ui build error und db config error und erstell einen fix report" für bevero-plattform. Diagnose-only Slice geliefert, drei Optionen für DB-Config-Recovery vorgeschlagen, Option B (owned-development = `ienwshemokpsjwkedmyp`) und Sub-Pfad B.2c (operator-owned `.env`-Edits) gemeinsam mit Operator gewählt, Split-Env zwischen `./.env` und `apps/api/.env` entdeckt und behoben, Verifikation mit fünf konvergierenden Checks bestanden. Commit `e656d56` auf `main` (kein Push).
+
+**Entscheidungen:**
+- UI-Builds vor jeder Tiefen-Aktion verifiziert (Vite 137 ms grün, Next.js 2.8 s grün, tsc + prisma validate grün) — kein UI-Fehler im aktuellen Stand.
+- DB-Target-Fix diagnose-only gestartet: AGENTS.md „Pflicht: Datenbank-Zielgate" verlangt Owner-Entscheidung vor riskanten Operationen.
+- Drei Optionen vorgelegt (lokal · development · production), Operator wählte development.
+- Sub-Pfad B.2c gewählt: Agent editiert keine `.env`, Operator übernimmt URL-Passwort-Tausch, Agent verifiziert.
+- Audit-Pattern etabliert: bei DB-Gate-Fehlschlag werden künftig npm-Workspace- und direct-tsx-CWD parallel geprüft (Split-Env-Hazard reduzieren).
+- Die zwei `2026-07-03-bevero-plattform-vercel-production-endpoints-cleanup.md`-Files blieben untracked und sind nicht Teil dieses Commits — separate Entscheidung des Operators.
+
+**Offen:**
+- Cockpit-Live-Smoke gegen owned-development ist nicht in diesem Schnitt enthalten.
+- Schema-Migrations als eigene L2-Slices (Guard steht, schema-seitige Freigabe nicht).
+- `SUPABASE_JWT_SECRET` / `SUPABASE_SECRET_KEY` wurden in dieser Verifikation nicht inhaltlich geprüft; Folgefrage, falls für neuen Project-JWT-Secret relevant.
+- Die zwei `vercel-production-endpoints-cleanup`-Files: Operator entscheidet separat, ob und wie diese committet werden.
