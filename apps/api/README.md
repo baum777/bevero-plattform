@@ -1,15 +1,16 @@
 # bevero
 
 **bevero** is the warehouse and inventory platform for the Motorworld BB bar
-and kitchen operation. It pairs a Fastify backend/API (`bevero-api`, this repo)
-with the Cockpit Next.js frontend in `apps/cockpit`.
+and kitchen operation. It pairs a Fastify backend/API (this repo) with the
+Cockpit Next.js frontend in `apps/cockpit` (`bevero-plattform-cockpit`).
 
 The backend is an independent service for moving external POS data into internal
 workflow logic. The POS adapter has moved from Gastronovi to FoodNotify; external
 POS data is never treated as operational truth directly. Payloads are imported,
 normalized, versioned, and only then processed as internal workflow events.
 
-Deployments: frontend on `bevero-ui`, backend/API on `bevero-api`.
+Deployments: frontend on `bevero-plattform-cockpit`, backend/API on
+`bevero-plattform-api`.
 
 ## Goals
 
@@ -359,7 +360,7 @@ DIRECT_URL="postgresql://..."
   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `NEXT_PUBLIC_API_BASE_URL` in its
   deployment environment. `NEXT_PUBLIC_API_BASE_URL` is public browser
   configuration for backend-dependent Cockpit flows; it must point to the
-  stable `bevero-api` service, not to the Cockpit frontend origin.
+  stable `bevero-plattform-api` service, not to the Cockpit frontend origin.
 - `NEXT_PUBLIC_APP_ENV` and `NEXT_PUBLIC_COMMIT_SHA` are public build display
   values for the Cockpit shell. On Vercel, `NEXT_PUBLIC_COMMIT_SHA` may mirror
   the deployment commit SHA value.

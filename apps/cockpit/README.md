@@ -82,7 +82,10 @@ Light/dark theme is managed by `hooks/useTheme.ts`, backed by `localStorage` key
 - `NEXT_PUBLIC_APP_ENV`
 - `NEXT_PUBLIC_COMMIT_SHA`
 
-`NEXT_PUBLIC_API_BASE_URL` must point to the stable `bevero-api` surface for Cockpit flows that still call repository-owned Fastify endpoints. It is public browser configuration, not a secret. Do not point it at the Cockpit frontend origin.
+`NEXT_PUBLIC_API_BASE_URL` must point to the stable `bevero-plattform-api`
+surface for Cockpit flows that still call repository-owned Fastify endpoints.
+It is public browser configuration, not a secret. Do not point it at the
+Cockpit frontend origin.
 
 ## Backend Gate
 

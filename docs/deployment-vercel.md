@@ -1,156 +1,138 @@
-# Vercel Deployment — SOT
+# Vercel Deployment — Bevero-Plattform SOT
 
-**Stand:** 2026-06-18  
-**Gültig für:** Monorepo `rauschenberger-os`  
-**Team-ID:** `team_UDEAB38fNwJF8GYv9wkJsKSc` (Account: `baum`)
+**Stand:** 2026-07-03
+**Gültig für:** Monorepo `bevero-plattform`
+**Team / Scope:** `forgedfromwood`
 
 ---
 
-## Kanonische Projekte
+## Canonical Projects
 
-Diese drei Projekte sind die einzigen autorisierten Deployment-Ziele.
-Jeder weitere `vercel deploy`-Aufruf muss auf eines davon zeigen.
+Diese drei Projekte sind die einzigen autorisierten Bevero-Plattform-Ziele.
+Die alten Projekte `bevero-api` und `bevero-ui` bleiben unangetastet und sind
+keine Bevero-Plattform-Deploy-Ziele.
 
-| App | Vercel-Projekt | Projekt-ID | Root Directory | Production URL |
+| App | Vercel-Projekt | Projekt-ID | Repo-relativer Root | Status |
 |---|---|---|---|---|
-| `apps/api` | **bevero-api** | `prj_EcJwphogd9Gi1KbOLtQWPpfoQjOW` | `apps/api` | bevero-api.vercel.app |
-| `apps/cockpit` | **bevero-ui** | `prj_FhYjq24YzoWd6nXaOn3fIlRNos8Z` | `apps/cockpit` | bevero-ui.vercel.app |
-| `apps/landing` | **landing** | `prj_Yxi8zycTxkwOGp7ZSKBdlS66dAlX` | `apps/landing` | landing-seven-kappa-69.vercel.app |
+| `apps/api` | `bevero-plattform-api` | `prj_QEYGXu3hbDyvuCkUX2Sh0uJUQL7M` | `apps/api` | linked, preview-only, prod blocked |
+| `apps/cockpit` | `bevero-plattform-cockpit` | `prj_ymfMaXixvk2FaDgQ7Nyd4QSwj28i` | `apps/cockpit` | linked, preview-only, prod blocked |
+| `apps/landing` | `bevero-plattform-landing` | `prj_94WhlY4UzKh8GcSrAwVXmytHKM6Z` | `apps/landing` | linked, preview-only, prod blocked |
 
-Framework-Versionen: Fastify 5.2 · Next.js 15.3 · Vite 5 · Node.js 24.x · Region: `fra1`
+Note: `vercel project inspect` shows `Root Directory = "."` because the project
+was linked from the app directory itself. Repo-relative ownership still lives in
+the app paths above.
 
 ---
 
-## Deployment-Regel
+## Hard Rules
 
-**Immer aus dem App-Verzeichnis deployen — nie aus dem Repo-Root.**
+* Never deploy from the repo root.
+* Keep the repo-root `.vercel/` absent.
+* Use preview deploys first.
+* Production deploys require a separate Owner GO.
+* Do not reuse any Bevero-Plattform app as a transport for legacy
+  `rauschenberger-os` Vercel projects.
+
+Preview command shape:
 
 ```bash
-# API
+cd apps/api && vercel
+cd apps/cockpit && vercel
+cd apps/landing && vercel
+```
+
+Observation from this session: `vercel deploy` on the local CLI produced
+production-targeted deployments and aliases. Do not use it as the preview
+command in this workspace.
+
+Production remains blocked until a separate Owner approval is issued:
+
+```bash
 cd apps/api && vercel deploy --prod
-
-# Cockpit
 cd apps/cockpit && vercel deploy --prod
-
-# Landing
 cd apps/landing && vercel deploy --prod
 ```
 
-Das Repo-Root hat kein `.vercel/project.json` mehr (bewusst entfernt 2026-06-18).
-Ein `vercel deploy` aus dem Root würde ein neues, ungewolltes Projekt erzeugen.
+---
+
+## Root Context
+
+The repo root must not carry a live Vercel project link. If `.vercel/` reappears
+at the repo root, treat it as a deploy-safety regression and remove it before
+any further deployment work.
 
 ---
 
-## Vercel Dashboard: Root Directory-Einstellung
+## Environment Boundary
 
-Für jeden Deploy aus dem Monorepo muss in den Vercel Projekt-Settings
-der **Root Directory**-Wert korrekt gesetzt sein:
+### `apps/api` — `bevero-plattform-api`
 
-| Projekt | Settings → Root Directory |
-|---|---|
-| bevero-api | `apps/api` |
-| bevero-ui | `apps/cockpit` |
-| landing | `apps/landing` |
+Framework: Node / Fastify
 
-→ Vercel Dashboard: `Project → Settings → General → Root Directory`
+Required runtime variables:
 
----
-
-## Stale Projekte — löschen
-
-Diese Projekte sind Relikte und sollen im Vercel Dashboard gelöscht werden:
-
-| Projekt | Projekt-ID | Grund |
+| Variable | Scope | Notes |
 |---|---|---|
-| `cockpit` | `prj_57V8ZDUA3HR7VDjiPABkkho7sCY0` | Fehlgeschlagener Migrationversuch (ERROR), nicht verlinkt |
-| `cockpit-next` | `prj_FPmMOlne0k50LBN2nRxvPRAN75Dq` | Alter Name vor Monorepo-Umbenennung |
-| `bevero-landing` | `prj_IUMGcRi607rtvWrtfc4IpIRHU479` | Abgelöst durch `landing` |
-| `rauschenberger-os` | `prj_PFdhBHEgrVw1Mi8WYzrzShGXs2vw` | Versehentlich beim `vercel link` im Root erzeugt |
+| `NODE_ENV` | config | `production` for prod-only deploys |
+| `DATABASE_URL` | secret | Supabase pooled Postgres URL |
+| `DIRECT_URL` | secret | Supabase direct URL for Prisma / migrations |
+| `SUPABASE_JWT_SECRET` | secret | Auth token verification |
+| `CORS_ALLOWED_ORIGINS` | config | Must include the Bevero-Plattform Cockpit origin |
+| `UPSTASH_REDIS_REST_URL` | secret | Redis runtime dependency, if enabled |
+| `UPSTASH_REDIS_REST_TOKEN` | secret | Redis runtime dependency, if enabled |
+| `LOG_LEVEL` | config | Default `info` |
+| `DEMO_MODE` | config | Must be `false` in production |
+| `SYNC_ENABLE_SCHEDULED_JOBS` | config | Default `false` |
+| `PROCUREMENT_ORGANIZATION_ID` | config | Only for FoodNotify ingest flows |
+| `MICROSOFT_TENANT_ID` | secret | Only for Graph integration flows |
+| `MICROSOFT_CLIENT_ID` | secret | Only for Graph integration flows |
+| `MICROSOFT_CLIENT_SECRET` | secret | Only for Graph integration flows |
+| `FOODNOTIFY_MAILBOX` | config | Only for Graph integration flows |
+| `FOODNOTIFY_IMPORT_ENABLED` | config | Default `false` |
 
-Löschen: `Project → Settings → General → Delete Project`
+### `apps/cockpit` — `bevero-plattform-cockpit`
 
----
+Framework: Next.js
 
-## Produktion-Deployment wiederherstellen
+Required runtime variables:
 
-`bevero-api` und `bevero-ui` haben aktuell `target: null` auf dem letzten Deploy —
-kein gesetzter Production-Alias. Einmalig je App mit `--prod` deployen:
+| Variable | Scope | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | public | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | public | Supabase anon / publishable key |
+| `BEVERO_API_BASE_URL` | public config | Required; no fallback to `bevero-api` or localhost |
+| `NEXT_PUBLIC_APP_ENV` | public | `production` / `preview` / `local` |
+| `NEXT_PUBLIC_COMMIT_SHA` | public | Vercel git commit SHA |
+| `NEXT_PUBLIC_SITE_URL` | public | Optional, for auth redirects |
 
-```bash
-cd apps/api    && vercel deploy --prod
-cd apps/cockpit && vercel deploy --prod
-```
+### `apps/landing` — `bevero-plattform-landing`
 
-`landing` ist bereits korrekt (`target: production`).
+Framework: Vite
 
----
-
-## Backend — bevero-api (`apps/api`)
-
-- Framework: Other / Node.js
-- Install: `npm install --include=dev`
-- Build: `npm run build`
-- Output Directory: leer lassen
-- Entry: `api/index.ts` (via `apps/api/vercel.json`)
-
-### Environment Variables
-
-| Variable | Pflicht | Typ | Hinweis |
-|---|---|---|---|
-| `NODE_ENV` | ja | config | `production` für Prod-Deployments |
-| `DATABASE_URL` | ja | secret | Supabase pooled Postgres URL (Runtime) |
-| `DIRECT_URL` | ja | secret | Supabase direct URL (Prisma/Migrations) |
-| `SUPABASE_JWT_SECRET` | ja | secret | Supabase Bearer-Token-Verifikation |
-| `CORS_ALLOWED_ORIGINS` | ja | config | `bevero-ui`-Origin, z.B. `https://bevero-ui.vercel.app` |
-| `UPSTASH_REDIS_REST_URL` | prod ja | secret | Redis (Upstash) |
-| `UPSTASH_REDIS_REST_TOKEN` | prod ja | secret | Redis (Upstash) |
-| `LOG_LEVEL` | optional | config | Default: `info` |
-| `DEMO_MODE` | optional | config | Muss `false` in Produktion sein |
-| `SYNC_ENABLE_SCHEDULED_JOBS` | optional | config | Default: `false` |
-| `PROCUREMENT_ORGANIZATION_ID` | nur FoodNotify-Ingest | config | Org-ID für importierte Bestellungen |
-| `MICROSOFT_TENANT_ID` | nur FoodNotify-Graph | secret | Microsoft Entra Tenant-ID |
-| `MICROSOFT_CLIENT_ID` | nur FoodNotify-Graph | secret | Graph App Registration Client-ID |
-| `MICROSOFT_CLIENT_SECRET` | nur FoodNotify-Graph | secret | Graph Client Secret |
-| `FOODNOTIFY_MAILBOX` | nur FoodNotify-Graph | config | M365-Postfach UPN/ID |
-| `FOODNOTIFY_IMPORT_ENABLED` | optional | config | Default: `false` |
+No secrets. Keep landing static unless a documented public URL dependency is
+introduced later.
 
 ---
 
-## Frontend — bevero-ui (`apps/cockpit`)
+## Legacy Shared Projects
 
-- Framework: Next.js
-- Install: `npm install --include=dev`
-- Build: `npm run build`
-- Output Directory: leer lassen
+Die folgenden Vercel-Projekte existieren historisch oder aktuell im Team, sind
+aber keine Bevero-Plattform-Ziele:
 
-### Environment Variables
-
-| Variable | Pflicht | Typ | Hinweis |
-|---|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | ja | public config | Supabase Projekt-URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | ja | public config | Supabase Anon/Publishable Key |
-| `NEXT_PUBLIC_API_BASE_URL` | ja | public config | `bevero-api` Production-URL, kein trailing slash |
-| `NEXT_PUBLIC_APP_ENV` | ja | public config | `production` / `preview` / `local` |
-| `NEXT_PUBLIC_COMMIT_SHA` | empfohlen | public config | Vercel Git Commit SHA |
-| `NEXT_PUBLIC_SITE_URL` | optional | public config | Für Auth-Redirects |
-
-Keine Backend-Secrets in `bevero-ui` setzen — alle `NEXT_PUBLIC_*` sind browser-sichtbar.
+| Projekt | Zuordnung | Aktion |
+|---|---|---|
+| `bevero-api` (`prj_EcJwphogd9Gi1KbOLtQWPpfoQjOW`) | legacy shared project | nicht verwenden, unangetastet lassen |
+| `bevero-ui` (`prj_FhYjq24YzoWd6nXaOn3fIlRNos8Z`) | legacy shared project | nicht verwenden, unangetastet lassen |
+| `landing` (`prj_Yxi8zycTxkwOGp7ZSKBdlS66dAlX`) | legacy landing project | nicht verwenden, unangetastet lassen |
+| `rauschenberger-os` (`prj_Z60vyyeyLELjWJ90udDE9Zh7KHfY`) | stray/root history | root link darf nicht zurückkehren |
 
 ---
 
-## Landing — landing (`apps/landing`)
+## Validation Gate
 
-- Framework: Vite
-- Install: `npm install`
-- Build: `npm run build`
-- Output Directory: `dist`
+Before any production release:
 
-Keine Secrets — statisches Frontend ohne Backend-Abhängigkeit.
-
----
-
-## Runtime Boundary
-
-Cockpit-Backend-Calls ausschließlich über `NEXT_PUBLIC_API_BASE_URL`.
-Kein Fallback auf `localhost:4000` oder eigene Origin.
-Kein Secret darf im Frontend landen.
+1. `vercel env ls` checked for each app.
+2. Preview deploy succeeds or the failure mode is explicitly documented.
+3. Cockpit build no longer falls back to the legacy API project.
+4. Owner gives separate production approval.

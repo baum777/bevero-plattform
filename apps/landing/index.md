@@ -1,13 +1,13 @@
 # Bevero Landing — Strukturindex
 
 Stand: 2026-06-27 · Audit-Snapshot · read-only
-Pfad: `projects/rauschenberger-os/apps/landing/`
+Pfad: `projects/bevero-plattform/apps/landing/`
 
 ## Überblick
 
 Statische Single-Page-App in **Vite 5 + React 18 + plain CSS** (ca. 2422 Zeilen `styles.css`). Kein Router — Tab-Wechsel und Modal über `useState`. Zielgruppe: Key Account der Rauschenberger Gruppe, interne IT, Management. Ton: defensiv ("eigeninitiativ entwickelter Pilot", "kein offizielles Rauschenberger-Projekt").
 
-Vercel-Projekt: `landing` (`prj_Yxi8zycTxkwOGp7ZSKBdlS66dAlX`)
+Vercel-Projekt: `bevero-plattform-landing` (`prj_94WhlY4UzKh8GcSrAwVXmytHKM6Z`)
 Build-Output: `dist/` (statisch)
 
 ## Quell-Layout

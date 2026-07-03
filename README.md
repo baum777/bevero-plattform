@@ -75,7 +75,7 @@ npm run typecheck  # TypeScript strict
 
 **Stack:** TypeScript 5.7 · Fastify 5.2 · Prisma 6.1 · Supabase Postgres · Zod 3 · Vitest  
 **Kennzahlen:** 78 Prisma-Modelle · 59 Migrationen · 20 Module · 124 API-Routen · 21.169+ Testzeilen  
-**Vercel-Projekt:** `bevero-api` (`prj_EcJwphogd9Gi1KbOLtQWPpfoQjOW`)
+**Vercel-Projekt:** `bevero-plattform-api` (`prj_QEYGXu3hbDyvuCkUX2Sh0uJUQL7M`)
 
 **Module (Stand 2026-06-24):** inventory · procurement · kitchen · shift-planning · gastronovi · workspaces · alerts · notes · approvals · automation · auth · ... (20 gesamt)
 
@@ -96,7 +96,7 @@ npm run build
 **Stack:** Next.js 15.3 · React 19 · @supabase/ssr · TypeScript 5.7  
 **Seiten:** 40 page.tsx (Dashboard, Inventory, Procurement, Mother-Concern, Workspaces, Shift-Handover …)  
 **Screenshots:** 18 Cockpit-Ansichten dokumentiert unter `assets/Screenshots/01-tabs/`  
-**Vercel-Projekt:** `bevero-ui` (`prj_FhYjq24YzoWd6nXaOn3fIlRNos8Z`)
+**Vercel-Projekt:** `bevero-plattform-cockpit` (`prj_ymfMaXixvk2FaDgQ7Nyd4QSwj28i`)
 
 ---
 
@@ -112,20 +112,22 @@ npm run build      # Output: dist/
 ```
 
 **Stack:** Vite 5 · React 18  
-**Vercel-Projekt:** `landing` (`prj_Yxi8zycTxkwOGp7ZSKBdlS66dAlX`)
+**Vercel-Projekt:** `bevero-plattform-landing` (`prj_94WhlY4UzKh8GcSrAwVXmytHKM6Z`)
 
 ---
 
 ## Deployment
 
-Alle drei Apps deployen auf separate Vercel-Projekte. Details in [`docs/deployment-vercel.md`](docs/deployment-vercel.md).
+Alle drei Apps deployen auf separate Vercel-Projekte. Details in
+[`docs/deployment-vercel.md`](docs/deployment-vercel.md).
 
-**Regel:** Immer aus dem App-Verzeichnis deployen — nie aus dem Repo-Root.
+**Regel:** Immer aus dem App-Verzeichnis deployen, nie aus dem Repo-Root.
+Preview zuerst, Production nur mit separatem Owner-GO.
 
 ```bash
-cd apps/api     && vercel deploy --prod
-cd apps/cockpit && vercel deploy --prod
-cd apps/landing && vercel deploy --prod
+cd apps/api     && vercel
+cd apps/cockpit && vercel
+cd apps/landing && vercel
 ```
 
 ---

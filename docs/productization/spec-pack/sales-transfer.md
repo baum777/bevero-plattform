@@ -3,7 +3,7 @@
 ## 5 Landingpage-Claims
 
 1. „Jede Schichtübergabe nachlesbar. Jede Warenbewegung nachvollziehbar."
-2. „Die Fehlmenge von 7:30 Uhr ist um 7:35 Uhr beim Küchenchef — nicht bei der Inventur."
+2. „Die Fehlmenge von 7:30 Uhr ist beim Küchenchef — nicht bei der Inventur."
 3. „Weniger Zettel. Weniger Rückfragen. Weniger Schwund."
 4. „Bevero ersetzt nicht Ihre Kasse. Bevero ersetzt das Chaos davor."
 5. „Die Auffüllliste, die schon weiß, was Freitagabend gebraucht wird."

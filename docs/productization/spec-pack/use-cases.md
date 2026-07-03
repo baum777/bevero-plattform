@@ -5,7 +5,7 @@
 **Ausgangsproblem (heute):** 7:30 Uhr, der Lieferant hat es eilig. Der Azubi nimmt an, zählt grob, unterschreibt. Dass zwei Kisten fehlen, fällt mittags der Küche auf. Der Lieferschein liegt in der Hülle im Büro, der Fahrer ist weg, der Küchenchef erfährt es beim Abendservice. Die Reklamation verläuft im Sand, die Fehlmenge wird zur Inventurdifferenz.
 
 **Workflow mit Bevero:**
-1. **Lager/Warenannahme** öffnet „Neue Warenannahme", wählt Lieferant A.
+1. **Lager / Warenannahme** öffnet „Neue Warenannahme", wählt Lieferant A.
 2. Beim Zählen: zwei Kisten fehlen → Position als **Fehlmenge** markiert, Foto vom Lieferschein direkt in den Vorgang.
 3. Vorgang geht automatisch zur Freigabe an den **Küchenchef** — der sieht es auf dem Handy, noch bevor der Fahrer vom Hof ist.
 4. Küchenchef gibt frei; Reklamationsgrundlage (Foto, Zeit, Person, Position) ist vollständig dokumentiert.
