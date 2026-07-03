@@ -66,6 +66,7 @@ type ReviewTaskRecord = {
     metadataJson: unknown;
   } | null;
   createdAt: Date;
+  resolvedAt?: Date | null;
 };
 
 type CorrectionRequestListRecord = {
@@ -206,7 +207,7 @@ export type InventoryReadDatabaseClient = {
 export type InventoryReadServicePort = {
   listStock(): Promise<AdminStockRow[]>;
   listMovements(): Promise<InventoryMovementRow[]>;
-  listOpenReviewTasks(): Promise<ReviewTaskRow[]>;
+  listOpenReviewTasks(options?: { windowDays?: number }): Promise<ReviewTaskRow[]>;
   listCorrectionRequests(filters: {
     status?: string;
     limit?: number;
@@ -326,16 +327,38 @@ export class InventoryReadService implements InventoryReadServicePort {
     }));
   }
 
-  public async listOpenReviewTasks(): Promise<ReviewTaskRow[]> {
+  public async listOpenReviewTasks(options?: { windowDays?: number }): Promise<ReviewTaskRow[]> {
+    const openStatusFilter = {
+      status: {
+        in: ["open", "in_review"]
+      }
+    };
+    // windowDays additionally includes tasks created or resolved within the
+    // window, so KPI consumers get resolution history without a second read.
+    const windowStart =
+      options?.windowDays === undefined
+        ? undefined
+        : new Date(Date.now() - options.windowDays * 24 * 60 * 60 * 1000);
+    const where =
+      windowStart === undefined
+        ? {
+            ...openStatusFilter,
+            type: {
+              startsWith: "inventory."
+            }
+          }
+        : {
+            type: {
+              startsWith: "inventory."
+            },
+            OR: [
+              openStatusFilter,
+              { createdAt: { gte: windowStart } },
+              { resolvedAt: { gte: windowStart } }
+            ]
+          };
     const tasks = await this.db.workflowTask.findMany({
-      where: {
-        status: {
-          in: ["open", "in_review"]
-        },
-        type: {
-          startsWith: "inventory."
-        }
-      },
+      where,
       include: {
         workflowEvent: {
           select: {
@@ -356,7 +379,8 @@ export class InventoryReadService implements InventoryReadServicePort {
       title: task.title,
       description: task.description ?? undefined,
       correctionRequestId: extractCorrectionRequestId(task),
-      createdAt: task.createdAt.toISOString()
+      createdAt: task.createdAt.toISOString(),
+      resolvedAt: task.resolvedAt ? task.resolvedAt.toISOString() : null
     }));
   }
 

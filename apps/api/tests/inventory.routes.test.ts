@@ -1703,10 +1703,69 @@ describe("inventory API routes", () => {
             title: "Bestandskorrektur prüfen",
             description: "Tomaten passiert 5kg: Korrektur um -1 Stück angefordert.",
             correctionRequestId: "correction-1",
-            createdAt: "2026-05-25T20:00:00.000Z"
+            createdAt: "2026-05-25T20:00:00.000Z",
+            resolvedAt: null
           }
         ]
       });
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("validates and forwards the review-task windowDays query", async () => {
+    const receivedOptions: Array<{ windowDays?: number } | undefined> = [];
+    const app = buildApp({
+      inventory: fakeInventoryServices({
+        inventoryReadService: {
+          async listStock() {
+            return [];
+          },
+          async listMovements() {
+            return [];
+          },
+          async listOpenReviewTasks(options?: { windowDays?: number }) {
+            receivedOptions.push(options);
+            return [];
+          },
+          async listCorrectionRequests() {
+            return [];
+          },
+          async listStockByLocation() {
+            return [];
+          }
+        }
+      })
+    });
+
+    try {
+      await app.ready();
+      const invalidResponse = await app.inject({
+        method: "GET",
+        url: "/admin/review-tasks?windowDays=abc",
+        headers: authHeaders("admin-1", "admin")
+      });
+      const outOfRangeResponse = await app.inject({
+        method: "GET",
+        url: "/admin/review-tasks?windowDays=0",
+        headers: authHeaders("admin-1", "admin")
+      });
+      const windowedResponse = await app.inject({
+        method: "GET",
+        url: "/admin/review-tasks?windowDays=30",
+        headers: authHeaders("admin-1", "admin")
+      });
+      const defaultResponse = await app.inject({
+        method: "GET",
+        url: "/admin/review-tasks",
+        headers: authHeaders("admin-1", "admin")
+      });
+
+      expect(invalidResponse.statusCode).toBe(400);
+      expect(outOfRangeResponse.statusCode).toBe(400);
+      expect(windowedResponse.statusCode).toBe(200);
+      expect(defaultResponse.statusCode).toBe(200);
+      expect(receivedOptions).toEqual([{ windowDays: 30 }, undefined]);
     } finally {
       await app.close();
     }
@@ -2192,7 +2251,8 @@ function fakeInventoryServices(
             title: "Bestandskorrektur prüfen",
             description: "Tomaten passiert 5kg: Korrektur um -1 Stück angefordert.",
             correctionRequestId: "correction-1",
-            createdAt: "2026-05-25T20:00:00.000Z"
+            createdAt: "2026-05-25T20:00:00.000Z",
+            resolvedAt: null
           }
         ];
       },

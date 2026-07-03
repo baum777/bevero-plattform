@@ -163,8 +163,24 @@ export async function inventoryRoute(
       return reply;
     }
 
+    const query = request.query as { windowDays?: string };
+    let windowDays: number | undefined;
+    if (query.windowDays !== undefined) {
+      const parsed = Number.parseInt(query.windowDays, 10);
+      if (!Number.isInteger(parsed) || parsed < 1 || parsed > 365) {
+        reply.code(400).send({
+          error: "Bad Request",
+          message: "windowDays must be an integer between 1 and 365"
+        });
+        return reply;
+      }
+      windowDays = parsed;
+    }
+
     return {
-      tasks: await dependencies.inventoryReadService.listOpenReviewTasks()
+      tasks: await dependencies.inventoryReadService.listOpenReviewTasks(
+        windowDays === undefined ? undefined : { windowDays }
+      )
     };
   });
 

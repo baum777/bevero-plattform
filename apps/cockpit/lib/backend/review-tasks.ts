@@ -13,6 +13,7 @@ type ReviewTaskApiRow = {
   createdAt: string;
   description?: string;
   id: string;
+  resolvedAt?: string | null;
   severity: string;
   status: string;
   title: string;
@@ -29,6 +30,7 @@ export type ReviewTaskRow = {
   createdAt: string;
   description?: string;
   id: string;
+  resolvedAt: string | null;
   severity: string;
   status: string;
   title: string;
@@ -42,7 +44,9 @@ export type ReviewTasksResult = {
   error: string | null;
 };
 
-export async function listReviewTasksForCurrentUser(): Promise<ReviewTasksResult> {
+export async function listReviewTasksForCurrentUser(options?: {
+  windowDays?: number;
+}): Promise<ReviewTasksResult> {
   const supabase = await createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   const userId = userData.user?.id ?? null;
@@ -105,7 +109,11 @@ export async function listReviewTasksForCurrentUser(): Promise<ReviewTasksResult
   }
 
   try {
-    const response = await apiFetch("/admin/review-tasks", {
+    const reviewTasksPath =
+      options?.windowDays === undefined
+        ? "/admin/review-tasks"
+        : `/admin/review-tasks?windowDays=${options.windowDays}`;
+    const response = await apiFetch(reviewTasksPath, {
       accessToken,
       organizationId,
       requireOrganization: true,
@@ -131,6 +139,7 @@ export async function listReviewTasksForCurrentUser(): Promise<ReviewTasksResult
         createdAt: task.createdAt,
         description: task.description,
         id: task.id,
+        resolvedAt: task.resolvedAt ?? null,
         severity: task.severity,
         status: task.status,
         title: task.title,

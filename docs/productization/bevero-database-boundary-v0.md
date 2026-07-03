@@ -184,3 +184,36 @@ declared role, command class, approval gate, and validation outcome without secr
 
 Complete the remaining production read-only checks in
 `/home/baum/workspace/baum-os/evidence/2026-07-02-bevero-db-verification.md`.
+
+## Incident Closure (2026-07-03)
+
+The P0 DB incident (unintended `prisma migrate deploy` against the
+Rauschenberger/Pilot production DB during Phase 4b-1) is formally closed with
+**Option A — forward-fix accepted** (owner decision, 2026-07-03).
+
+Basis:
+
+- Migration health `pass` — both incident migrations finished cleanly, no
+  open/failed migrations (owner-supplied Supabase evidence, matrix update in
+  `/home/baum/workspace/baum-os/evidence/2026-07-02-bevero-db-verification.md`).
+- Constraints `pass`, logs `pass`; Advisors queued as a dedicated hardening
+  block (`os/DECISIONS.md`, "Advisor Hardening Queue").
+- Authenticated cockpit smoke `pass` with live data
+  (`/home/baum/workspace/baum-os/evidence/2026-07-02-cockpit-auth-smoke.md`).
+- Closure decision entry: `os/DECISIONS.md` (Baum-OS root),
+  "P0-DB-Incident-Closure: Option A forward-fix" (2026-07-03).
+
+Boundary rules that remain in force, unchanged:
+
+- `czinchfegtglmrloxlmh` (warenwirtschaft) is production owned by
+  `rauschenberger-os` — **foreign** to this repo; writes are blocked by the DB
+  target guard, reads require the explicit cross-project read approval phrase.
+- `ienwshemokpsjwkedmyp` (bevero-os / bevero-plattform) is the only owned
+  development target.
+- No local or remote DB command (migrate, seed, push, execute) without the
+  guard passing and, for production-role targets, explicit owner approval.
+- Guardrails: `apps/api/scripts/verify-database-target.ts` (allowlist +
+  approval phrases, fail-closed) with `apps/api/tests/database-target-guard.test.ts`.
+
+Open items tracked outside this closure: Organization=0 domain question,
+Advisor hardening block, backup/PITR remediation (separate owner gates).

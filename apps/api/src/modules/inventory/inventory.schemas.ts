@@ -277,6 +277,7 @@ export type ReviewTaskRow = {
   description?: string;
   correctionRequestId?: string;
   createdAt: string;
+  resolvedAt: string | null;
 };
 
 export type BarRefillRunStatus = "open" | "partially_confirmed" | "completed";

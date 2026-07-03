@@ -72,28 +72,21 @@ export async function getDashboardSnapshot(): Promise<DashboardSnapshotResult> {
       listInventoryBalances(),
       listStorageLocations({ status: "all" }),
       listWorkspaceSummariesForCurrentUser(),
-      listReviewTasksForCurrentUser()
+      listReviewTasksForCurrentUser({ windowDays: days })
     ]);
   const [openSuggestions, criticalNotesCount] = await Promise.all([
     countOpenAutomationSuggestions(workspacesResult.organizationId ?? ""),
     countCriticalOpenNotes(workspacesResult.organizationId ?? ""),
   ]);
-  const [{ data: movementRows, error: movementError }, { data: workflowTasks, error: workflowTasksError }] =
-    await Promise.all([
-      supabase
-        .from("InventoryMovement")
-        .select("inventoryItemId,type,quantity,createdAt")
-        .gte("createdAt", sinceIso)
-        .order("createdAt", { ascending: true })
-        .limit(5000),
-      supabase
-        .from("WorkflowTask")
-        .select("type,createdAt,resolvedAt")
-        .ilike("type", "inventory.%")
-        .gte("createdAt", sinceIso)
-        .order("createdAt", { ascending: true })
-        .limit(5000)
-    ]);
+  // WorkflowTask has no organization column, so it must not be read directly
+  // with the user session; alert history comes from the org-scoped
+  // review-task backend proxy (alertsResult) instead.
+  const { data: movementRows, error: movementError } = await supabase
+    .from("InventoryMovement")
+    .select("inventoryItemId,type,quantity,createdAt")
+    .gte("createdAt", sinceIso)
+    .order("createdAt", { ascending: true })
+    .limit(5000);
 
   const warnings: string[] = [];
   if (workspacesResult.access !== "allowed") {
@@ -120,9 +113,6 @@ export async function getDashboardSnapshot(): Promise<DashboardSnapshotResult> {
   }
   if (movementError) {
     return { data: null, error: movementError.message, warnings };
-  }
-  if (workflowTasksError) {
-    return { data: null, error: workflowTasksError.message, warnings };
   }
 
   const itemTotal = itemsResult.data.length;
@@ -235,16 +225,16 @@ export async function getDashboardSnapshot(): Promise<DashboardSnapshotResult> {
     }
   }
 
-  for (const task of workflowTasks ?? []) {
-    const createdDate = String((task as { createdAt?: string }).createdAt ?? "").slice(0, 10);
+  const reviewTasksForHistory = alertsResult.access === "allowed" ? alertsResult.data : [];
+  for (const task of reviewTasksForHistory) {
+    const createdDate = task.createdAt.slice(0, 10);
     const createdBucket = historyMap.get(createdDate);
     if (createdBucket) {
       createdBucket.alertsCreated += 1;
     }
 
-    const resolvedAt = String((task as { resolvedAt?: string | null }).resolvedAt ?? "");
-    if (resolvedAt) {
-      const resolvedDate = resolvedAt.slice(0, 10);
+    if (task.resolvedAt) {
+      const resolvedDate = task.resolvedAt.slice(0, 10);
       const resolvedBucket = historyMap.get(resolvedDate);
       if (resolvedBucket) {
         resolvedBucket.alertsResolved += 1;

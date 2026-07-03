@@ -280,7 +280,8 @@ describe("InventoryReadService", () => {
         title: "Bestandskorrektur prüfen",
         description: "Tomaten: Korrektur um -1 kg angefordert.",
         correctionRequestId: "correction-1",
-        createdAt: "2026-05-29T08:00:00.000Z"
+        createdAt: "2026-05-29T08:00:00.000Z",
+        resolvedAt: null
       },
       {
         id: "task-risk-1",
@@ -290,7 +291,71 @@ describe("InventoryReadService", () => {
         title: "Negativbestand prüfen",
         description: "Artikel droht negativ zu werden.",
         correctionRequestId: undefined,
-        createdAt: "2026-05-29T08:05:00.000Z"
+        createdAt: "2026-05-29T08:05:00.000Z",
+        resolvedAt: null
+      }
+    ]);
+  });
+
+  it("includes resolved tasks and resolvedAt when a window is requested", async () => {
+    const calls: unknown[] = [];
+    const service = new InventoryReadService({
+      inventoryItem: {
+        async findMany() {
+          return [];
+        }
+      },
+      inventoryMovement: {
+        async findMany() {
+          return [];
+        }
+      },
+      inventoryCorrectionRequest: {
+        async findMany() {
+          return [];
+        }
+      },
+      storageLocation: {
+        async findMany() {
+          return [];
+        }
+      },
+      workflowTask: {
+        async findMany(args: unknown) {
+          calls.push(args);
+          return [
+            {
+              id: "task-resolved-1",
+              type: "inventory.correction_request",
+              status: "resolved",
+              severity: "warning",
+              title: "Bestandskorrektur prüfen",
+              description: null,
+              workflowEvent: null,
+              createdAt: new Date("2026-06-20T08:00:00.000Z"),
+              resolvedAt: new Date("2026-06-21T09:00:00.000Z")
+            }
+          ];
+        }
+      }
+    });
+
+    const rows = await service.listOpenReviewTasks({ windowDays: 30 });
+
+    const where = (calls[0] as { where: { OR?: unknown[]; type: unknown } }).where;
+    expect(where.type).toEqual({ startsWith: "inventory." });
+    expect(where.OR).toHaveLength(3);
+    expect(rows).toEqual([
+      {
+        id: "task-resolved-1",
+        type: "inventory.correction_request",
+        status: "resolved",
+        severity: "warning",
+        title: "Bestandskorrektur prüfen",
+        description: undefined,
+        correctionRequestId: undefined,
+        createdAt: "2026-06-20T08:00:00.000Z",
+        resolvedAt: "2026-06-21T09:00:00.000Z"
       }
     ]);
   });
