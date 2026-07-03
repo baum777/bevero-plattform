@@ -16,7 +16,7 @@
 ## Code Change Context
 
 - Trigger: P1.1a-`partial` durch W1–W4 schließen, O2 neu prüfen, Skill-Layer validieren und einen sendefreien Lead-Dry-Run ausführen.
-- Dirty-state disposition: `docs/sales-kit/` war vor diesem Slice vollständig untracked. Während des Slices erschien extern/parallel Commit `47ca501` auf `main`/`origin/main`; danach waren die Basisdateien tracked und die P1.1b-Änderungen als `M` sichtbar. Dieser Agent hat weder committed noch gepusht. Andere Dirty-/Untracked-Dateien wurden nicht verändert oder absorbiert.
+- Dirty-state disposition: `docs/sales-kit/` war vor diesem Slice vollständig untracked. Während des Slices erschienen extern/parallel `47ca501` und später `c851236` auf `main`/`origin/main`; der zweite Commit nahm die P1.1b-Bereinigung und Work Docs auf. Dieser Agent hat weder committed noch gepusht. Andere Dirty-/Untracked-Dateien wurden nicht verändert oder absorbiert.
 - Reuse decision: repo-lokale Skills verwendet; kein Shared-Core-Change, keine Fremdskill-Installation/Kopie.
 - Files read: Root-/Repo-Frontdoors, vollständiger `docs/sales-kit/`-Bestand einschließlich sechs Skill-Dateien, Work Documentation Rule und vorheriger P1.1/P1.1a-Kontext.
 - Files changed: siehe `docs/sales-kit/p1.1b-closure.md` Abschnitt „Geänderte Dateien“, plus dieser MSPR- und verknüpfter Intent-Eintrag.
@@ -34,12 +34,17 @@
 
 ## Review
 
-- status: pending final validation
-- W1–W4: geschlossen, vorbehaltlich finalem Claim-Scan.
+- status: partial
+- W1–W4: geschlossen; finaler aktiver Claim-Scan `pass`.
 - O2: erlaubt enge bestätigte Formulierungen; partial/unconfirmed/future bleiben klar begrenzt.
 - Dry Run: pass als synthetischer Prozess-/Safety-Test; realer Versand korrekt blockiert.
-- Overall: `partial`, weil neue P1.1b-Artefakte untracked bleiben und der Work-Docs-Check den Slice durch einen in der Sandbox leeren internen `git status` überspringt.
-- nextGate: Owner-Review und gezielte Tracking-/Commit-Entscheidung; danach Validator erneut gegen erfassten Diff.
+- Skill-Struktur/Guardrails/Index: `pass`.
+- RED/GREEN Statusvokabular-Test: `pass`.
+- Trailing whitespace: `pass`.
+- `git diff --check`: `pass`.
+- `npm run check:work-docs`: `fail` mit sichtbarem Changeset (3 Dateien). Skript-Bug in `getChangedFiles()` (`run().trim()` frisst führendes Leerzeichen der ersten `git status`-Zeile, anschließend `slice(3)` trifft das `d` von `docs/`); MSPR-Pfad matcht `newMsprEntries` nicht. Zusätzlich: kein Intent-Eintrag im Changeset. Validator ist also mittlerweile aussagekräftig, aber doppelt blockiert.
+- Overall: `partial`, weil der Work-Docs-Check den lokalen Restdiff durch einen in der Sandbox leeren internen `git status` überspringt und die parallelen Commits die Abschlussbasis zweimal verändert haben.
+- nextGate: Owner-Review von `47ca501`, `c851236` und Restdiff; danach Validator erneut mit sichtbarem Changeset.
 
 ## Linked intent entry
 
