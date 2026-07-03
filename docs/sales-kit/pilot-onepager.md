@@ -6,31 +6,32 @@
 
 ## Für wen
 
-Gastronomie- und Hotelleriebetriebe mit mindestens einer Schichtgrenze und mindestens einer Ausgabestelle (Bar, Küche, Frühstück, Bankett), bei denen Warenannahme, Auffülllisten oder Schichtübergaben heute über Papier, Messenger oder Zuruf laufen.
+Gastronomie- und Hotelleriebetriebe mit mindestens einer Schichtgrenze und mindestens einer Ausgabestelle (Bar, Küche, Frühstück, Bankett), bei denen Warenannahme, Bar-Auffüllung oder Schichtübergaben heute über Papier, Messenger oder Zuruf laufen.
 
 Nicht geeignet für Betriebe, die ein vollwertiges Warenwirtschafts- oder ERP-System suchen (Bestellwesen, Lieferantenpreise, Buchhaltung) — das ist Bevero nicht.
 
 ## Welches Problem der Pilot löst
 
-Heute weiß am Ende des Tages niemand verlässlich:
+Der Pilot prüft, ob der Betrieb diese Fragen heute verlässlich beantworten kann:
 
 - Was wurde geliefert, und stimmte es mit dem Lieferschein überein?
 - Was ist vom Lager an Bar und Küche gegangen?
 - Was hat die Frühschicht der Spätschicht übergeben — und was ist davon angekommen?
 - Wer hat eine Korrektur gemacht, und warum?
 
-Der Pilot macht genau diese Fragen für einen Standort beantwortbar — mit einem Blick statt mit fünf Anrufen.
+Bevero kann die zugrunde liegenden Einträge und Warenbewegungen mit verantwortlicher Person und Zeitpunkt festhalten. Ob das den tatsächlichen Rückfrageaufwand senkt, ist ein Pilot-Ergebnis und keine Vorabzusage.
 
-## Was im Pilot enthalten ist
+## Wählbare Pilot-Bausteine
 
+- Aus der folgenden Liste werden gemeinsam **ein bis zwei Prozesse** für den tatsächlichen Pilot-Scope gewählt; die Liste ist kein Gesamtleistungsversprechen.
 - Gemeinsames Mini-Audit der heutigen Abläufe (20–30 Minuten, vor Ort oder remote)
-- Einrichtung von Bevero für die gewählten Prozesse aus diesem Scope:
+- Einrichtung von Bevero für die ausgewählten Prozesse:
   - Warenannahme (Mengen, Abweichungen, Verantwortlicher)
   - Lagerorte und Warenbewegungen
-  - Auffüllliste Bar/Küche
+  - Bar-Auffüllliste
   - Schichtübergabe
   - Freigabe-/Korrekturprozess
-  - Verlauf/Audit Trail für die Betriebsleitung
+  - Verlauf von Warenbewegungen mit Wer/Was/Wann für die Betriebsleitung
 - Kurze Einweisung des Teams (praxisnah, am echten Ablauf, keine Schulungstage)
 - Ein fester Ansprechpartner während der Laufzeit
 - Zwei kurze Check-ins (nach Woche 1–2 und zum Abschluss)
@@ -41,7 +42,7 @@ Der Pilot macht genau diese Fragen für einen Standort beantwortbar — mit eine
 - Kein Ersatz für Kasse, Bestellwesen, Warenwirtschaft oder Buchhaltung
 - Keine Schnittstellen-Integrationen in Bestandssysteme
 - Kein Multi-Standort-Rollout — erst ein Standort, dann reden wir weiter
-- Keine Rezeptur-, Kalkulations- oder Personalplanungsfunktionen
+- Keine Küchen-Auffüllliste sowie keine Rezeptur-, Kalkulations- oder Personalplanungsfunktionen
 - Keine Versprechen über Funktionen, die es noch nicht gibt
 
 ## Ablauf
@@ -64,21 +65,19 @@ Vor dem Start gemeinsam festgelegt — als Vorschlag:
 
 ## Faire Abbruchkriterien
 
-Der Pilot wird beendet — ohne Diskussion und ohne Restkosten für nicht erbrachte Leistung — wenn:
+Die fachlichen Abbruchsignale sind:
 
 - das Team das Werkzeug nach der Justierung in Woche 1–2 weiterhin aktiv umgeht,
 - der Betrieb in eine Ausnahmesituation gerät (Personalausfall, Umbau), die den Test wertlos macht,
 - sich zeigt, dass das eigentliche Problem woanders liegt und Bevero es nicht löst.
 
-Ein sauber beendeter Pilot ist ein gutes Ergebnis. Ein durchgeschleppter Pilot ist keins.
+Preis- und Kostenfolgen eines Abbruchs werden erst nach O1 schriftlich vereinbart. Bis dahin enthält dieses Dokument keine verbindliche Abbruch- oder Kostenzusage. Ein fachlich sauber beendeter Pilot ist ein valides Ergebnis; ein durchgeschleppter Pilot ist keins.
 
-## Preislogik
+## Preis-Gate
 
-> Annahme: Es gibt noch keine finale Preisliste. Die folgende Logik ist ein Vorschlag als Gesprächsgrundlage, keine Zusage.
+> ⛔ O1 ist offen. Bis der Owner in `pricing-pilot-decision.md` eine Variante entschieden hat, wird dieser Onepager nicht mit Preis, Anrechnung, Laufzeit oder Verlängerungsregeln an einen Betrieb gegeben.
 
-- **Pilotphase:** einmaliger Pauschalbetrag für Einrichtung, Einweisung und Begleitung — Größenordnung im niedrigen bis mittleren dreistelligen bis niedrigen vierstelligen Bereich, abhängig von Standortgröße und Scope. Wird bei Übernahme in den Regelbetrieb angerechnet.
-- **Regelbetrieb danach:** monatlicher Betrag pro Standort, Größenordnung zweistellig bis niedrig dreistellig — abhängig von Nutzeranzahl und Prozessumfang.
-- Keine Mindestlaufzeit im Pilot. Keine automatische Verlängerung. Nach dem Pilot entscheiden Sie aktiv.
+Nach O1 wird hier ausschließlich die entschiedene Fassung eingetragen und gegen `objection-handling.md` abgeglichen.
 
 ## Nächster Schritt
 

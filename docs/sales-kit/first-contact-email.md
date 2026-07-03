@@ -16,13 +16,13 @@
 
 ## Variante A — Sehr kurz
 
-**Betreff:** Übergaben und Auffülllisten bei [Betriebsname]
+**Betreff:** Übergaben und Bar-Auffüllung bei [Betriebsname]
 
 Guten Tag [Name],
 
 kurz und direkt: In den meisten Betrieben laufen Schichtübergaben, Auffülllisten und Warenbewegungen über Zettel, WhatsApp und Zuruf. Das funktioniert — bis etwas verloren geht.
 
-Ich baue Bevero, ein schlankes Werkzeug, das genau diese Abläufe festhält: Warenannahme, Auffülllisten für Bar und Küche, Schichtübergaben — nachvollziehbar, ohne Ihre bestehenden Systeme zu ersetzen.
+Ich baue Bevero, ein schlankes Werkzeug, das genau diese Abläufe festhält: Warenannahme, Bar-Auffülllisten und Schichtübergaben — nachvollziehbar, ohne Ihre bestehenden Systeme zu ersetzen.
 
 Hätten Sie 20–30 Minuten, um einmal Ihren Warenfluss durchzugehen? Wenn Bevero nicht passt, sage ich das auch.
 
@@ -44,9 +44,9 @@ mein Name ist [Name], ich entwickle Bevero — ein Werkzeug für die operative S
 
 Der Anlass meiner Mail: In fast jedem Betrieb, den ich mir angesehen habe, laufen dieselben Dinge nebeneinander her — die Warenannahme wird auf dem Lieferschein abgehakt, die Auffüllliste für die Bar hängt als Zettel am Kühlhaus, die Schichtübergabe passiert mündlich zwischen Tür und Angel, und Korrekturen merkt sich, wer gerade dabei war. Jeder einzelne Schritt ist harmlos. Zusammen bedeuten sie: Wenn etwas fehlt oder nicht stimmt, beginnt die Suche.
 
-Bevero setzt genau dort an. Es hält Warenannahme, Lagerbewegungen, Auffülllisten und Schichtübergaben strukturiert fest — mobil, direkt im Ablauf, mit klaren Verantwortlichkeiten und einem Verlauf, den die Betriebsleitung jederzeit einsehen kann. Es ersetzt weder Ihre Kasse noch Ihr Bestellwesen oder Ihre Buchhaltung; die bleiben, wie sie sind.
+Bevero setzt genau dort an. Es hält Warenannahme, Lagerbewegungen, Bar-Auffülllisten und Schichtübergaben im Browser strukturiert fest. Warenbewegungen bleiben mit verantwortlicher Person und Zeitpunkt nachvollziehbar. Es ersetzt weder Ihre Kasse noch Ihr Bestellwesen oder Ihre Buchhaltung; die bleiben, wie sie sind.
 
-Mein Vorschlag: 20–30 Minuten, in denen wir Ihren heutigen Ablauf durchgehen — Warenannahme, Lager, Übergaben. Danach wissen Sie konkret, ob und wo Bevero bei Ihnen etwas verbessern würde. Kein Verkaufstermin, eher ein strukturierter Blick auf Ihre Abläufe.
+Mein Vorschlag: 20–30 Minuten, in denen wir Ihren heutigen Ablauf durchgehen — Warenannahme, Lager, Übergaben. Danach können wir gemeinsam einschätzen, ob Bevero zu einem dieser Abläufe passt. Kein Verkaufstermin, eher ein strukturierter Blick auf Ihre Abläufe.
 
 Falls das operativ bei jemand anderem liegt — Betriebsleitung, F&B, Standortleitung — wäre ich dankbar, wenn Sie die Mail kurz weiterreichen.
 
@@ -66,7 +66,7 @@ ich habe lange genug in operativen Standorten gearbeitet, um zu wissen, wie eine
 
 > Annahme: Der Absender hat eigene operative Erfahrung in Standortbetrieben. Falls nicht zutreffend, Variante B oder D verwenden — diese Variante lebt davon, dass der Satz stimmt.
 
-Genau aus diesem Frust heraus baue ich Bevero: ein einfaches Werkzeug, das Warenannahme, Auffülllisten und Schichtübergaben so festhält, dass die nächste Schicht — und die Betriebsleitung — nicht raten muss, was passiert ist. Kein großes System, kein Ersatz für Kasse oder Warenwirtschaft. Nur die Abläufe, die heute auf Papier und Zuruf laufen, sauber dokumentiert.
+Genau aus diesem Frust heraus baue ich Bevero: ein Werkzeug, das Warenannahme, Bar-Auffülllisten und Schichtübergaben mit verantwortlicher Person und Zeitpunkt festhält. Kein großes System, kein Ersatz für Kasse oder Warenwirtschaft. Nur eine nachvollziehbare Dokumentation dieser Abläufe.
 
 Ich würde gern 20–30 Minuten mit Ihnen oder Ihrer Betriebsleitung durch Ihren Warenfluss gehen — vom LKW an der Rampe bis zur Übergabe an die Spätschicht. Wenn dabei rauskommt, dass Ihre Abläufe schon sauber laufen: umso besser, dann kostet es Sie eine halbe Stunde und ein ehrliches Kompliment.
 
@@ -88,7 +88,7 @@ ich wende mich an Sie mit einem konkreten operativen Thema: der Nachvollziehbark
 
 In vielen Betrieben sind Warenannahme, Lagerbewegungen, Auffülllisten und Schichtübergaben nicht systematisch dokumentiert — sie laufen über Papier, Messenger und mündliche Absprachen. Die Folgen sind bekannt: Rückfragen, Suchzeiten, unklare Verantwortlichkeiten und fehlende Belegbarkeit, wenn Differenzen auftreten.
 
-Bevero ist ein schlankes digitales Werkzeug für genau diese Prozessschicht. Es dokumentiert Warenannahme, Warenbewegungen, Auffülllisten und Schichtübergaben mit Verantwortlichkeiten und lückenlosem Verlauf — als Ergänzung zu bestehenden Kassen-, Warenwirtschafts- und Buchhaltungssystemen, nicht als deren Ersatz.
+Bevero ist ein schlankes digitales Werkzeug für genau diese Prozessschicht. Es dokumentiert Warenannahme, Warenbewegungen, Bar-Auffülllisten und Schichtübergaben mit Verantwortlichkeiten und nachvollziehbarem Verlauf — als Ergänzung zu bestehenden Kassen-, Warenwirtschafts- und Buchhaltungssystemen, nicht als deren Ersatz.
 
 Ich schlage einen Termin von 20–30 Minuten vor, in dem wir Ihre aktuellen Abläufe strukturiert durchgehen. Ergebnis ist eine ehrliche Einschätzung, ob und in welchem Bereich ein begrenzter Pilotbetrieb für Sie sinnvoll wäre.
 

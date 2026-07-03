@@ -91,7 +91,7 @@ Chronologisch am Tagesablauf entlang:
 
 Erst jetzt. Bezogen auf das, was gerade gesagt wurde:
 
-> „Bevero hält genau die Abläufe fest, die Sie gerade beschrieben haben — Warenannahme, Bewegungen vom Lager an die Bar, Bar-Auffülllisten, Schichtübergaben. Im Handy-Browser, direkt im Ablauf, mit klarer Verantwortlichkeit und einem Verlauf, den Sie als Betriebsleitung jederzeit einsehen können. Es ersetzt weder Kasse noch Bestellwesen — die bleiben, wie sie sind.“
+> „Bevero hält genau die Abläufe fest, die Sie gerade beschrieben haben — Warenannahme, Bewegungen vom Lager an die Bar, Bar-Auffülllisten und Schichtübergaben. Die Anwendung läuft im Browser. Warenbewegungen bleiben mit verantwortlicher Person und Zeitpunkt nachvollziehbar. Es ersetzt weder Kasse noch Bestellwesen — die bleiben, wie sie sind.“
 
 Keine Feature-Liste. Keine KI-Erklärung. Nur Fähigkeiten mit `confirmed` in der Truth Table (`outreach-readiness.md` Abschnitt 2d). Wenn nach Technik gefragt wird: kurz und ehrlich antworten, dann zurück zum Ablauf.
 
@@ -132,7 +132,7 @@ Keine Feature-Liste. Keine KI-Erklärung. Nur Fähigkeiten mit `confirmed` in de
 
 - Der Betrieb ein Bestellwesen, Lieferantenpreise oder Buchhaltung erwartet — das ist Bevero nicht, und wird es im Pilot auch nicht.
 - Eine Person macht alles und es gibt keine Übergabepunkte — dann gibt es das Problem nicht, das Bevero löst.
-- Der Hauptschmerz liegt in der Küche bei Auffülllisten — produktseitig gibt es dort heute Checklisten/Walk-Route, keine Auffüllliste (Truth Table K2). Nicht wegmoderieren, sondern benennen: „Das deckt Bevero heute für die Bar ab, für die Küche noch nicht.“
+- Der Hauptschmerz liegt in der Küche bei Auffülllisten — Bevero hat heute keine bestätigte Küchen-Auffüllliste (Truth Table K2/K8). Nicht wegmoderieren, sondern benennen: „Das deckt Bevero heute für die Bar ab, für die Küche nicht als Auffüllliste.“
 - Der Betrieb Offline-Betrieb braucht (Funklöcher im Keller als Kernanforderung) — Bevero läuft im Browser, Offline kommt nicht im Pilot.
 - Gerade Großbaustelle (Umbau, Systemwechsel, Personalkrise) — kein Kopf frei, später wiederkommen.
 

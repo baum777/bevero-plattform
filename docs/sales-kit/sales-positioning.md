@@ -1,6 +1,6 @@
 # Sales-Positionierung — Bevero
 
-**Kern in einem Satz:** Bevero macht Warenfluss, Auffülllisten und Schichtübergaben an operativen Standorten nachvollziehbar — als Ergänzung zu Kasse und Warenwirtschaft, nicht als deren Ersatz.
+**Kern in einem Satz:** Bevero macht Warenfluss, Bar-Auffülllisten und Schichtübergaben an operativen Standorten nachvollziehbar — als Ergänzung zu Kasse und Warenwirtschaft, nicht als deren Ersatz.
 
 ---
 
@@ -9,10 +9,10 @@
 1. **„Die Abläufe, die heute auf Zettel und Zuruf laufen — sauber festgehalten.“**
    Konkret, jeder Betriebsleiter erkennt sich wieder.
 
-2. **„Ein Blick statt fünf Anrufe: Sie sehen, was gestern am Standort passiert ist.“**
-   Der Nutzen für die Betriebsleitung in einem Bild.
+2. **„Warenbewegungen mit Wer, Was und Wann statt einer nachträglichen Rekonstruktion.“**
+   Beschreibt die belegte Produktfähigkeit ohne eine ungemessene Zeitersparnis zu versprechen.
 
-3. **„Warenannahme, Auffüllliste, Schichtübergabe — mit Namen, Zeit und Verlauf.“**
+3. **„Warenannahme, Bar-Auffüllliste, Schichtübergabe — mit Namen, Zeit und Verlauf.“**
    Benennt die drei Kernprozesse und das, was sie heute nicht haben: Belegbarkeit.
 
 4. **„Ihre Kasse und Ihre Warenwirtschaft bleiben. Bevero füllt die Lücke dazwischen.“**
@@ -39,9 +39,9 @@
 
 ## 3 Angebotswinkel
 
-1. **Pilot Schichtübergaben** — Einstieg für Betriebe, deren größter Schmerz die Informationslücke an der Schichtgrenze ist. Kleinster Scope, schnellster sichtbarer Effekt.
-2. **Pilot Bar-/Küchen-Auffülllisten** — Einstieg für Betriebe mit Stoßzeiten-Frust: ausverkaufte Positionen, Läufe ins Lager mitten im Service, Schuldzuweisungen zwischen Schichten.
-3. **Pilot Warenfluss-Transparenz** — Einstieg für Betriebsleitungen, die Annahme, Lagerbewegungen und Korrekturen belegbar machen wollen: von der Rampe bis zur Ausgabestelle, mit Audit Trail.
+1. **Pilot Schichtübergaben** — begrenzter Einstieg für Betriebe, die einen selbst benannten Schmerz an der Schichtgrenze prüfen wollen.
+2. **Pilot Bar-Auffüllliste** — Einstieg für Betriebe mit Stoßzeiten-Frust an der Bar: ausverkaufte Positionen, Läufe ins Lager mitten im Service, unklare Übergaben zwischen Schichten.
+3. **Pilot Warenfluss-Transparenz** — Einstieg für Betriebsleitungen, die Annahme, Lagerbewegungen und Korrekturen nachvollziehbar machen wollen: jede Warenbewegung mit Wer/Was/Wann statt eines pauschalen „Audit Trail“-Versprechens.
 
 ## 3 Sätze, die Bevero NICHT sagen sollte
 

@@ -15,7 +15,7 @@
 | Leitfrage | „Wie läuft eine typische Lieferung ab — von ‚LKW steht da' bis ‚Ware ist weggeräumt'? Wer nimmt an, wer prüft, wo wird was notiert?“ |
 | Beobachtung | |
 | Risiko | Fehlmengen und Qualitätsmängel fallen erst später auf; Lieferschein-Abweichungen sind nicht belegbar; Annahme hängt an einzelnen Personen. |
-| Bevero-Hebel | Annahme mit Mengen, Abweichungen und Verantwortlichem festhalten — mobil, direkt an der Rampe. |
+| Bevero-Hebel | Annahme mit Mengen, Abweichungen und Verantwortlichem im Browser festhalten. Ob die Nutzung an der Rampe praktisch trägt, wird im Pilot geprüft. |
 | Priorität | ☐ niedrig ☐ mittel ☐ hoch |
 
 ## 2. Lagerorte
@@ -38,14 +38,14 @@
 | Bevero-Hebel | Bewegungen zwischen Lagerorten und Ausgabestellen dokumentieren — nachvollziehbar, ohne Zettel. |
 | Priorität | ☐ niedrig ☐ mittel ☐ hoch |
 
-## 4. Auffülllisten Bar / Küche
+## 4. Bar-Auffüllung / Küchen-Checks
 
 | Feld | Inhalt |
 |---|---|
-| Leitfrage | „Wie entsteht die Auffüllliste für Bar und Küche — Zettel, WhatsApp, Zuruf, Kopf? Und wie oft fehlt trotzdem etwas im Service?“ |
+| Leitfrage | „Wie entsteht die Auffüllliste für die Bar — Zettel, Messenger, Zuruf, Kopf? Welche festen Checks gibt es vor der Schicht in der Küche?“ |
 | Beobachtung | |
 | Risiko | Ausverkaufte Positionen mitten im Service; Läufe ins Lager während der Stoßzeit; Frust zwischen Schichten („die Frühschicht hat wieder nicht aufgefüllt“). |
-| Bevero-Hebel | Auffülllisten digital, mit Status: was gebraucht wird, was erledigt ist, wer es erledigt hat. |
+| Bevero-Hebel | Für die Bar: Auffüllliste mit Status, Bestätigung und Verantwortlichem. Küchen-Checks werden im Audit nur als angrenzender Prozess aufgenommen; keine Küchen-Auffüllliste zusagen. |
 | Priorität | ☐ niedrig ☐ mittel ☐ hoch |
 
 ## 5. Schichtübergaben
@@ -85,7 +85,7 @@
 | Leitfrage | „Wenn Sie wissen wollen, was gestern am Standort passiert ist — wie lange dauert das, und wen müssen Sie dafür fragen?“ |
 | Beobachtung | |
 | Risiko | Überblick nur durch Hinterherlaufen; Entscheidungen auf Basis von Bauchgefühl; bei Problemen beginnt die Rekonstruktion bei null. |
-| Bevero-Hebel | Ein Blick statt fünf Anrufe: Annahmen, Bewegungen, Übergaben und offene Aufgaben an einem Ort, mit Verlauf. |
+| Bevero-Hebel | Annahmen, Warenbewegungen und Übergaben mit verantwortlicher Person und Zeitpunkt festhalten; tatsächlichen Rückfrageaufwand im Pilot beobachten. |
 | Priorität | ☐ niedrig ☐ mittel ☐ hoch |
 
 ## 9. Medienbrüche
@@ -109,7 +109,7 @@ Bewertung je Bereich: **1 = großes ungelöstes Problem … 5 = läuft sauber, k
 | Warenannahme | | |
 | Lagerorte | | |
 | Warenbewegungen | | |
-| Auffülllisten Bar/Küche | | |
+| Bar-Auffüllung / Küchen-Checks | | |
 | Schichtübergaben | | |
 | Freigaben/Korrekturen | | |
 | Verantwortlichkeiten | | |

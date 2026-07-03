@@ -22,7 +22,7 @@
 
 **Was das wirklich bedeutet:** „Ich traue meinem Team den Umgang mit noch einem Tool nicht zu — oder ich traue es einzelnen nicht zu und will niemanden bloßstellen.“ Manchmal auch die eigene Unsicherheit der Führungskraft.
 
-**Antwort:** „Das Team nutzt heute schon WhatsApp für Übergaben — digitaler muss es nicht sein. Bevero ist bewusst so gebaut, dass ein Eintrag nicht komplizierter ist als eine Nachricht in der Gruppe. Und im Pilot bleibt der alte Weg als Fallback erlaubt: Wir sehen dann ehrlich, was das Team freiwillig nutzt.“
+**Antwort:** „Noch ein Tool ist erstmal eine zusätzliche Anforderung. Deshalb prüfen wir im Pilot mit einem einzigen Prozess, ob die Eingabe im Browser für Ihr Team kurz und praktikabel genug ist. Der alte Weg bleibt anfangs als Fallback erlaubt; wenn das Team Bevero nicht sinnvoll nutzen kann, ist das ein klares Pilot-Ergebnis.“
 
 **Mögliche Rückfrage:** „Wie laufen Übergaben und Auffülllisten denn heute — komplett analog, oder ist WhatsApp schon im Spiel?“
 
@@ -58,9 +58,9 @@
 
 **Was das wirklich bedeutet:** Ernst zu nehmende Frage — oft steckt dahinter: „Landet das bei Dritten? Sieht meine Konkurrenz das? Was ist mit Mitarbeiterdaten?“
 
-**Antwort:** „Ihre Daten gehören Ihnen. Sie werden nicht verkauft, nicht für andere Kunden ausgewertet und nicht für Werbung genutzt. Gespeichert wird nur, was für die Abläufe nötig ist — wer was wann angenommen, bewegt oder übergeben hat. Beim Pilotende bekommen Sie Ihre Daten heraus, und wir löschen sie auf Wunsch. Die Details gebe ich Ihnen gern schriftlich, bevor irgendetwas startet.“
+**Antwort:** „Ihre Daten werden nicht verkauft, nicht für andere Kunden ausgewertet und nicht für Werbung genutzt. Die vollständigen Unterlagen zu Hosting und Auftragsverarbeitung lege ich Ihnen vor einem Pilotstart schriftlich vor — vorher startet nichts.“
 
-> Annahme: Datenhaltung in der EU und DSGVO-konforme Auftragsverarbeitung sind vorgesehen. Vor dem ersten echten Pilot muss das schriftlich belegbar sein (AV-Vertrag, Hosting-Standort) — bis dahin nichts Konkreteres zusagen als oben formuliert.
+> Gate O3: EU-Datenhaltung, AV-Verträge, Datenexport und Löschprozess sind noch nicht vollständig belegt. Bis O3 geschlossen ist, ausschließlich die Antwort oben verwenden.
 
 **Mögliche Rückfrage:** „Gibt es bei Ihnen jemanden — Datenschutzbeauftragte, Verwaltung — den ich die Details direkt schicken soll?“
 
@@ -72,7 +72,9 @@
 
 **Was das wirklich bedeutet:** Entweder echtes Kaufinteresse — oder ein Test, ob jetzt der Verkaufsdruck beginnt.
 
-**Antwort:** „Für den Pilot: ein einmaliger Pauschalbetrag für Einrichtung und Begleitung, der bei Übernahme angerechnet wird — die genaue Höhe hängt von Standortgröße und Scope ab, das kläre ich nach dem Abgleich verbindlich. Im Regelbetrieb danach reden wir über einen monatlichen Betrag pro Standort, keine langen Laufzeiten, keine automatische Verlängerung. Ich nenne Ihnen lieber nach 30 Minuten eine ehrliche Zahl als jetzt eine geratene.“
+**Antwort solange O1 offen ist:** „Die Konditionen sind noch nicht final freigegeben. Ich nenne Ihnen keine geratene Zahl. Vor einem verbindlichen nächsten Schritt erhalten Sie eine schriftliche Preisangabe für den vereinbarten Scope.“
+
+**Nach O1:** Nur die in `pricing-pilot-decision.md` entschiedene Variante verwenden; keine Spanne oder Vertragsbedingung aus dem Gedächtnis ergänzen.
 
 **Mögliche Rückfrage:** „Damit ich realistisch rechnen kann: Wie viele Leute würden damit arbeiten, und über wie viele Ausgabestellen reden wir?“
 
@@ -84,7 +86,7 @@
 
 **Was das wirklich bedeutet:** Angst vor Abhängigkeit und vor versunkenem Aufwand: „Dann haben wir das Team umgestellt und stehen wieder bei null.“
 
-**Antwort:** „Faire Frage. Erstens: Der Pilot ändert Ihre bestehenden Systeme nicht — Kasse, Warenwirtschaft, Bestellwesen laufen unverändert weiter, der Rückweg ist also kurz. Zweitens: Ihre Daten bekommen Sie heraus. Drittens: Der Pilot ist bewusst so klein, dass ein Abbruch ein paar Wochen kostet, kein Projektbudget. Ein sauber beendeter Pilot ist für uns ein akzeptables Ergebnis — ein durchgeschleppter nicht.“
+**Antwort:** „Faire Frage. Der Pilot ersetzt Ihre bestehenden Systeme nicht; Kasse, Warenwirtschaft und Bestellwesen bleiben außerhalb des Bevero-Scopes. Die konkreten Regeln zu Preis, Abbruch und Datenbehandlung erhalten Sie vor dem Start schriftlich. Solange O1 und O3 offen sind, sage ich dazu nichts Verbindliches zu, was noch nicht belegt oder entschieden ist.“
 
 **Mögliche Rückfrage:** „Was wäre für Sie das Kriterium, an dem Sie nach sechs Wochen festmachen: Das behalten wir?“
 
@@ -108,7 +110,7 @@
 
 **Was das wirklich bedeutet:** Wir haben es falsch erklärt. Der Einwand richtet sich fast nie gegen das Produkt, sondern gegen unsere Sprache.
 
-**Antwort:** „Dann habe ich es schlecht erklärt — lassen Sie es mich anders sagen: Heute hängt die Auffüllliste als Zettel am Kühlhaus und die Übergabe passiert im Vorbeigehen. Mit Bevero tippt Ihre Schichtleitung dasselbe in ein Handy, und die nächste Schicht — und Sie — können es nachlesen. Das ist alles. Keine Umstellung Ihrer Systeme, keine IT-Projektgruppe.“
+**Antwort:** „Dann habe ich es schlecht erklärt — lassen Sie es mich anders sagen: Eine Bar-Auffüllliste oder Schichtübergabe wird im Browser festgehalten. Die nächste Schicht und die Betriebsleitung können den Eintrag anschließend nachlesen. Ob dieser Ablauf im Lager- und Schichtalltag Ihres Teams praktisch trägt, prüfen wir im Pilot.“
 
 **Mögliche Rückfrage:** „Darf ich es einmal an Ihrem konkreten Ablauf durchspielen — wie lief die letzte Warenannahme bei Ihnen?“
 
@@ -120,7 +122,7 @@
 
 **Was das wirklich bedeutet:** Legitime Frage. Der Betrieb will Systemlandschaft und Ansprechpartner konsolidieren, nicht erweitern.
 
-**Antwort:** „Wenn Ihr System Schichtübergaben, Auffülllisten und Warenbewegungen zwischen Lagerorten sauber abbildet — machen Sie das, ernsthaft. Meistens scheitert es daran, dass Warenwirtschaft für Bestellung und Buchhaltung gebaut ist, nicht für das, was auf der Fläche zwischen zwei Schichten passiert. Fragen Sie Ihren Anbieter konkret danach; wenn die Antwort ein Modul mit sechs Monaten Einführung ist, wissen Sie, warum es uns gibt.“
+**Antwort:** „Wenn Ihr System Schichtübergaben, Bar-Auffülllisten und Warenbewegungen zwischen Lagerorten bereits passend abbildet — nutzen Sie das, ernsthaft. Bevero ist nur dann relevant, wenn zwischen diesen Systemen eine operative Lücke bleibt. Prüfen Sie zuerst, was Ihr bestehender Anbieter heute konkret abdeckt.“
 
 **Mögliche Rückfrage:** „Was müsste Ihr System können, damit das Thema für Sie gelöst ist — und kann es das heute?“
 

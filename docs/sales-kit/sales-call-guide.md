@@ -61,7 +61,7 @@ Der Kern des Gesprächs. Konkret durchgehen, am besten chronologisch am Tagesabl
 
 Erst jetzt. Und bezogen auf das, was gerade gesagt wurde:
 
-> „Bevero hält genau die Abläufe fest, die Sie gerade beschrieben haben — Warenannahme, Bewegungen vom Lager an die Bar, Auffülllisten, Schichtübergaben. Mobil, direkt im Ablauf, mit klarer Verantwortlichkeit und einem Verlauf, den Sie als Betriebsleitung jederzeit einsehen können. Es ersetzt weder Kasse noch Bestellwesen — die bleiben, wie sie sind.“
+> „Bevero hält genau die Abläufe fest, die Sie gerade beschrieben haben — Warenannahme, Bewegungen vom Lager an die Bar, Bar-Auffülllisten und Schichtübergaben. Die Anwendung läuft im Browser. Warenbewegungen bleiben mit verantwortlicher Person und Zeitpunkt nachvollziehbar. Es ersetzt weder Kasse noch Bestellwesen — die bleiben, wie sie sind.“
 
 Keine Feature-Liste. Keine KI-Erklärung. Wenn nach Technik gefragt wird: kurz und ehrlich antworten, dann zurück zum Ablauf.
 
@@ -85,7 +85,7 @@ Der Lead passt gut, wenn überwiegend Ja:
 
 | Kriterium | Ja/Nein |
 |---|---|
-| Es gibt mindestens einen konkreten, selbst benannten Schmerz im Pilot-Scope (Annahme, Bewegungen, Auffülllisten, Übergaben, Korrekturen) | |
+| Es gibt mindestens einen konkreten, selbst benannten Schmerz im Pilot-Scope (Annahme, Bewegungen, Bar-Auffüllung, Übergaben, Korrekturen) | |
 | Der Schmerz wurde vom Betrieb formuliert, nicht von uns hineingeredet | |
 | Es gibt Schichtgrenzen oder mehrere Ausgabestellen — also echte Übergabepunkte | |
 | Die Person am Tisch kann entscheiden oder hat direkten Zugang zum Entscheider | |

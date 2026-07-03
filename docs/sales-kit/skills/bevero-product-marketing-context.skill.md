@@ -29,7 +29,7 @@ Den gemeinsamen, belegbaren Produkt- und Marktkontext für alle nachgelagerten S
    - **How:** nur Fähigkeiten mit aktuellem O2-Beleg; Belegpfad und Prüfdatum nennen.
    - **What After:** beobachtbare Verbesserung ohne unbelegten ROI oder Superlativ.
    - **Alternatives:** Status quo, vorhandene Systeme und Nicht-Fit-Fälle.
-3. Jede Fähigkeit als `confirmed`, `needs wording change` oder `unconfirmed` übernehmen. `unconfirmed` nie in freigegebene Aussagen überführen.
+3. Jede Fähigkeit als `confirmed`, `partial`, `unconfirmed` oder `future` übernehmen. `partial` nur in der ausdrücklich erlaubten engen Form verwenden; `unconfirmed` und `future` nie als aktuelle Fähigkeit freigeben.
 4. Erste Version und spätere Versionen trennen. Roadmap, Offline, native App oder Integrationen sind keine aktuelle Fähigkeit.
 5. Proof Points erfassen. Fehlende Referenzen, Kennzahlen oder Live-Belege ausdrücklich als `none` oder `open` markieren.
 6. Ein datiertes Kontextpaket für die nachgelagerten Skills ausgeben. Bei geändertem Claim oder veraltetem Beleg O2 wieder öffnen.

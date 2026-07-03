@@ -67,7 +67,7 @@ Ankreuzen, was plausibel ist — mit kurzer Begründung. Nicht mehr als 3 priori
 | Pain Point | Plausibel? | Begründung |
 |---|---|---|
 | Übergaben zwischen Schichten gehen verloren (mündlich / Zettel / WhatsApp) | ☐ | |
-| Auffülllisten Bar/Küche laufen auf Papier oder Zuruf | ☐ | |
+| Bar-Auffülllisten oder Küchen-Checks laufen auf Papier oder Zuruf | ☐ | |
 | Warenannahme wird nicht sauber dokumentiert (Mengen, Abweichungen) | ☐ | |
 | Warenbewegungen Lager → Outlet sind nicht nachvollziehbar | ☐ | |
 | Betriebsleitung hat keinen schnellen Überblick über den Standort | ☐ | |

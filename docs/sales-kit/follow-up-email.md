@@ -20,7 +20,7 @@ Guten Tag [Name],
 
 ich weiß, wie ein Posteingang in der Betriebsleitung aussieht — deshalb nur ein kurzer zweiter Anlauf.
 
-Mein Vorschlag von neulich, konkreter gefasst: Ich gehe mit Ihnen in 20–30 Minuten Ihren Warenfluss durch — Warenannahme, Auffülllisten, Schichtübergabe — und Sie bekommen am Ende eine ehrliche Einschätzung, wo es bei Ihnen hakt und ob Bevero dafür das richtige Werkzeug wäre. Falls nicht, sage ich Ihnen das genauso klar.
+Mein Vorschlag von neulich, konkreter gefasst: Ich gehe mit Ihnen in 20–30 Minuten Ihren Warenfluss durch — Warenannahme, Bar-Auffüllung, Schichtübergabe — und Sie bekommen am Ende eine ehrliche Einschätzung, wo es bei Ihnen hakt und ob Bevero dafür das richtige Werkzeug wäre. Falls nicht, sage ich Ihnen das genauso klar.
 
 Passt Ihnen ein Termin in den nächsten zwei Wochen — oder ist gerade schlicht der falsche Zeitpunkt? Auch das ist eine hilfreiche Antwort.
 

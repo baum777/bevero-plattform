@@ -16,7 +16,7 @@
 ## Die Mail
 
 **Betreff (eine Zeile wählen):**
-- Übergaben und Auffülllisten bei [Betriebsname]
+- Übergaben und Bar-Auffüllung bei [Betriebsname]
 - Der Zettel am Kühlhaus — [Betriebsname]
 - Warenfluss bei [Betriebsname] — 20 Minuten, ehrliche Einschätzung
 
@@ -28,9 +28,9 @@ Guten Tag [Herr/Frau Nachname],
 
 ich habe selbst lange genug in der Gastronomie gearbeitet, um zu wissen, wie eine Schichtübergabe wirklich aussieht: zwei Sätze im Vorbeigehen, ein Zettel, den nachher keiner findet, und eine WhatsApp-Gruppe, in der das Wichtige zwischen Dienstplan-Diskussionen untergeht.
 
-Weil mich genau das immer wieder geärgert hat, habe ich ein Werkzeug dafür gebaut: **Bevero**. Es hält Warenannahme, Bar-Auffülllisten und Schichtübergaben so fest, dass die nächste Schicht — und die Betriebsleitung — nicht raten muss, was passiert ist. Kein großes System, kein Ersatz für Kasse oder Warenwirtschaft. Nur die Abläufe, die heute auf Papier und Zuruf laufen, sauber dokumentiert.
+Weil mich genau das immer wieder geärgert hat, habe ich ein Werkzeug dafür gebaut: **Bevero**. Es hält Warenannahme, Bar-Auffülllisten und Schichtübergaben mit verantwortlicher Person und Zeitpunkt fest. Kein großes System, kein Ersatz für Kasse oder Warenwirtschaft. Nur eine nachvollziehbare Dokumentation dieser Abläufe.
 
-[BETRIEBSSPEZIFISCHER AUFHÄNGER — 1–2 Sätze aus dem Lead-Steckbrief, z. B.: „Bei einem Haus mit Restaurant, Bar und Terrasse wie Ihrem laufen erfahrungsgemäß drei Auffülllisten parallel — irgendwo davon meist auf Papier.“]
+[BETRIEBSSPEZIFISCHER AUFHÄNGER — 1–2 Sätze aus dem Lead-Steckbrief, z. B.: „Auf Ihrer Website sind Restaurant, Bar und Terrasse als getrennte Bereiche beschrieben. Mich interessiert, wie Warenbewegungen und Übergaben zwischen diesen Bereichen heute laufen.“]
 
 Mein Vorschlag: 20–30 Minuten, in denen wir Ihren Warenfluss durchgehen — von der Rampe bis zur Übergabe an die Spätschicht. Am Ende bekommen Sie eine ehrliche Einschätzung, wo es bei Ihnen hakt. Wenn dabei rauskommt, dass Ihre Abläufe schon sauber laufen: umso besser, dann kostet es Sie eine halbe Stunde und ein ehrliches Kompliment.
 
@@ -60,7 +60,7 @@ Beste Grüße
 - Keine Datenschutz-Details (kommen schriftlich vor Pilotstart, siehe `outreach-readiness.md` Abschnitt 3)
 - Keine Einsparungs- oder ROI-Behauptung
 - Keine Küchen-Auffüllliste (produktseitig existieren Küchen-Checklisten, keine Auffüllliste — Truth Table K2)
-- Keine native App oder Offline-Fähigkeit (Bevero läuft im Handy-Browser — Truth Table K6)
+- Keine native App, Offline-Fähigkeit oder im Lageralltag bestätigte Mobile-Optimierung (Browser-Nutzung ist belegt; praktische Eignung bleibt Pilot-/Runtime-Gate — Truth Table K6)
 
 ## Follow-up-Pfad
 

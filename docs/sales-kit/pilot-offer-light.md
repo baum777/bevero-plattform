@@ -26,7 +26,7 @@ Nur aus bestätigten Fähigkeiten wählen (Truth Table, `outreach-readiness.md` 
 | Baustein | Enthalten? | Anmerkung |
 |---|---|---|
 | Warenannahme dokumentieren (Mengen, Abweichungen, wer) | ☐ | K1 confirmed |
-| Lagerorte & Warenbewegungen nachvollziehbar | ☐ | K5 confirmed |
+| Warenbewegungen mit Wer/Was/Wann nachvollziehbar | ☐ | K5 confirmed |
 | Bar-Auffüllliste mit Status (offen / teilbestätigt / bestätigt, wer/wann) | ☐ | K2 — nur Bar, keine Küchen-Auffüllliste zusagen |
 | Schichtübergabe (Zusammenfassung, offene Punkte, Alerts) | ☐ | K3 confirmed |
 | Korrekturen mit Grund + Freigabe | ☐ | K4 confirmed |
@@ -58,7 +58,7 @@ Immer enthalten (Dienstleistung):
 - Woche 2–5: Regelnutzung im gewählten Prozess; wir beobachten, was hakt.
 - Check-in 1 (Ende Woche 2): Was nervt? Was fehlt? Nutzt das Team es wirklich?
 - Check-in 2 (Woche 4/5): Zwischenbilanz gegen die Erfolgskriterien.
-- Abbruch jederzeit möglich, wenn es dem Betrieb nichts bringt — ohne Diskussion.
+- Fachlicher Abbruchpunkt, wenn es dem Betrieb nichts bringt; Kosten- und Vertragsfolgen erst nach O1 schriftlich vereinbaren.
 
 ## 5. Erfolgskriterien (am Pilot-Ziel ausrichten, messbar formulieren)
 
