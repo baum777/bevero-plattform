@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { screensFor } from "./screenshotRegistry.js";
+import SandboxDemo from "./components/SandboxDemo.jsx";
 import "./styles.css";
 
 const CONTACT_EMAIL = "twim.baum@proton.me";
@@ -356,6 +357,7 @@ export default function App() {
         <div className="anchorNav" aria-label="Seitennavigation">
           <a href="#nutzen">Nutzen</a>
           <a href="#hub">Hub</a>
+          <a href="#demo">Demo</a>
           <a href="#screens">Screens</a>
           <a href="#pilot">Pilot</a>
           <a href="#vertrauen">Vertrauen</a>
@@ -382,7 +384,10 @@ export default function App() {
             weniger Nacharbeit, früher sichtbare Fehlbestände und klarere Übergaben.
           </p>
           <div className="hero-ctas">
-            <a href="#nutzen" className="btn btn-primary">
+            <a href="#demo" className="btn btn-primary">
+              Demo starten
+            </a>
+            <a href="#nutzen" className="btn btn-secondary">
               ROI-Hebel verstehen
             </a>
             <a href="#screens" className="btn btn-secondary">
@@ -398,6 +403,8 @@ export default function App() {
           <HubDiagram />
         </div>
       </section>
+
+      <SandboxDemo />
 
       <section id="kurzfassung" className="section-anchor container">
         <SectionHead
