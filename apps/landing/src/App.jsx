@@ -32,8 +32,8 @@ const summaryCards = [
     text: "Planungssystem und POS-System bleiben führend. Bevero ergänzt die operative Standortschicht.",
   },
   {
-    title: "Operativer Hub",
-    text: "Bevero verbindet Systemdaten mit Standortaktionen: Warenfluss, Freigaben, Übergaben und offene Punkte.",
+    title: "Operations Cockpit",
+    text: "Bevero macht Stationsbereitschaft, Aufgaben, Refill, HACCP und Übergaben sichtbar — nicht als Systemersatz, sondern als operative Schicht für Küche, Bar und Service.",
   },
   {
     title: "Prüfbarer ROI",
@@ -55,8 +55,8 @@ const roiPoints = [
     text: "Weniger Suchen, Nachfragen, Kontrollieren und Rekonstruieren. Teams sehen schneller, was fehlt, was offen ist und was erledigt wurde.",
   },
   {
-    title: "Fehlbestände früher sehen",
-    text: "Kritische Artikel, offene Auffüllungen und Soll/Ist-Abweichungen werden sichtbar, bevor sie Schicht, Event oder Kunde stören.",
+    title: "Stationsbereitschaft früher sehen",
+    text: "Offene Prep-, Refill- und HACCP-Aufgaben werden sichtbar, bevor sie Schicht, Station oder Kunde stören.",
   },
   {
     title: "Nacharbeit reduzieren",
@@ -71,40 +71,40 @@ const roiPoints = [
     text: "Gute Abläufe bleiben nicht nur Erfahrungswissen einzelner Personen, sondern werden als Workflow sichtbar und vergleichbar.",
   },
   {
-    title: "Systemdaten operativ nutzbar machen",
-    text: "Planungssystem und POS-System liefern wertvolle Systemlogik. Bevero übersetzt diese Anbindung in operative Standortfragen.",
+    title: "Systemdaten in Stationsaufgaben übersetzen",
+    text: "Planungssystem und POS-System liefern wertvolle Systemlogik. Bevero übersetzt diese Anbindung in konkrete Stationsaufgaben für die Schicht.",
   },
 ];
 
 const gapRows = [
   {
-    gap: "Systemdaten liegen getrennt",
-    hub: "Adapterlogik + Standortdatenbank",
-    result: "Standortaktion wird sichtbar",
+    gap: "Stationsbereitschaft ist unklar",
+    hub: "Stationen + Aufgaben + Status",
+    result: "Jede Station zeigt: bereit, offen, kritisch",
   },
   {
-    gap: "Warenfluss ist fragmentiert",
-    hub: "Lieferung -> Lager -> Entnahme -> Auffüllung",
-    result: "Kette wird nachvollziehbar",
+    gap: "Schichtwissen hängt an Einzelpersonen",
+    hub: "Aufgaben + Verantwortlichkeiten + Übergabe",
+    result: "Nächste Schicht sieht, was offen ist",
   },
   {
-    gap: "Übergaben hängen an Personen",
-    hub: "Schichtlogik + offene Punkte",
-    result: "Wissen geht nicht verloren",
+    gap: "HACCP läuft auf Papier und Zuruf",
+    hub: "HACCP-Checkpoints + Temperatur + MHD",
+    result: "Nachweise werden prüfbar",
   },
   {
-    gap: "Abweichungen sind Bauchentscheidung",
-    hub: "Freigabe + Auditpfad",
-    result: "Entscheidung wird prüfbar",
+    gap: "Produktionsbedarf erreicht Küche zu spät",
+    hub: "Station meldet, Produktion erzeugt",
+    result: "Bedarf wird rechtzeitig sichtbar",
   },
 ];
 
 const measurementPoints = [
-  { metric: "Zeit pro Auffüllrunde", question: "Wie lange dauert es, bis klar ist, was fehlt?" },
-  { metric: "Offene Punkte pro Übergabe", question: "Was bleibt ungeklärt liegen?" },
-  { metric: "Korrekturen pro Woche", question: "Wie oft muss nachträglich bereinigt werden?" },
-  { metric: "Kritische Fehlbestände", question: "Welche Artikel fallen zu spät auf?" },
-  { metric: "Wareneingang bis Sichtbarkeit", question: "Wie schnell ist eine Lieferung operativ nutzbar?" },
+  { metric: "Stationsbereitschaft vor Service", question: "Wie lange dauert es, bis klar ist, ob eine Station bereit ist?" },
+  { metric: "Offene Aufgaben pro Übergabe", question: "Was bleibt ungeklärt für die nächste Schicht liegen?" },
+  { metric: "HACCP-Erfüllungsgrad", question: "Wie viele Checkpoints sind fristgerecht dokumentiert?" },
+  { metric: "Kritische Stationsengpässe", question: "Welche Engpässe fallen erst im Service auf?" },
+  { metric: "Produktionsvorlauf", question: "Wie früh wird Produktionsbedarf für morgen gemeldet?" },
   { metric: "Eskalationen vor Events", question: "Welche Probleme erreichen Leitung oder Kunde zu spät?" },
 ];
 
@@ -146,8 +146,8 @@ const trustColumns = [
 const visionPhases = [
   {
     phase: "Phase 1",
-    title: "Sichtbarer Tagesworkflow",
-    text: "Bestand, Auffüllung, Bewegungen, Freigaben und Übergaben werden an einem Standort prüfbar.",
+    title: "Sichtbare Stationsbereitschaft",
+    text: "Prep, Refill, Produktion, HACCP und Übergaben werden an einem Standort prüfbar.",
   },
   {
     phase: "Phase 2",
@@ -167,8 +167,8 @@ const itCards = [
     text: "Planungssystem und POS-System werden nicht ersetzt. Bevero nutzt die Adapterlogik, um operative Standortaktionen sichtbar zu machen.",
   },
   {
-    title: "Standortdaten statt Bauchgefühl",
-    text: "Das Dashboard ist mit einer standortgekoppelten Datenbank verbunden. Bestände, Bewegungen und offene Punkte werden nicht nur beschrieben, sondern als Standortlogik abbildbar.",
+    title: "Stationsdaten statt Bauchgefühl",
+    text: "Das Dashboard zeigt Stationsbereitschaft, offene Aufgaben, HACCP-Status und Übergaben — nicht nur beschrieben, sondern als steuerbare Standortlogik.",
   },
   {
     title: "Kein unkontrollierter Writeback",
@@ -396,15 +396,15 @@ export default function App() {
       <section id="top" className="hero-section section-anchor">
         <div className="hero-copy">
           <p className="eyebrow">Pilot von innen - operativer Standort-Hub - KAM-Relevanz</p>
-          <h1 className="hero-h1">Der Hub zwischen Systemen und Standortrealität.</h1>
+          <h1 className="hero-h1">Ist Ihre Station bereit für die nächste Servicephase?</h1>
           <p className="hero-lead">
-            Bevero verbindet Standortdatenbank, Planungs-/POS-Anbindung und operative
-            Tagesaktionen — nicht als Ersatz bestehender Systeme, sondern als Hub für Warenfluss,
-            Freigaben, Übergaben und Standortqualität.
+            Bevero ist ein Operations Cockpit für Gastronomie und Standortbetriebe.
+            Es macht Stationsbereitschaft, Aufgaben, Refill, Produktion, HACCP und
+            Schichtübergaben sichtbar — ohne Planungs-, POS- oder ERP-Systeme zu ersetzen.
           </p>
           <p className="hero-subtext">
-            Der Nutzen entsteht dort, wo operative Reibung sichtbar wird: weniger Suchzeit,
-            weniger Nacharbeit, früher sichtbare Fehlbestände und klarere Übergaben.
+            Der Nutzen entsteht dort, wo Schichtrealität sichtbar wird: weniger Zuruf,
+            weniger Nacharbeit, früher sichtbare Engpässe und klarere Übergaben.
           </p>
           <div className="hero-ctas">
             <a href="#nutzen" className="btn btn-primary">
@@ -667,12 +667,12 @@ export default function App() {
 
       <section id="einschaetzung" className="section-anchor final-cta-section">
         <div className="container final-cta-shell">
-          <h2 className="cta-h2">Eine echte Warenannahme. Eine echte Übergabe. Eine klare Entscheidung.</h2>
+          <h2 className="cta-h2">Eine echte Station. Eine echte Schicht. Eine klare Entscheidung.</h2>
           <p className="cta-text">
             Ich suche keine schnelle Freigabe und keinen großen Rollout. Ich suche eine ehrliche
-            Einschätzung: Ist ein operativer Hub, der Standortdatenbank, Planungs-/POS-
-            Anbindung und Tagesaktionen verbindet, für Key Accounts, Standortqualität oder
-            wiederkehrende Kundenprozesse in Ihrem Konzern relevant?
+            Einschätzung: Macht ein Operations Cockpit, der Stationsbereitschaft, Aufgaben,
+            HACCP und Übergaben sichtbar macht, für Ihren Standortbetrieb oder Ihre
+            Betriebsgruppe Sinn?
           </p>
           <div className="cta-buttons">
             <a href={KAM_MAILTO} className="btn btn-primary">

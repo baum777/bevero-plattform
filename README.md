@@ -1,25 +1,26 @@
-# Bevero — Mobile Operations Layer Monorepo
+# Bevero — Operations Cockpit Monorepo
 
 **Öffentlicher Produktname: Bevero Ops.**
 
-**Version:** 0.2.0 · **Stand:** 2026-07-02  
+**Version:** 0.2.0 · **Stand:** 2026-07-04  
 Autor: Cheikh Baum
 
 ---
 
 ## Was ist dieses Repo?
 
-Dieses Monorepo ist die Codebasis von **Bevero** — einem mobilen
-**Operations Layer** für Standortbetriebe (Gastronomie, Hotellerie, Catering,
-Event- und Filialbetriebe).
+Dieses Monorepo ist die Codebasis von **Bevero** — einem **Operations Cockpit**
+für Gastronomie-, Hotellerie-, Catering-, Event- und Filialbetriebe.
 
-Bestehende Systeme planen. Bevero macht Ausführung, Abweichungen, Übergaben
-und Nachweise vor Ort sichtbar — ohne Planungs-, POS-, ERP- oder
-Buchhaltungssysteme zu ersetzen.
+Bevero beantwortet die Frage, die jeden Tagesbetrieb umtreibt:
+> **Ist der Betrieb für die nächste Servicephase bereit — und wenn nicht, was muss jetzt konkret passieren?**
 
-Es enthält drei deployed Apps unter `apps/` sowie die Produkt-, Governance-
-und Entscheidungsdokumentation, die Ausführung kontrolliert und nachvollziehbar
-hält.
+Es macht Stationen, Aufgaben, Refill, Produktion, HACCP, Warenannahme und
+Schichtübergaben sichtbar, steuerbar und übergabefähig — ohne Planungs-,
+POS-, ERP- oder Buchhaltungssysteme zu ersetzen.
+
+Bevero ist kein Inventory-Cockpit. Es ist eine operative Handlungsschicht:
+Beobachtung → Erfassung → Aufgabe → Zuständigkeit → Erledigung → Nachweis → Übergabe.
 
 > KI darf entwerfen. Menschen geben operative Konsequenzen frei.
 
@@ -53,7 +54,7 @@ bevero/
 ├── IDENTITY.md       SOT — Existenzgrund, L0–L4, Autoritätskette
 ├── OS.md             Systemkarte — Repo-Aufbau, Dateistruktur
 ├── AGENTS.md         Agent-Rollen und Grenzen
-├── BEVERO.md         Bevero Workspace — Inventory Platform
+├── BEVERO.md         Bevero Workspace — Operations Cockpit
 └── MIGRATION.md      Migrationsstatus und -history
 ```
 
@@ -102,7 +103,7 @@ npm run build
 
 ### `apps/landing` — Bevero Landing
 
-Statische Investor-/IT-Präsentation mit Cockpit-Screenshots und Architektur-Dokumentation.
+Statische Investor-/IT-Präsentation mit Cockpit-Screenshots, Operations-Demo und Architektur-Dokumentation.
 
 ```bash
 cd apps/landing

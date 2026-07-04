@@ -26,7 +26,7 @@ bevero-platform/
 ├── IDENTITY.md              ← SOT — Existenzgrund, L0–L4, Autoritätskette (L4)
 ├── OS.md                    ← Systemkarte (L3)
 ├── AGENTS.md                ← Agent-Rollen und Grenzen (L2)
-├── BEVERO.md                ← Bevero Workspace (Inventory Platform)
+├── BEVERO.md                ← Bevero Workspace (Operations Cockpit)
 ├── package.json             ← npm workspace root
 │
 ├── apps/

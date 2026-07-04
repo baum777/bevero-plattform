@@ -1,10 +1,10 @@
-# Bevero — Mobile Operations Layer
+# Bevero — Operations Cockpit
 
-**Public product name: Bevero Ops.** **Bevero is a mobile operations layer for site-based teams.** It helps teams manage
-refill lists, stock movements, goods receipts, operational notes, shift handovers,
-review tasks, and audit evidence — **without replacing existing planning, POS, ERP,
-or accounting systems.** Those systems stay authoritative; Bevero adds the on-site
-execution, deviation, handover, and proof layer.
+**Public product name: Bevero Ops.** Bevero is an **operations cockpit for hospitality and site-based teams.** It answers the question that drives every service shift:
+
+> **Is the operation ready for the next service phase — and if not, what needs to happen right now?**
+
+Bevero makes station readiness, tasks, refill, production, HACCP, goods receipt, and shift handovers visible, actionable, and handover-ready — **without replacing existing planning, POS, ERP, or accounting systems.**
 
 This document describes the Bevero monorepo and how its apps fit together.
 
@@ -12,6 +12,14 @@ This document describes the Bevero monorepo and how its apps fit together.
 > group (Motorworld Inn / CUBE). Those references are pilot / case-study context and
 > governance history — not the product identity. See
 > [`docs/productization/bevero-product-identity-v0.md`](docs/productization/bevero-product-identity-v0.md).
+
+## Core Logic
+
+```
+Observation → Capture → Structure → Task → Responsibility → Completion → Proof → Handover
+```
+
+Bevero transforms shift knowledge, station demand, and goods movements into clear tasks for Kitchen, Bar, Service, Goods Receipt, and Management.
 
 ## Structure
 
@@ -23,7 +31,7 @@ bevero/
 │   │   ├── prisma/         # Schema, migrations
 │   │   └── tests/          # Unit + integration tests
 │   │
-│   ├── cockpit/            # Bevero Next.js frontend
+│   ├── cockpit/            # Bevero Next.js operations cockpit
 │   │   ├── app/            # App Router pages + layout
 │   │   ├── components/     # React components
 │   │   └── lib/            # Utilities, API client
@@ -141,23 +149,25 @@ See **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** and **[DECISIONS.md](./docs/DE
 
 ## Project Status
 
-### ✅ Phase A (Complete)
-- Kitchen interface (7 tabs)
-- Bar & Service refill runs
-- Area scoping (Bar vs. Kitchen)
-- Stock tracking & movements
-- Inventory corrections
+### ✅ Phase A (Built)
+- Station readiness (Kitchen, Bar, Service areas)
+- Prep, Refill, Production task types
+- HACCP checkpoints and temperature docs
+- Shift handover with open tasks
+- Goods receipt capture
+- Area and role scoping
 
-### 🔄 Phase 2 (Planned)
-- Physical count workflows
-- Correction approvals
-- Audit trail
+### 🔄 Phase B (In Progress)
+- Shift-based task routing
+- Role and station assignment
+- HACCP audit trail
+- Mobile-first UI refinements
 
-### 🚀 Phase 3 (Planned)
-- Reorder suggestions
-- Multi-location transfers
-- Shift handover synthesis
-- Automated alerts
+### 🚀 Phase C (Planned)
+- Voice-to-task capture
+- Photo-based goods receipt
+- Integration adapters (existing planning/POS systems)
+- Multi-site operations view
 
 ## Git History
 
@@ -179,6 +189,5 @@ Previous separate repos are now archived:
 
 See:
 - **ARCHITECTURE.md** — System design & technical decisions
-- **KITCHEN.md** — Kitchen module specifics
-- **AGENTS.md** — AI agent guidelines
+- **OS.md** — System map
 - **README.md** — Monorepo overview

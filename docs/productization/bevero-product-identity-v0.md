@@ -1,6 +1,6 @@
 # Bevero Product Identity v0
 
-**Status:** v0 (updated) · **Stand:** 2026-07-02 · **Owner:** Productization
+**Status:** v0 (updated) · **Stand:** 2026-07-04 · **Owner:** Productization
 **Related:** [`VISION.md`](../VISION.md) · [`bevero-productization-audit-2026-07-01.md`](bevero-productization-audit-2026-07-01.md)
 
 This document is the source of truth for how Bevero is described in product-identity
@@ -12,20 +12,22 @@ clearly marked history.
 
 ## One-Liner
 
-> Bevero ist ein mobiler Operations Layer für Standortbetriebe. Bestehende Systeme
-> planen; Bevero macht Ausführung, Abweichungen, Übergaben und Nachweise vor Ort sichtbar.
+> Bevero ist ein Operations Cockpit für Gastronomie- und Standortbetriebe.
+> Es beantwortet: Ist die Station bereit für die nächste Servicephase —
+> und wenn nicht, was muss jetzt passieren?
 
 English:
 
-> Bevero is a mobile operations layer for site-based teams. Existing systems plan;
-> Bevero makes on-site execution, deviations, handovers, and proof visible.
+> Bevero is an operations cockpit for hospitality and site-based teams.
+> It answers: Is the station ready for the next service phase —
+> and if not, what needs to happen right now?
 
 ---
 
 ## Category
 
-**Mobile Operations Layer** — a complementary execution/proof layer, not an ERP, POS,
-planning, or accounting system.
+**Operations Cockpit** — a station-level operations readiness system, not an ERP, POS,
+planning, inventory, or accounting system.
 
 ---
 
@@ -44,14 +46,14 @@ handovers between shifts, and a proof requirement — alongside existing plannin
 
 ## Core Use Cases
 
+- Stationsbereitschaft (station readiness — Prep, Refill, Production, HACCP)
+- Aufgaben je Station und Rolle (tasks per station and role)
 - Auffülllisten (refill lists)
-- Bestände (stock)
+- Produktionsaufgaben (production tasks for next shift)
 - Wareneingang (goods receipt)
-- Verbrauch / Entnahme (consumption / withdrawal)
-- Korrekturanfragen (correction requests)
-- Schichtnotizen (shift notes)
-- Schichtübergabe (shift handover)
-- Manager Review
+- HACCP-Nachweise (temperature checks, cleaning, MHD)
+- Schichtnotizen und Übergabe (shift notes and handover)
+- Manager Review und Eskalation
 - Audit Trail
 
 ---
@@ -73,14 +75,16 @@ handovers between shifts, and a proof requirement — alongside existing plannin
 approved_vocabulary:
   - "Bevero"
   - "Bevero Ops"
-  - "Mobile Operations Layer"
-  - "site operations"
-  - "location"
+  - "Operations Cockpit"
+  - "station readiness"
+  - "Betriebsbereitschaft"
+  - "shift readiness"
+  - "task-per-station"
+  - "station"
   - "area"
-  - "stock location"
+  - "role-based view"
   - "external planning system"
   - "POS source connector"
-  - "ERP export"
   - "human-gated automation"
   - "audit trail"
   - "shift handover"

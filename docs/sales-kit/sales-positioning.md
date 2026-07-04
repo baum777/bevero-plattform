@@ -1,19 +1,19 @@
 # Sales-Positionierung — Bevero
 
-**Kern in einem Satz:** Bevero macht Warenfluss, Bar-Auffülllisten und Schichtübergaben an operativen Standorten nachvollziehbar — als Ergänzung zu Kasse und Warenwirtschaft, nicht als deren Ersatz.
+**Kern in einem Satz:** Bevero macht Stationsbereitschaft, Aufgaben und Schichtübergaben in Küche, Bar und Service sichtbar — als Ergänzung zu Kasse und Warenwirtschaft, nicht als deren Ersatz.
 
 ---
 
 ## 5 gute Claims
 
-1. **„Die Abläufe, die heute auf Zettel und Zuruf laufen — sauber festgehalten.“**
-   Konkret, jeder Betriebsleiter erkennt sich wieder.
+1. **„Die Stationsvorbereitung, die heute auf Zuruf und Zettel läuft — sauber festgehalten.“**
+   Konkret, jeder Küchen- oder Bar-Leiter erkennt sich wieder.
 
-2. **„Warenbewegungen mit Wer, Was und Wann statt einer nachträglichen Rekonstruktion.“**
-   Beschreibt die belegte Produktfähigkeit ohne eine ungemessene Zeitersparnis zu versprechen.
+2. **„Jede Station sieht, was vorbereitet, aufgefüllt, produziert und an die nächste Schicht übergeben werden muss.“**
+   Beschreibt die Produktfähigkeit ohne leere Versprechen.
 
-3. **„Warenannahme, Bar-Auffüllliste, Schichtübergabe — mit Namen, Zeit und Verlauf.“**
-   Benennt die drei Kernprozesse und das, was sie heute nicht haben: Belegbarkeit.
+3. **„Saladette-Check, Bar-Refill, HACCP, Schichtübergabe — mit Namen, Zeit und Beleg.“**
+   Benennt die Kernprozesse und die Lücke, die Bevero schließt: Belegbarkeit.
 
 4. **„Ihre Kasse und Ihre Warenwirtschaft bleiben. Bevero füllt die Lücke dazwischen.“**
    Nimmt die größte Angst (Systemwechsel) und positioniert ehrlich.

@@ -9,46 +9,48 @@
 
 ## Product Thesis
 
-Bevero is a **mobile operations layer for site-based teams**. It does not replace
-planning, POS, ERP, or accounting systems. It complements them exactly where real-time
-on-site work happens: refill runs, goods receipt, consumption/withdrawal, stock,
-shift notes, deviations, handovers, and proof.
+Bevero is an **operations cockpit for hospitality and site-based teams**.
+
+It does not replace planning, POS, ERP, or accounting systems. It answers the
+question that matters most in daily operations:
+
+> **Is the station ready for the next service phase — and if not, what needs to happen right now?**
 
 The core is not "yet another inventory system", but:
 
-> **Planning on top, execution below.**
+> **Bevero makes shift readiness visible.**
 > External planning, POS, and ERP systems plan, calculate, and administer.
-> Bevero makes visible what actually happens on site — and turns it into reviewable,
-> auditable evidence.
+> Bevero makes station-level readiness, tasks, refill, production, HACCP, and
+> handovers visible, actionable, and audit-proof.
 
 ---
 
 ## Target Customers
 
-Site-based operations across industries:
+Site-based hospitality operations:
 
-- Gastronomie
+- Gastronomie (Küche, Bar, Service)
 - Hotellerie
 - Catering
 - Eventbetriebe
-- Filial- und Standortbetriebe
+- Filial- und Standortbetriebe mit Schichtbetrieb
 
-The common shape: distributed physical locations, shift-based teams, stock and
-consumption to track, handovers between shifts, and a need for proof — while central
-planning/ERP/POS systems already exist and stay authoritative.
+The common shape: distributed physical locations, shift-based teams, station-level
+prep and refill, handovers between shifts, HACCP requirements, and a proof
+need — while central planning/ERP/POS systems already exist and stay authoritative.
 
 ---
 
 ## Core Job To Be Done
 
-A shift lead or on-site team member, without an office PC, can see and act on:
+A shift lead or on-site team member opens Bevero and sees:
 
-- What's missing? (refill lists, stock)
-- What was refilled / received? (goods receipt)
-- What was consumed or corrected? (movements, correction requests)
-- What's still open? (operational notes, shift handover)
-- What must escalate to purchasing or management? (manager review, alerts)
-- Is any of this defensible later? (audit trail / evidence)
+- **Is my station ready?** What is prepped, refilled, produced, cleaned?
+- **What's critical?** Which tasks need immediate attention before service?
+- **What's open?** What was not completed from the previous shift?
+- **What must be produced?** Production needs for the next shift/day.
+- **What must be documented?** HACCP checks, temperatures, MHD, cleaning.
+- **What must be handed over?** Open tasks, notes, deviations for the next shift.
 
 ---
 
@@ -57,45 +59,47 @@ A shift lead or on-site team member, without an office PC, can see and act on:
 **Does not replace:**
 
 - external planning systems (recipes, purchasing, quantities)
-- POS systems
-- ERP / reporting
-- accounting
+- POS / cash register systems
+- ERP / reporting / accounting
+- inventory management systems
 - central event planning
 - CRM / HR / recruiting
 
-**Adds (the execution layer):**
+**Adds (the operations cockpit layer):**
 
-- mobile last mile of site operations
-- refill lists, stock, movements, goods receipt
-- operational notes, shift handover
-- correction requests + manager review (human-gated)
-- deviation capture and structured feedback back to leading systems
+- station readiness per area (Kitchen, Bar, Service, Goods Receipt)
+- prep, refill, production, cleaning, HACCP task types
+- role-based views (staff sees their station; shift lead sees all stations)
+- shift handover with open-task synthesis
+- HACCP checkpoints and temperature documentation
+- goods receipt capture
+- deviation capture and structured task generation
 - audit trail for operational proof
 
 Bevero must never present itself as the main system. It is a deliberately narrow,
-complementary layer. Leading systems stay leading; Bevero feeds operational reality
-back to them via generic connectors/exports.
+complementary cockpit. Leading systems stay leading; Bevero feeds operational
+readiness back to them via generic connectors/exports.
 
 ---
 
 ## MVP Scope
 
-The MVP proves one real daily problem end to end at a single site:
+The MVP proves one real daily shift cycle end to end at a single site:
 
-- refill list (e.g. bar / area)
-- stock balances
-- book consumption
-- record goods receipt / delivery
-- local quick notes
-- shift handover
+- station readiness view (e.g. Gardemanger / Saladette, Bar, Production Kitchen)
+- prep and refill task creation and completion
+- production task request (station → production kitchen)
+- HACCP checkpoint (temperature, MHD, cleaning)
+- shift handover with open tasks
+- role-based views (Staff, Shift Lead)
 - controlled error and empty states
 
-**Explicitly not MVP:** full inventory-management suite, full external-planning-system
-integration, event costing, accounting, ERP integration.
+**Explicitly not MVP:** full inventory management, external planning integration,
+event costing, accounting, ERP integration, multi-site rollup.
 
 **MVP gate — production runtime proof:** UI + API deployments reachable, auth login
-works, refill run loads/creates, quantity change works, confirmation works, balances
-and movements load, no raw technical errors in the mobile UI.
+works, station readiness loads, tasks can be created and completed, handover
+generates open-task summary, HACCP checkpoint can be logged.
 
 ---
 
@@ -105,13 +109,14 @@ Hospitality is the first industry profile because it is where Bevero was piloted
 It stays a **profile on top of the generic core**, not hard-wired into it.
 
 Generic hierarchy: **Organization → Brand/Operation → Site → Area**.
-Hospitality areas map to concepts like Bar, Kitchen, Storage, Service, Event.
+Hospitality areas map to stations: Kitchen stations (Saucier, Entremetier,
+Gardemanger/Saladette, Production Kitchen), Bar, Service, Goods Receipt.
 
 Two site profiles emerged in the pilot and generalize well:
 
-- **Standard site** — leaner areas, essential refill/stock/handover flows.
-- **Premium site** — higher-value items, more precise stock locations, stronger
-  deviation notes, batch/quality notes, split bar/restaurant, higher-quality handover.
+- **Standard site** — leaner areas, essential prep/refill/handover flows.
+- **Premium site** — more stations, higher prep complexity, stronger HACCP
+  requirements, split bar/restaurant, richer handover.
 
 > **Pilot / case study (historical):** the first tenant was the Rauschenberger group
 > (brands Motorworld — incl. Motorworld Inn Böblingen — and CUBE). Those concrete names
@@ -121,10 +126,10 @@ Two site profiles emerged in the pilot and generalize well:
 
 ## Later Profiles
 
-The same generic core (org/site/area, stock, movements, notes, handover, review,
-audit) is intended to extend to additional site-based industries (retail chains,
+The same generic core (org/site/station, tasks, readiness, HACCP, handover, audit)
+is intended to extend to additional site-based industries (retail chains,
 facility/venue operations, other multi-location operators) via their own profiles —
-without changing the core execution model.
+without changing the core operations cockpit model.
 
 ---
 
@@ -133,25 +138,21 @@ without changing the core execution model.
 Framed as a generic product roadmap; pilot-specific milestones are historical.
 
 1. **Stabilize MVP** — the app runs reliably in production; one active UI (Cockpit),
-   controlled error states. Gate: refill list loads or shows a controlled error.
-2. **Single-site operations pilot** — solve one real daily problem end to end
-   (refill, stock, consumption, goods receipt, quick notes, shift handover).
+   controlled error states. Gate: station readiness loads or shows a controlled error.
+2. **Single-site operations pilot** — solve one real daily shift cycle end to end
+   (station readiness, prep/refill tasks, HACCP, handover).
    *(Pilot: a hospitality site.)*
-3. **Multi-site structure** — hardened Organization model, clean site/location
-   separation, roles (Owner/Admin/Manager/Staff/Viewer), per-site storage locations,
-   central item master with local target quantities, areas modeled cleanly.
-4. **Premium-site compatibility** — site profiles, per-site item categories,
-   area-based stock views, notes from local device to optional team/shift sync,
-   role-based cockpit start pages per site type.
-5. **External planning ingestion** — complement (not replace) external planning
-   systems: secured mail/export ingestion, parser confidence + trusted senders +
-   failure alerts, procurement-order ↔ inventory-item mapping, goods receipts from
-   external orders, structured deviation export.
-6. **Organization / multi-site management layer** — central cross-site overview,
-   site comparison, open refills per site, bottleneck and critical-deviation views,
-   consumption/movement history, export for purchasing/controlling, audit trail.
+3. **Multi-station structure** — hardened station/area model, per-station task types,
+   roles (Shift Lead, Staff, Manager, Admin), per-station readiness criteria.
+4. **Premium-site compatibility** — site profiles, per-site station layout,
+   area-based task views, role-based cockpit start pages per site type.
+5. **External planning integration** — complement (not replace) external planning
+   systems: secured ingestion of planned quantities, menu/recipe data → station prep
+   needs, structured deviation export back to planning.
+6. **Multi-site operations view** — central cross-site readiness overview,
+   open tasks per site, bottleneck views, HACCP compliance per site, audit trail.
    *Not in scope:* replacing ERP, accounting, HR, or central event planning.
-7. **Event / banquet extension** — event pick/commission lists, planned item needs,
+7. **Event / banquet extension** — event prep lists, planned station needs,
    return quantities, consumption vs. plan, mobile event checklists, photo/deviation
    proof, exportable post-costing data.
 
@@ -163,16 +164,17 @@ Framed as a generic product roadmap; pilot-specific milestones are historical.
 
 - "We replace the external planning system."
 - "We replace the ERP."
+- "We are an inventory management system."
 - "We do your accounting."
 - "We run central event planning."
 - Framing Bevero as built for one specific customer.
 
 **Always emphasize:**
 
-- mobile last mile
-- site reality
-- refill · deviation · proof
-- simple operation
+- station readiness
+- shift operations
+- task · HACCP · handover
+- role-based views
 - leading systems stay leading
 - human-gated automation
-- Bevero returns operational data to the systems that plan
+- Bevero feeds operational readiness data to the systems that plan

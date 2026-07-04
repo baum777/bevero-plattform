@@ -7,8 +7,8 @@
 ```yaml
 identity:
   system: "Bevero"
-  category: "Mobile Operations Layer"
-  mission: "turn site-level operational work into visible, reviewable, auditable workflows"
+  category: "Operations Cockpit"
+  mission: "make station-level shift readiness visible, actionable, and handover-ready"
   governance: "AI may assist, humans approve operational consequences"
 ```
 
@@ -26,10 +26,13 @@ identity:
 
 ## Existenzgrund
 
-Bevero ist ein mobiler **Operations Layer** für Standortbetriebe.
+Bevero ist ein **Operations Cockpit** für Gastronomie- und Standortbetriebe.
 
-Es macht operative Arbeit in allen Standorten und Betriebsprozessen
-**sichtbar, prüfbar und freigabepflichtig** —
+Es beantwortet die zentrale Frage jedes Tagesbetriebs:
+> **Ist die Station für die nächste Servicephase bereit — und wenn nicht, was muss jetzt passieren?**
+
+Bevero macht Stationsbereitschaft, Aufgaben, Refill, Produktion, HACCP,
+Warenannahme und Schichtübergaben **sichtbar, steuerbar und übergabefähig** —
 bevor KI-Unterstützung zu einer bindenden Entscheidung oder Aktion wird.
 
 > KI darf entwerfen. Menschen geben operative Konsequenzen frei.
@@ -51,12 +54,13 @@ Bevero arbeitet **für** den Operator — nicht statt ihm.
 ## Was Bevero ist — und was nicht
 
 | Was es ist | Was es nicht ist |
-|---|---|
-| Mobiler Operations Layer für Standortbetriebe | Ersatz für Planungs-, POS-, ERP- oder Buchhaltungssysteme |
-| Controlled Execution — Draft vor Commitment | Autonomes Entscheidungssystem |
-| Standortübergreifendes operatives Lagebild | Vollständiges ERP oder Warenwirtschaft |
-| Freigabe-Enforcer mit Audit-Trail | Chat-Interface oder einfacher Assistent |
-| Lernfähiges System mit Feedback-Schleife | Statisches Reporting-Tool |
+|---|---|---|
+| Operations Cockpit für Stations- und Schichtbereitschaft | Ersatz für Planungs-, POS-, ERP- oder Buchhaltungssysteme |
+| Aufgaben- und Übergabesystem für Küche, Bar, Service, Warenannahme | Inventory-Management-System oder Warenwirtschaft |
+| Stationsbereitschaft sichtbar machen (Prep, Refill, Produktion, HACCP) | Kassensystem oder komplettes Bestellportal |
+| Schichtwissen in strukturierte Aufgaben übersetzen | Rezeptkalkulation oder Food-Cost-Controlling |
+| HACCP-Nachweise und Audit-Trail | Vollautomatische OCR ohne Freigabe |
+| Rollen- und schichtbasierte Sichten (jede Rolle sieht ihre Aufgaben) | All-in-One-Management-Dashboard |
 
 ---
 
