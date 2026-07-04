@@ -73,3 +73,39 @@ Connection Strings, Passwörter oder Tokens ausgeben.
 
 → [`IDENTITY.md`](IDENTITY.md) — Existenzgrund und Leitprinzipien
 → [`governance/rules.md`](governance/rules.md) — Betriebsregeln
+
+---
+
+<!-- workspace-root-sync:agents:start -->
+## Workspace Root Integration (BAUM-OS)
+
+Class: repo-local agent frontdoor extension.
+Use rule: read after this repository's own opening instructions. The workspace root `README.md` and `AGENTS.md` route entry, authority checks, reusable-surface checks, evidence, and stop rules; this repository's local files remain the canonical source for repo-specific product, runtime, archive, contract, and implementation truth.
+
+### Authority And Scope
+
+- This repository operates its own agent system (Rauschenberger OS) with independent roles, levels (L0–L4), and governance. Repo-local `AGENTS.md`, `IDENTITY.md`, `OS.md`, `governance/rules.md`, and `docs/` govern this repository.
+- Workspace-root files provide routing and constraints only; they do not replace repo-local architecture, implementation, product, runtime, or archive truth.
+- Portfolio surfaces may classify, coordinate, or record cross-repo work, but they do not override this repository.
+- Shared-core assets under `model-agnostic-workflow-system/` are the reusable authority for portable skills, contracts, templates, validators, provider exports, and workflow routing patterns.
+
+### Entry Sequence
+
+1. When entering from `/home/baum/workspace/baum-os`, read the root `README.md` and root `AGENTS.md` first.
+2. Read this repository's frontdoors next: `AGENTS.md`, `README.md`, `IDENTITY.md`, `OS.md`, `governance/rules.md`.
+3. Identify owner, scope, canonical file, expected write targets, dirty/user-made changes, validation path, and next gate before editing.
+4. Prefer existing repo-local or shared-core scripts, templates, validators, contracts, and docs over new files.
+5. Apply the smallest safe change.
+6. Verify by reading changed state and running the relevant local checks.
+7. Report results with exact paths, evidence, unresolved gaps, and next gate.
+
+### Stop Conditions
+
+Stop and report `BLOCKED` when:
+
+- owner, scope, authority, source, or validation is unclear;
+- root, portfolio, shared-core, and repo-local guidance conflict;
+- a loose doc, chat summary, archive, or imported source would drive implementation without owning-surface approval;
+- required checks or validation cannot prove the claim;
+- an edit would overwrite user or agent work that was not created by the current task.
+<!-- workspace-root-sync:agents:end -->
