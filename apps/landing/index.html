@@ -605,6 +605,9 @@
     </div>
   </section>
 
+  <!-- ============ INTERAKTIVE WORKFLOW-SANDBOX ============ -->
+  <div id="sandbox-root"></div>
+
   <!-- ============ MAGIC MOMENT ============ -->
   <section class="moment" aria-labelledby="moment-titel">
     <div class="container">
@@ -838,6 +841,7 @@
   </div>
 </footer>
 
+<script type="module" src="/src/sandbox-entry.jsx"></script>
 <script>
   // Kontaktformular: baut eine mailto-Nachricht — kein Versand an Dritte, kein Backend.
   document.getElementById('kontaktformular').addEventListener('submit', function (e) {
