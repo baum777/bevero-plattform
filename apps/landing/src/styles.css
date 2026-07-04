@@ -1041,13 +1041,35 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
   html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
   .navCta,
   .btn,
-  .proof-item {
-    transition: none;
+  .proof-item,
+  .summary-card,
+  .roi-card,
+  .gap-row,
+  .standort-card,
+  .phase-card,
+  .it-card,
+  .modal-content,
+  .modal-overlay {
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  .modal-overlay {
+    animation: none !important;
   }
 }

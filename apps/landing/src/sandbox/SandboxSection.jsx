@@ -6,15 +6,72 @@ import { WorkflowPanel } from "./WorkflowPanel.jsx";
 import { WORKFLOW_BY_ID, WORKFLOWS } from "./workflowConfig.js";
 import "./sandbox.css";
 
+function CockpitPreview({ state }) {
+  return (
+    <section className="sandbox-cockpit" aria-labelledby="sandbox-cockpit-title">
+      <div className="sandbox-cockpit__head">
+        <p className="sandbox-kicker">Session-Status</p>
+        <h2 id="sandbox-cockpit-title">Demo-Cockpit</h2>
+      </div>
+      <div className="sandbox-cockpit__stats">
+        <div className="sandbox-stat">
+          <span className="sandbox-stat__value">{state.completedWorkflows.length}/5</span>
+          <span className="sandbox-stat__label">Abgeschlossen</span>
+        </div>
+        <div className="sandbox-stat">
+          <span className="sandbox-stat__value">{state.timeline.length}</span>
+          <span className="sandbox-stat__label">Aktionen</span>
+        </div>
+        <div className="sandbox-stat">
+          <span className="sandbox-stat__value">{state.demoRole === "manager" ? "Manager" : "Mitarbeiter"}</span>
+          <span className="sandbox-stat__label">Rolle</span>
+        </div>
+      </div>
+      <div className="sandbox-cockpit__timeline">
+        <h3>Aktivitäts-Verlauf</h3>
+        {state.timeline.length ? (
+          <ol>
+            {state.timeline.map((entry) => (
+              <li key={entry.id}>
+                <strong>{WORKFLOW_BY_ID[entry.workflowId].name}</strong>
+                <span>{entry.status}</span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p>Noch keine Demo-Aktionen.</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function Dashboard({ state, startWorkflow }) {
   return (
     <section className="sandbox-dashboard" aria-labelledby="sandbox-dashboard-title">
-      <div className="sandbox-dashboard__head"><div><p className="sandbox-kicker">Lokaler Demo-Stand</p><h2 id="sandbox-dashboard-title">Workflow-Dashboard</h2></div><strong>{state.completedWorkflows.length} von 5 abgeschlossen</strong></div>
-      <div className="sandbox-progress" aria-label={`${state.completedWorkflows.length} von 5 abgeschlossen`}><span style={{ width: `${state.completedWorkflows.length * 20}%` }} /></div>
-      <div className="sandbox-dashboard__grid">
-        {WORKFLOWS.map((workflow) => <button type="button" key={workflow.id} onClick={() => startWorkflow(workflow.id)}><span>{state.completedWorkflows.includes(workflow.id) ? "Erledigt" : "Starten"}</span><strong>{workflow.name}</strong></button>)}
+      <div className="sandbox-dashboard__head">
+        <div>
+          <p className="sandbox-kicker">Workflow-Auswahl</p>
+          <h2 id="sandbox-dashboard-title">Verfügbare Workflows</h2>
+        </div>
+        <strong>{state.completedWorkflows.length} von 5 abgeschlossen</strong>
       </div>
-      <div className="sandbox-timeline"><h3>Session-Verlauf</h3>{state.timeline.length ? <ol>{state.timeline.map((entry) => <li key={entry.id}><strong>{WORKFLOW_BY_ID[entry.workflowId].name}</strong><span>{entry.status}</span></li>)}</ol> : <p>Noch keine Demo-Aktion abgeschlossen.</p>}</div>
+      <div className="sandbox-progress" aria-label={`${state.completedWorkflows.length} von 5 abgeschlossen`}>
+        <span style={{ width: `${state.completedWorkflows.length * 20}%` }} />
+      </div>
+      <div className="sandbox-dashboard__grid">
+        {WORKFLOWS.map((workflow) => (
+          <button
+            type="button"
+            key={workflow.id}
+            onClick={() => startWorkflow(workflow.id)}
+            aria-label={`${workflow.name} Workflow ${state.completedWorkflows.includes(workflow.id) ? "(Erledigt)" : "(Starten)"}`}
+          >
+            <span>{state.completedWorkflows.includes(workflow.id) ? "Erledigt" : "Starten"}</span>
+            <strong>{workflow.name}</strong>
+          </button>
+        ))}
+      </div>
     </section>
   );
 }
@@ -41,6 +98,36 @@ export function SandboxSection() {
     }
     if (!open && dialog?.open) dialog.close();
     return () => { document.body.style.overflow = ""; };
+  }, [open]);
+  
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    
+    const handleTab = (event) => {
+      if (event.key !== "Tab") return;
+      
+      const focusableElements = dialog.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      
+      if (event.shiftKey) {
+        if (document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+    
+    dialog.addEventListener('keydown', handleTab);
+    return () => dialog.removeEventListener('keydown', handleTab);
   }, [open]);
 
   function startWorkflow(workflowId, trigger) {
@@ -82,7 +169,14 @@ export function SandboxSection() {
         <div className="sandbox-dialog__shell">
           <header className="sandbox-toolbar"><div><span className="sandbox-demo-badge">DEMO</span><span>keine produktive Buchung/Freigabe</span></div><div><button type="button" className="sandbox-button sandbox-button--quiet" onClick={reset}>Demo zurücksetzen</button><button type="button" className="sandbox-close" aria-label="Sandbox schließen" onClick={requestClose}>×</button></div></header>
           <main className="sandbox-dialog__content">
-            {state.activeWorkflowId ? <WorkflowPanel state={state} dispatch={dispatch} /> : <Dashboard state={state} startWorkflow={startWorkflow} />}
+            {state.activeWorkflowId ? (
+              <WorkflowPanel state={state} dispatch={dispatch} />
+            ) : (
+              <div className="sandbox-layout-grid">
+                <CockpitPreview state={state} />
+                <Dashboard state={state} startWorkflow={startWorkflow} />
+              </div>
+            )}
           </main>
           <footer className="sandbox-dialog__footer"><span>Fiktive Daten · Session-only</span><span>Keine API · keine Supabase-Verbindung</span></footer>
         </div>

@@ -165,9 +165,19 @@ function Correction({ draft, dispatch, state }) {
   if (draft.step === 2) return (
     <div className="sandbox-approval">
       <p>Aktive Demo-Rolle: <strong>{state.demoRole === "manager" ? "Manager" : "Mitarbeiter"}</strong></p>
-      {state.demoRole !== "manager" ? <button type="button" className="sandbox-button sandbox-button--secondary" onClick={() => dispatch({ type: "SWITCH_DEMO_ROLE", role: "manager" })}>Zur Demo-Manager-Rolle wechseln</button> : null}
-      <div><button type="button" disabled={state.demoRole !== "manager"} className="sandbox-button sandbox-button--primary" onClick={() => patch({ decision: "approved" })}>Genehmigen</button>
-      <button type="button" disabled={state.demoRole !== "manager"} className="sandbox-button sandbox-button--danger" onClick={() => patch({ decision: "rejected" })}>Ablehnen</button></div>
+      {state.demoRole !== "manager" ? (
+        <button type="button" className="sandbox-button sandbox-button--secondary" onClick={() => dispatch({ type: "SWITCH_DEMO_ROLE", role: "manager" })}>
+          Zur Demo-Manager-Rolle wechseln
+        </button>
+      ) : null}
+      <div className="sandbox-approval__actions">
+        <button type="button" disabled={state.demoRole !== "manager"} className="sandbox-button sandbox-button--primary" onClick={() => patch({ decision: "approved" })} aria-disabled={state.demoRole !== "manager"}>
+          Genehmigen
+        </button>
+        <button type="button" disabled={state.demoRole !== "manager"} className="sandbox-button sandbox-button--danger" onClick={() => patch({ decision: "rejected" })} aria-disabled={state.demoRole !== "manager"}>
+          Ablehnen
+        </button>
+      </div>
       {draft.decision ? <p className="sandbox-success">Entscheidung: {draft.decision === "approved" ? "genehmigt" : "abgelehnt"}</p> : null}
     </div>
   );
@@ -210,8 +220,16 @@ export function WorkflowPanel({ state, dispatch }) {
       {error ? <p className="sandbox-alert" role="alert">{error}</p> : null}
       <Panel draft={draft} dispatch={dispatch} state={state} />
       <footer className="sandbox-workflow__actions">
-        {draft.step > 0 ? <button type="button" className="sandbox-button sandbox-button--quiet" onClick={() => dispatch({ type: "UPDATE_DRAFT", workflowId, patch: { step: draft.step - 1 } })}>Zurück</button> : <span />}
-        <button type="button" className="sandbox-button sandbox-button--primary" onClick={next}>{draft.step === finalStep ? FINAL_LABELS[workflowId] : "Weiter"}</button>
+        {draft.step > 0 ? (
+          <button type="button" className="sandbox-button sandbox-button--quiet" onClick={() => dispatch({ type: "UPDATE_DRAFT", workflowId, patch: { step: draft.step - 1 } })}>
+            Zurück
+          </button>
+        ) : (
+          <span />
+        )}
+        <button type="button" className="sandbox-button sandbox-button--primary" onClick={next}>
+          {draft.step === finalStep ? FINAL_LABELS[workflowId] : "Weiter"}
+        </button>
       </footer>
     </section>
   );

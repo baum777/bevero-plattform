@@ -277,6 +277,7 @@ function HubDiagram() {
 
 function ScreenshotModal({ screen, onClose }) {
   const closeButtonRef = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (!screen) return undefined;
@@ -290,18 +291,40 @@ function ScreenshotModal({ screen, onClose }) {
       if (event.key === "Escape") {
         onClose();
       }
+    };
 
-      if (event.key === "Tab") {
-        event.preventDefault();
-        closeButtonRef.current?.focus();
+    const handleTab = (event) => {
+      if (event.key !== "Tab") return;
+      
+      const modalElement = modalRef.current;
+      if (!modalElement) return;
+      
+      const focusableElements = modalElement.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      
+      if (event.shiftKey) {
+        if (document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement?.focus();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleTab);
 
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleTab);
       previousFocus?.focus();
     };
   }, [screen, onClose]);
@@ -313,11 +336,12 @@ function ScreenshotModal({ screen, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose} role="presentation">
       <div
+        ref={modalRef}
         className={`modal-content ${screen.src.includes("/mobile/") ? "modal-content--mobile" : ""}`}
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label={screen.caption}
+        aria-labelledby="modal-title"
       >
         <button ref={closeButtonRef} className="modal-close" onClick={onClose} aria-label="Schließen">
           ×
@@ -325,7 +349,7 @@ function ScreenshotModal({ screen, onClose }) {
         <img src={screen.src} alt={screen.alt} className="modal-image" />
         <div className="modal-copy">
           <p className="eyebrow">Screenshot</p>
-          <h3>{screen.caption}</h3>
+          <h3 id="modal-title">{screen.caption}</h3>
           <p className="modal-lead">{screen.desc}</p>
           <p>
             <strong>Frage:</strong> {narrative.operative}
@@ -364,7 +388,7 @@ export default function App() {
         </div>
 
         <a className="navCta" href="#einschaetzung">
-          Einschätzung geben
+          Prozesscheck anfragen
         </a>
       </nav>
 
@@ -383,10 +407,10 @@ export default function App() {
           </p>
           <div className="hero-ctas">
             <a href="#nutzen" className="btn btn-primary">
-              ROI-Hebel verstehen
+              60-Minuten Prozesscheck anfragen
             </a>
-            <a href="#screens" className="btn btn-secondary">
-              Screens ansehen
+            <a href="#demo-sandbox" className="btn btn-secondary">
+              Demo-Schicht durchspielen
             </a>
             <a href="#einschaetzung" className="btn btn-tertiary">
               Einschätzung geben
@@ -640,7 +664,7 @@ export default function App() {
 
       <section id="einschaetzung" className="section-anchor final-cta-section">
         <div className="container final-cta-shell">
-          <h2 className="cta-h2">Sagen Sie mir bitte, ob ich damit am richtigen Hebel ansetze.</h2>
+          <h2 className="cta-h2">Eine echte Warenannahme. Eine echte Übergabe. Eine klare Entscheidung.</h2>
           <p className="cta-text">
             Ich suche keine schnelle Freigabe und keinen großen Rollout. Ich suche eine ehrliche
             Einschätzung: Ist ein operativer Hub, der Standortdatenbank, Planungs-/POS-
@@ -649,7 +673,7 @@ export default function App() {
           </p>
           <div className="cta-buttons">
             <a href={KAM_MAILTO} className="btn btn-primary">
-              Einschätzung per Mail geben
+              60-Minuten Prozesscheck anfragen
             </a>
             <a href="#screens" className="btn btn-secondary">
               Screens ansehen
