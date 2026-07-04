@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { screensFor } from "./screenshotRegistry.js";
+import DemoSandboxTeaser from "./components/DemoSandboxTeaser.jsx";
 import "./styles.css";
 
 const CONTACT_EMAIL = "twim.baum@proton.me";
@@ -586,6 +587,8 @@ export default function App() {
           </article>
         </div>
       </section>
+
+      <DemoSandboxTeaser />
 
       <section id="vertrauen" className="section-anchor trust-section--contrast">
         <div className="container">

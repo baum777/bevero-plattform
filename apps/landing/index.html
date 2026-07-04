@@ -454,6 +454,100 @@
   .fuss nav { display: flex; gap: 24px; }
   .fuss a { color: var(--grau); }
 
+  /* ---------- Demo Sandbox Teaser ---------- */
+  .demo-sandbox { background: var(--papier-warm); border-top: 1px solid var(--linie); border-bottom: 1px solid var(--linie); }
+  .demo-sandbox-claim {
+    font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+    font-weight: 700;
+    color: var(--gruen-dunkel);
+    max-width: 36rem;
+    margin-bottom: 16px;
+    line-height: 1.25;
+  }
+  .demo-sandbox-desc {
+    color: var(--grau);
+    max-width: 36rem;
+    margin-bottom: 32px;
+    font-size: 0.98rem;
+  }
+  .demo-sandbox-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 28px;
+    margin-bottom: 32px;
+  }
+  .demo-cockpit-preview {
+    border: 1px solid var(--linie);
+    border-radius: var(--radius);
+    background: var(--papier);
+    padding: 24px;
+  }
+  .cockpit-head {
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--linie);
+  }
+  .cockpit-title { font-weight: 700; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+  .cockpit-status { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 8px; }
+  .cockpit-status li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; border-radius: 8px;
+    font-size: 0.88rem; font-weight: 600; line-height: 1.45;
+  }
+  .cockpit-done { background: var(--gruen-hell); color: var(--gruen-dunkel); }
+  .cockpit-partial { background: #fdf6e8; color: var(--bernstein); }
+  .cockpit-open { background: #fdf0ed; color: #984331; }
+  .cockpit-icon {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 800; margin-top: 1px;
+  }
+  .cockpit-icon--done { background: var(--gruen); color: #fff; }
+  .cockpit-icon--partial { background: var(--bernstein); color: #fff; }
+  .cockpit-icon--open { background: #984331; color: #fff; }
+  .cockpit-timeline { margin-bottom: 14px; }
+  .cockpit-timeline-label {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--grau); margin-bottom: 8px;
+  }
+  .cockpit-events { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .cockpit-events li { display: flex; gap: 8px; font-size: 0.82rem; color: var(--grau); font-variant-numeric: tabular-nums; }
+  .cockpit-time { font-weight: 700; color: var(--tinte); min-width: 4ch; }
+  .cockpit-result {
+    padding: 12px 16px; border-radius: 8px;
+    background: var(--gruen-hell); color: var(--gruen-dunkel);
+    font-size: 0.88rem; font-weight: 700; line-height: 1.5;
+  }
+  .demo-workflow-cards { display: grid; gap: 10px; }
+  .demo-cards-label {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--grau); margin-bottom: 4px;
+  }
+  .demo-card-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 16px; border: 1px solid var(--linie); border-radius: var(--radius);
+    background: var(--papier); cursor: default;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .demo-card-item:hover { border-color: var(--gruen); transform: translateY(-2px); }
+  .demo-card-nr {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--gruen-hell); color: var(--gruen);
+    font-weight: 700; font-size: 0.75rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .demo-card-item div strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
+  .demo-card-item div span { color: var(--grau); font-size: 0.82rem; }
+  .demo-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+  .btn--demo-cta { padding: 16px 28px; font-size: 1.05rem; }
+  .demo-hinweis { color: var(--grau); font-size: 0.85rem; }
+  @media (max-width: 768px) {
+    .demo-sandbox-layout { grid-template-columns: 1fr; }
+    .demo-sandbox-claim { font-size: 1.15rem; }
+    .demo-ctas { flex-direction: column; align-items: stretch; }
+    .btn--demo-cta { text-align: center; }
+  }
+
   /* ---------- Scroll-Reveal (nur ohne reduced motion) ---------- */
   @media (prefers-reduced-motion: no-preference) {
     .reveal {
@@ -472,7 +566,7 @@
 <header class="top">
   <div class="container top-inner">
     <a class="marke" href="#inhalt">Bevero<span class="punkt">.</span></a>
-    <a class="btn btn-gruen" href="#pilot-kontakt">Pilotgespräch vereinbaren</a>
+    <a class="btn btn-gruen" href="#pilot-kontakt">Prozesscheck anfragen</a>
   </div>
 </header>
 
@@ -485,8 +579,8 @@
         <h1 id="hero-titel">Jede Schichtübergabe nachlesbar. Jede Warenbewegung nachvollziehbar.</h1>
         <p class="subline">Bevero ersetzt Zettel, Zuruf und WhatsApp-Gruppen in Küche, Bar und Lager — <strong>nicht Ihre Kasse, nicht Ihre Buchhaltung.</strong> Die bleiben führend. Bevero ist die Ausführungs- und Nachweisebene davor.</p>
         <div class="hero-cta">
-          <a class="btn btn-gruen" href="#pilot-kontakt">Pilotgespräch vereinbaren</a>
-          <a class="btn btn-rand" href="#prozesse">Die fünf Prozesse ansehen</a>
+    <a class="btn btn-gruen" href="#pilot-kontakt">60-Minuten Prozesscheck anfragen</a>
+          <a class="btn btn-rand" href="#demo-sandbox">Demo-Schicht durchspielen</a>
         </div>
         <p class="cta-hinweis">60 Minuten vor Ort: Wir sehen uns gemeinsam eine echte Warenannahme und eine Übergabe an. Keine Folien, kein Verkaufsgespräch.</p>
       </div>
@@ -627,6 +721,59 @@
           <footer>Schichtleitung nach der zweiten Pilotwoche — genau der Moment, für den Bevero gebaut ist.</footer>
         </blockquote>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ DEMO-SANDBOX-TEASER ============ -->
+  <section id="demo-sandbox" class="demo-sandbox" aria-labelledby="demo-sandbox-titel">
+    <div class="container">
+      <div class="abschnitt-kopf reveal">
+        <span class="vorzeile">INTERAKTIVE DEMO</span>
+        <h2 id="demo-sandbox-titel">Übernehmen Sie die nächste Schicht — als Demo.</h2>
+      </div>
+      <p class="demo-sandbox-claim reveal">Von „Hat dir das jemand gesagt?" zu „Steht im Verlauf."</p>
+      <p class="demo-sandbox-desc reveal">Spielen Sie in 90 Sekunden durch, wie Bevero Warenannahme, Fehlmenge, Auffüllliste und offene Punkte zu einer klaren Schichtübergabe verbindet.</p>
+
+      <div class="demo-sandbox-layout reveal">
+        <!-- Cockpit Preview -->
+        <div class="demo-cockpit-preview" aria-label="Demo-Schichtübergabe-Ansicht">
+          <div class="cockpit-head">
+            <p class="cockpit-title">Schichtübergabe · Dienstag · 15:55 Uhr</p>
+          </div>
+          <ul class="cockpit-status">
+            <li class="cockpit-done"><span class="cockpit-icon cockpit-icon--done" aria-hidden="true">✓</span> Warenannahme abgeschlossen</li>
+            <li class="cockpit-done"><span class="cockpit-icon cockpit-icon--done" aria-hidden="true">✓</span> Fehlmenge dokumentiert</li>
+            <li class="cockpit-partial"><span class="cockpit-icon cockpit-icon--partial" aria-hidden="true">◐</span> Auffüllliste 80 % erledigt</li>
+            <li class="cockpit-open"><span class="cockpit-icon cockpit-icon--open" aria-hidden="true">!</span> Offener Punkt: Limettenbestand für Frühschicht prüfen</li>
+          </ul>
+          <div class="cockpit-timeline">
+            <p class="cockpit-timeline-label">Verlauf heute</p>
+            <ol class="cockpit-events">
+              <li><span class="cockpit-time">14:20</span> Lieferung geprüft</li>
+              <li><span class="cockpit-time">14:34</span> Fehlmenge markiert</li>
+              <li><span class="cockpit-time">15:10</span> Bar-Auffüllung gestartet</li>
+              <li><span class="cockpit-time">15:48</span> Übergabe vorbereitet</li>
+            </ol>
+          </div>
+          <p class="cockpit-result">Die nächste Schicht sieht, was erledigt ist, was fehlt und wer sich kümmert.</p>
+        </div>
+
+        <!-- Workflow Cards -->
+        <div class="demo-workflow-cards">
+          <p class="demo-cards-label">Was Sie durchspielen:</p>
+          <article class="demo-card-item"><span class="demo-card-nr">01</span><div><strong>Warenannahme</strong><span>Lieferung prüfen, Abweichung markieren, Demo-Beleg erzeugen.</span></div></article>
+          <article class="demo-card-item"><span class="demo-card-nr">02</span><div><strong>Umlagerung</strong><span>Bestände zwischen Lager, Küche und Bar nachvollziehbar bewegen.</span></div></article>
+          <article class="demo-card-item"><span class="demo-card-nr">03</span><div><strong>Auffüllung</strong><span>Offene Artikel sehen, Soll-Mengen prüfen, Entnahme dokumentieren.</span></div></article>
+          <article class="demo-card-item"><span class="demo-card-nr">04</span><div><strong>Übergabe</strong><span>Erledigte Aufgaben, offene Punkte und Zuständigkeiten sichtbar machen.</span></div></article>
+          <article class="demo-card-item"><span class="demo-card-nr">05</span><div><strong>Korrektur/Freigabe</strong><span>Abweichungen begründen und als Demo-Manager genehmigen oder ablehnen.</span></div></article>
+        </div>
+      </div>
+
+      <div class="demo-ctas reveal">
+        <a href="#sandbox" class="btn btn-gruen btn--demo-cta">Schicht übernehmen — Demo starten</a>
+        <a href="#prozesse" class="btn btn-rand">Erst die fünf Prozesse ansehen</a>
+      </div>
+      <p class="demo-hinweis reveal">Lokale Demo · keine echten Daten · keine Anmeldung</p>
     </div>
   </section>
 
@@ -787,8 +934,9 @@
     <div class="container">
       <div class="abschnitt-kopf reveal">
         <span class="vorzeile">Der nächste Schritt</span>
-        <h2 id="kontakt-titel">Ein Termin, eine echte Warenannahme, eine Entscheidung.</h2>
-        <p>Kein Verkaufszyklus mit fünf Terminen. So läuft es:</p>
+        <h2 id="kontakt-titel">Eine echte Warenannahme. Eine echte Übergabe. Eine klare Entscheidung.</h2>
+        <p>Kein Demo-Call mit Folien. Wir schauen uns 60 Minuten lang den Ablauf an, der heute Zeit kostet: Warenannahme, Übergabe, offene Punkte und Rückfragen.</p>
+        <p>Danach wissen beide Seiten: wo Bevero helfen würde, wo nicht, welche zwei Prozesse in den Piloten gehören und woran der Pilot nach vier Wochen gemessen wird.</p>
       </div>
 
       <ol class="schritte">
@@ -804,7 +952,7 @@
       </ol>
 
       <form class="kontakt-form reveal" id="kontaktformular">
-        <h3>Pilotgespräch vereinbaren</h3>
+        <h3>60-Minuten Prozesscheck anfragen</h3>
         <div class="feld">
           <label for="f-name">Name</label>
           <input type="text" id="f-name" name="name" autocomplete="name" required>
@@ -821,11 +969,11 @@
           <label for="f-nachricht">Kurz zu Ihrem Betrieb <span style="font-weight:400; color:var(--grau);">(optional — z.&nbsp;B. Anzahl Lagerorte, Ausgabestellen)</span></label>
           <textarea id="f-nachricht" name="nachricht"></textarea>
         </div>
-        <button type="submit" class="btn btn-gruen" style="width:100%;">Anfrage senden</button>
+        <button type="submit" class="btn btn-gruen" style="width:100%;">60-Minuten Prozesscheck anfragen</button>
         <p class="form-hinweis">Öffnet Ihr E-Mail-Programm mit einer vorbereiteten Nachricht — Sie sehen vor dem Senden alles, was uns erreicht.</p>
       </form>
 
-      <p class="mail-alt">Lieber direkt schreiben? <a href="mailto:twim.baum@proton.me?subject=Pilotgespr%C3%A4ch%20Bevero">twim.baum@proton.me</a></p>
+      <p class="mail-alt">Lieber direkt schreiben? <a href="mailto:twim.baum@proton.me?subject=60-Minuten%20Prozesscheck%20Bevero">twim.baum@proton.me</a></p>
     </div>
   </section>
 
@@ -850,12 +998,12 @@
     var betrieb = document.getElementById('f-betrieb').value.trim();
     var mail = document.getElementById('f-mail').value.trim();
     var nachricht = document.getElementById('f-nachricht').value.trim();
-    var body = 'Guten Tag,%0D%0A%0D%0Awir möchten ein Pilotgespräch vereinbaren.%0D%0A%0D%0A'
+    var body = 'Guten Tag,%0D%0A%0D%0Awir möchten einen 60-Minuten Prozesscheck vereinbaren.%0D%0A%0D%0A'
       + 'Name: ' + encodeURIComponent(name) + '%0D%0A'
       + 'Betrieb: ' + encodeURIComponent(betrieb) + '%0D%0A'
       + 'E-Mail: ' + encodeURIComponent(mail)
       + (nachricht ? '%0D%0A%0D%0AZum Betrieb:%0D%0A' + encodeURIComponent(nachricht) : '');
-    window.location.href = 'mailto:twim.baum@proton.me?subject=' + encodeURIComponent('Pilotgespräch Bevero — ' + betrieb) + '&body=' + body;
+    window.location.href = 'mailto:twim.baum@proton.me?subject=' + encodeURIComponent('60-Minuten Prozesscheck — ' + betrieb) + '&body=' + body;
   });
 
   // Scroll-Reveal — nur wenn der Betriebssystem-Schalter Bewegung erlaubt.
